@@ -1,0 +1,37 @@
+# docker-compose.prod.yml — Production full-stack override
+# =============================================================================
+# Usage:
+#   docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Prerequisites:
+#   1. Build Flutter web: scripts/build_web_production.sh
+#   2. Copy env: cp deploy/production/.env.example .env  (fill in real values)
+# =============================================================================
+
+services:
+  backend:
+    restart: always
+    # Binds to all interfaces in production; reverse-proxy handles port exposure
+    environment:
+      BACKEND_HOST: "0.0.0.0"
+      BACKEND_PORT: "8080"
+      BACKEND_ENV: "production"
+      BACKEND_LOG_LEVEL: "INFO"
+      BACKEND_ALLOW_DEBUG_VERIFY_CODE: "false"
+    # No host port mapping needed — nginx talks to backend on internal network
+
+  nginx:
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Production TLS certs (fill paths before running)
+      # - /etc/letsencrypt/live/your-domain/fullchain.pem:/etc/nginx/ssl/cert.pem:ro
+      # - /etc/letsencrypt/live/your-domain/privkey.pem:/etc/nginx/ssl/key.pem:ro
+    command: |
+      sh -c '
+        # In production, uncomment TLS volume mounts above and replace
+        # the conf with a TLS-enabled version.
+        nginx -g "daemon off;"
+      '

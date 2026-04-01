@@ -1,0 +1,17 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - lib_mobile/**
+    - backup_lib/**
+
+linter:
+  rules:
+    prefer_single_quotes
+    avoid_print
+    prefer_const_constructors
+    avoid_unnecessary_containers
+    prefer_interpolation_to_compose_strings
+    prefer_collection_literals
+    prefer_if_null_operators

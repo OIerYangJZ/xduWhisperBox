@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base href="$FLUTTER_BASE_HREF" />
+    <meta charset="UTF-8" />
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
+    <meta name="description" content="西电树洞 Web 端" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>西电树洞</title>
+    <link rel="manifest" href="manifest.json" />
+    <style>
+      :root {
+        color-scheme: light;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #eaf3fb 0%, #f6f8fb 100%);
+        font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei",
+          sans-serif;
+      }
+
+      #boot-shell {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #eaf3fb 0%, #f6f8fb 100%);
+        z-index: 9999;
+        transition: opacity 220ms ease;
+      }
+
+      #boot-shell.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .boot-card {
+        width: min(420px, calc(100vw - 32px));
+        padding: 24px 22px 20px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 20px 48px rgba(15, 45, 58, 0.12);
+        border: 1px solid rgba(21, 94, 117, 0.08);
+        box-sizing: border-box;
+      }
+
+      .boot-title {
+        margin: 0;
+        font-size: 30px;
+        font-weight: 800;
+        line-height: 1.2;
+        color: #0f2d3a;
+      }
+
+      .boot-subtitle {
+        margin: 8px 0 0;
+        font-size: 14px;
+        color: rgba(15, 45, 58, 0.68);
+      }
+
+      .boot-progress {
+        margin-top: 18px;
+        width: 100%;
+        height: 8px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(14, 116, 144, 0.12);
+      }
+
+      .boot-progress > span {
+        display: block;
+        width: 42%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #0e7490 0%, #155e75 100%);
+        animation: boot-progress 1.4s ease-in-out infinite;
+      }
+
+      .boot-status {
+        margin-top: 14px;
+        font-size: 13px;
+        color: #155e75;
+      }
+
+      .boot-error {
+        margin-top: 12px;
+        display: none;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #b42318;
+      }
+
+      .boot-retry {
+        margin-top: 14px;
+        display: none;
+        border: 0;
+        border-radius: 12px;
+        background: #155e75;
+        color: #fff;
+        padding: 10px 14px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      @keyframes boot-progress {
+        0% {
+          transform: translateX(-65%);
+        }
+        50% {
+          transform: translateX(65%);
+        }
+        100% {
+          transform: translateX(170%);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="boot-shell">
+      <div class="boot-card">
+        <h1 class="boot-title">西电树洞</h1>
+        <p class="boot-subtitle">正在加载应用资源，请稍候。</p>
+        <div class="boot-progress" aria-hidden="true"><span></span></div>
+        <div class="boot-status" id="boot-status">准备启动...</div>
+        <div class="boot-error" id="boot-error"></div>
+        <button class="boot-retry" id="boot-retry" type="button">
+          重新加载
+        </button>
+      </div>
+    </div>
+    <script>
+      const bootShell = document.getElementById('boot-shell');
+      const bootStatus = document.getElementById('boot-status');
+      const bootError = document.getElementById('boot-error');
+      const bootRetry = document.getElementById('boot-retry');
+      const cleanupVersion = '2026-03-28-web-bootstrap-v2';
+      const cleanupStorageKey = `xdu_treehole_boot_cleanup_${cleanupVersion}`;
+      let bootFinished = false;
+
+      function updateBootStatus(text) {
+        if (bootStatus) {
+          bootStatus.textContent = text;
+        }
+      }
+
+      function showBootError(message) {
+        updateBootStatus('启动失败');
+        if (bootError) {
+          bootError.style.display = 'block';
+          bootError.textContent = message;
+        }
+        if (bootRetry) {
+          bootRetry.style.display = 'inline-flex';
+        }
+      }
+
+      function hideBootShell() {
+        if (!bootShell || bootFinished) {
+          return;
+        }
+        bootFinished = true;
+        bootShell.classList.add('hidden');
+        window.setTimeout(() => bootShell.remove(), 260);
+      }
+
+      window.xduBootUpdateStatus = updateBootStatus;
+      window.xduBootHide = hideBootShell;
+      window.xduBootFail = showBootError;
+
+      async function maybeResetFlutterCaches() {
+        if (window.localStorage.getItem(cleanupStorageKey) === 'done') {
+          return;
+        }
+
+        updateBootStatus('正在清理旧缓存...');
+
+        try {
+          if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            await Promise.allSettled(
+              registrations.map((registration) => registration.unregister()),
+            );
+          }
+        } catch (error) {
+          console.warn('service worker cleanup skipped', error);
+        }
+
+        try {
+          if ('caches' in window) {
+            const cacheKeys = await caches.keys();
+            await Promise.allSettled(
+              cacheKeys
+                  .filter((key) => key.startsWith('flutter-'))
+                  .map((key) => caches.delete(key)),
+            );
+          }
+        } catch (error) {
+          console.warn('cache cleanup skipped', error);
+        }
+
+        try {
+          window.localStorage.setItem(cleanupStorageKey, 'done');
+        } catch (_) {}
+      }
+
+      function watchFlutterMount() {
+        const tryHide = () => {
+          if (
+            document.querySelector('flutter-view') ||
+            document.querySelector('flt-glass-pane')
+          ) {
+            hideBootShell();
+            return true;
+          }
+          return false;
+        };
+
+        if (tryHide()) {
+          return;
+        }
+
+        const observer = new MutationObserver(() => {
+          if (tryHide()) {
+            observer.disconnect();
+          }
+        });
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+        });
+
+        window.setTimeout(() => {
+          observer.disconnect();
+          if (!bootFinished) {
+            updateBootStatus('正在等待首页首帧，请稍候...');
+          }
+        }, 4000);
+      }
+
+      async function injectFlutterScript() {
+        updateBootStatus('正在加载前端资源...');
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'flutter_bootstrap.js';
+          script.onload = resolve;
+          script.onerror = () => reject(new Error('前端资源加载失败，请刷新重试。'));
+          document.body.appendChild(script);
+        });
+      }
+
+      async function loadFlutterApp() {
+        try {
+          await maybeResetFlutterCaches();
+          watchFlutterMount();
+          await injectFlutterScript();
+          updateBootStatus('正在启动应用...');
+        } catch (error) {
+          console.error(error);
+          showBootError(error?.message || '页面初始化失败，请稍后重试。');
+        }
+      }
+
+      window.addEventListener('error', (event) => {
+        if (!bootFinished) {
+          showBootError(event.message || '页面初始化失败，请稍后重试。');
+        }
+      });
+
+      bootRetry?.addEventListener('click', () => window.location.reload());
+      loadFlutterApp();
+    </script>
+  </body>
+</html>

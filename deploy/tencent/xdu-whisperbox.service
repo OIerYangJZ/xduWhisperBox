@@ -1,0 +1,57 @@
+[Unit]
+Description=XDU WhisperBox Backend API Server
+Documentation=https://github.com/xdu-whisperbox/xdu-whisperbox
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=xdu
+Group=xdu
+WorkingDirectory=/opt/xdu-whisperbox/current
+EnvironmentFile=-/etc/xdu-whisperbox.env
+Environment="BACKEND_HOST=127.0.0.1"
+Environment="BACKEND_PORT=8080"
+ExecStart=/usr/bin/python3 backend/server.py
+Restart=always
+RestartSec=3
+
+# 启动顺序：等待依赖服务就绪
+TimeoutStartSec=30
+TimeoutStopSec=10
+
+# 日志输出到 journald + 文件双写
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=xdu-whisperbox
+
+# 安全加固
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/xdu-whisperbox/shared/backend/data
+ReadWritePaths=/opt/xdu-whisperbox/shared/backend/storage
+PrivateTmp=true
+PrivateDevices=true
+ProtectHostname=true
+ProtectClock=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictRealtime=true
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=false
+
+# 资源限制
+LimitNOFILE=65536
+LimitNPROC=4096
+MemoryMax=2G
+
+# 环境验证：启动前检查关键配置是否存在
+ExecStartPre=+/bin/bash -c 'grep -q "BACKEND_ADMIN_PASSWORD" /etc/xdu-whisperbox.env || { echo "ERROR: BACKEND_ADMIN_PASSWORD not set in /etc/xdu-whisperbox.env"; exit 1; }'
+ExecStartPre=+/bin/bash -c 'grep -q "BACKEND_ENV=production" /etc/xdu-whisperbox.env || { echo "WARNING: BACKEND_ENV not set to production"; }'
+
+[Install]
+WantedBy=multi-user.target

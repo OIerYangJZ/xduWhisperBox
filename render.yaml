@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: xdu-whisperbox
+    runtime: python
+    plan: free
+    autoDeploy: true
+    buildCommand: "python3 --version"
+    startCommand: "BACKEND_HOST=0.0.0.0 BACKEND_PORT=$PORT python3 backend/server.py"
+    envVars:
+      - key: BACKEND_ADMIN_USERNAME
+        value: admin
+      - key: BACKEND_ADMIN_PASSWORD
+        sync: false
+      - key: BACKEND_SMTP_HOST
+        value: smtp.qq.com
+      - key: BACKEND_SMTP_PORT
+        value: "465"
+      - key: BACKEND_SMTP_USERNAME
+        sync: false
+      - key: BACKEND_SMTP_PASSWORD
+        sync: false
+      - key: BACKEND_SMTP_FROM_EMAIL
+        sync: false
+      - key: BACKEND_SMTP_FROM_NAME
+        value: 西电树洞
+      - key: BACKEND_SMTP_USE_SSL
+        value: "true"
+      - key: BACKEND_SMTP_USE_STARTTLS
+        value: "false"
+      - key: BACKEND_ALLOW_DEBUG_VERIFY_CODE
+        value: "false"
+      - key: BACKEND_INCLUDE_DEBUG_CODE
+        value: "false"

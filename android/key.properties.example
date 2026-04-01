@@ -1,0 +1,4 @@
+storePassword=填写真实 storePassword
+keyPassword=填写真实 keyPassword
+keyAlias=xdu_whisper_box
+storeFile=keystore/upload-keystore.jks

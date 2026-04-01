@@ -1,0 +1,49 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend/data:/app/data
+      - ./backend/storage/objects:/app/storage/objects
+    environment:
+      BACKEND_HOST: "0.0.0.0"
+      BACKEND_PORT: "8080"
+      BACKEND_ADMIN_USERNAME: "${BACKEND_ADMIN_USERNAME:-admin}"
+      BACKEND_ADMIN_PASSWORD: "${BACKEND_ADMIN_PASSWORD:-admin123456}"
+      BACKEND_DB_FILE: "/app/data/treehole.db"
+      BACKEND_STORAGE_DIR: "/app/storage/objects"
+      BACKEND_OBJECT_STORAGE_BACKEND: "${BACKEND_OBJECT_STORAGE_BACKEND:-local}"
+      BACKEND_SMTP_HOST: "${BACKEND_SMTP_HOST:-}"
+      BACKEND_SMTP_PORT: "${BACKEND_SMTP_PORT:-465}"
+      BACKEND_SMTP_USERNAME: "${BACKEND_SMTP_USERNAME:-}"
+      BACKEND_SMTP_PASSWORD: "${BACKEND_SMTP_PASSWORD:-}"
+      BACKEND_SMTP_FROM_EMAIL: "${BACKEND_SMTP_FROM_EMAIL:-}"
+      BACKEND_SMTP_FROM_NAME: "西电树洞"
+      BACKEND_SMTP_USE_SSL: "${BACKEND_SMTP_USE_SSL:-true}"
+      BACKEND_SMTP_USE_STARTTLS: "${BACKEND_SMTP_USE_STARTTLS:-false}"
+      BACKEND_ALLOW_DEBUG_VERIFY_CODE: "${BACKEND_ALLOW_DEBUG_VERIFY_CODE:-false}"
+      BACKEND_INCLUDE_DEBUG_CODE: "${BACKEND_INCLUDE_DEBUG_CODE:-false}"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/channels"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # Optional: Nginx reverse proxy (uncomment if needed)
+  # nginx:
+  #   image: nginx:alpine
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./deploy/production/nginx-xdu-whisperbox.conf:/etc/nginx/conf.d/default.conf:ro
+  #     - ./build/web:/usr/share/nginx/html:ro
+  #   depends_on:
+  #     backend:
+  #       condition: service_healthy

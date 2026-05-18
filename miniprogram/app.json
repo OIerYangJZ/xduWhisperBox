@@ -1,0 +1,45 @@
+{
+  "pages": [
+    "pages/campus/index",
+    "pages/ai/index",
+    "pages/profile/index",
+    "pages/campus/news/index",
+    "pages/campus/college/index",
+    "pages/campus/community/index",
+    "pages/campus/post-detail/index",
+    "pages/campus/search/index",
+    "pages/ai/chat/index",
+    "pages/ai/history/index",
+    "pages/profile/auth/index",
+    "pages/profile/favorites/index",
+    "pages/profile/settings/index",
+    "pages/profile/feedback/index"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "XDU WhisperBox",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#0052D9",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/campus/index",
+        "text": "校园"
+      },
+      {
+        "pagePath": "pages/ai/index",
+        "text": "AI"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

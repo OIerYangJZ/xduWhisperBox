@@ -1,0 +1,16 @@
+<view class="container">
+  <view class="title">登录 XDU WhisperBox</view>
+  <view class="subtitle">请使用西电学生邮箱或学号登录</view>
+
+  <view class="form-group">
+    <input class="input" placeholder="学号/邮箱 (@stu.xidian.edu.cn)" value="{{identifier}}" bindinput="onIdentifierInput" />
+  </view>
+  <view class="form-group">
+    <input class="input" type="password" placeholder="密码" value="{{password}}" bindinput="onPasswordInput" />
+  </view>
+
+  <button class="btn-primary" bindtap="handleLogin">登录</button>
+  <view class="actions">
+    <text class="link" bindtap="handleRegister">还没账号？去注册</text>
+  </view>
+</view>

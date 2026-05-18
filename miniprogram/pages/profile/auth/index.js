@@ -1,0 +1,47 @@
+import { login } from '../../../api/auth';
+
+Page({
+  data: {
+    identifier: '',
+    password: ''
+  },
+
+  onIdentifierInput(e) {
+    this.setData({ identifier: e.detail.value });
+  },
+
+  onPasswordInput(e) {
+    this.setData({ password: e.detail.value });
+  },
+
+  async handleLogin() {
+    const { identifier, password } = this.data;
+    if (!identifier || !password) {
+      wx.showToast({ title: '请输入账号和密码', icon: 'none' });
+      return;
+    }
+
+    wx.showLoading({ title: '登录中' });
+    try {
+      const res = await login(identifier, password);
+      wx.hideLoading();
+      if (res && res.data && res.data.token) {
+        wx.setStorageSync('token', res.data.token);
+        wx.showToast({ title: '登录成功', icon: 'success' });
+        setTimeout(() => {
+          wx.navigateBack({
+            delta: 1,
+            fail: () => wx.switchTab({ url: '/pages/profile/index' })
+          });
+        }, 1500);
+      }
+    } catch (err) {
+      wx.hideLoading();
+      console.error(err);
+    }
+  },
+
+  handleRegister() {
+    wx.showToast({ title: '小程序暂不支持注册，请前往App或Web端注册', icon: 'none' });
+  }
+});

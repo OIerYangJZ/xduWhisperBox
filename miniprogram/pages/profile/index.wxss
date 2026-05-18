@@ -1,0 +1,81 @@
+page {
+  background-color: #f5f7fb;
+}
+
+.container {
+  padding: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 40rpx 30rpx;
+  background-color: #fff;
+  margin-bottom: 20rpx;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  background-color: #eee;
+  margin-right: 30rpx;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.nickname {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.student-id {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.login-prompt {
+  flex: 1;
+}
+
+.login-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.login-desc {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.menu-list {
+  background-color: #fff;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #eee;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-text {
+  font-size: 30rpx;
+  color: #333;
+}
+
+.menu-arrow {
+  color: #ccc;
+  font-size: 30rpx;
+}

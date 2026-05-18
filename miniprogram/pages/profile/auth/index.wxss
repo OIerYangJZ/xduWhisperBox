@@ -1,0 +1,47 @@
+.container {
+  padding: 60rpx 40rpx;
+}
+
+.title {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.subtitle {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 60rpx;
+}
+
+.form-group {
+  margin-bottom: 40rpx;
+}
+
+.input {
+  height: 90rpx;
+  background-color: #f5f7fb;
+  border-radius: 12rpx;
+  padding: 0 30rpx;
+  font-size: 30rpx;
+}
+
+.btn-primary {
+  background-color: #0052D9;
+  color: #fff;
+  border-radius: 12rpx;
+  margin-top: 60rpx;
+  font-size: 32rpx;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 40rpx;
+}
+
+.link {
+  font-size: 28rpx;
+  color: #0052D9;
+}

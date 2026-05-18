@@ -34,11 +34,34 @@ XDUWhisperBox/
 - **Important:** When running Flutter commands (e.g., `flutter pub get`, `flutter build`), you **MUST** execute them from within the `flutter_app/` directory, not the repository root.
 
 ### 2.3 WeChat Mini Program (`miniprogram/`)
-- **Status:** Initialization Phase.
-- **Framework:** (To be decided - Native WXML/WXSS, Taro, or UniApp).
+- **Status:** Development Phase. Native WXML/WXSS structure initialized.
+- **Framework:** Native WeChat Mini Program (WXML, WXSS, JS, JSON).
 - **Responsibilities:** WeChat ecosystem integration, utilizing the shared `backend/` APIs.
 
-## 3. General AI Guidelines & Conventions
+## 3. Current Work Progress (Handoff Context)
+*This section tracks the latest progress to facilitate seamless handoffs between AI assistants (e.g., from Gemini CLI to Codex/Cursor).*
+
+**Latest Updates (May 18, 2026):**
+1. **Monorepo Restructuring:** Moved all Flutter root files into `flutter_app/`, moved Nginx certs to `deploy/certs/`, and created the `miniprogram/` directory.
+2. **Mini Program Initialization:** Scaffolded the native WeChat Mini Program according to `架构说明.md`.
+   - Setup TabBar (Campus, AI, Profile).
+   - Created pages for News, College, Community, Chat, Settings, etc.
+   - Fixed empty JSON and WXML file issues for WeChat DevTools compatibility.
+3. **Backend Integration:**
+   - Implemented `miniprogram/config/env.js` (dev environment points to `http://localhost:8080`).
+   - Created `miniprogram/utils/request.js` as a wrapper for `wx.request` handling JWT tokens, 401 redirects, and error toasts.
+   - Created `miniprogram/api/auth.js` for login endpoints.
+4. **UI Implementation:**
+   - Designed `pages/profile/index` (Avatar, Student ID display, Login Prompt, Menus).
+   - Designed `pages/profile/auth/index` (Email/Student ID + Password login form).
+   - Resolved DevTools proxy timeout and 403 errors (Backend only accepts valid `@stu.xidian.edu.cn` emails or student IDs for normal login, not `admin`).
+
+**Next Steps for the next AI Assistant:**
+- Implement real backend data fetching for the "Campus" and "AI" tab placeholders.
+- Expand the Mini Program API endpoints in `miniprogram/api/` based on existing Python backend routes.
+- Build out the Post List (Treehole) and Post Detail UI in the `campus` pages.
+
+## 4. General AI Guidelines & Conventions
 
 ### 3.1 Directory Context Awareness
 - **Always verify your working directory.** 

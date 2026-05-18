@@ -1,82 +1,69 @@
-import { askCampusAssistant } from '../../../api/ai';
-import { requireLoginPage } from '../../../utils/auth_guard';
+import { sendAiMessage } from '../../../api/ai';
 
 Page({
   data: {
-    input: '',
-    messages: [],
-    loading: false
+    chatId: '',
+    messages: [
+      { id: '1', role: 'assistant', content: '你好！我是西电 AI 助手，有什么可以帮到你的？你可以问我选课、班车、奖学金等校园政策问题。' }
+    ],
+    inputVal: '',
+    isSending: false,
+    scrollTop: 0
   },
 
   onLoad(options) {
-    if (!requireLoginPage()) return;
-    const question = options.q ? decodeURIComponent(options.q) : '';
-    if (question) {
-      this.askQuestion(question);
+    if (options.id) {
+      this.setData({ chatId: options.id });
+      // 如果传入了 id，可以发起请求获取该对话的历史记录
     }
   },
 
-  onShow() {
-    requireLoginPage();
+  onInput(e) {
+    this.setData({ inputVal: e.detail.value });
   },
 
-  onInput(event) {
-    this.setData({ input: event.detail.value });
-  },
+  async sendMessage() {
+    const text = this.data.inputVal.trim();
+    if (!text || this.data.isSending) return;
 
-  send() {
-    const question = this.data.input.trim();
-    if (!question) {
-      wx.showToast({ title: '请输入问题', icon: 'none' });
-      return;
-    }
-    this.setData({ input: '' });
-    this.askQuestion(question);
-  },
+    const newMsg = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: text
+    };
 
-  async askQuestion(question) {
-    if (this.data.loading) return;
-    const messages = [
-      ...this.data.messages,
-      { role: 'user', content: question }
-    ];
-    this.setData({ messages, loading: true });
+    this.setData({
+      messages: [...this.data.messages, newMsg],
+      inputVal: '',
+      isSending: true
+    }, this.scrollToBottom);
+
     try {
-      const result = await askCampusAssistant(question);
-      const nextMessages = [
-        ...messages,
-        {
+      const res = await sendAiMessage(text);
+      if (res && res.data) {
+        const replyMsg = {
+          id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: result.answer,
-          hint: result.hint,
-          sources: result.sources
-        }
-      ];
-      this.setData({ messages: nextMessages, loading: false });
-      this.saveHistory(question, result.answer);
-    } catch (error) {
-      this.setData({
-        messages: [
-          ...messages,
-          { role: 'assistant', content: '服务暂时不可用，请稍后再试。', sources: [] }
-        ],
-        loading: false
-      });
+          content: res.data.reply
+        };
+        this.setData({
+          messages: [...this.data.messages, replyMsg]
+        }, this.scrollToBottom);
+      }
+    } catch (err) {
+      wx.showToast({ title: '网络异常，请重试', icon: 'none' });
+    } finally {
+      this.setData({ isSending: false });
     }
   },
 
-  saveHistory(question, answer) {
-    const rows = wx.getStorageSync('aiHistory') || [];
-    rows.unshift({
-      question,
-      answer,
-      createdAt: new Date().toISOString()
-    });
-    wx.setStorageSync('aiHistory', rows.slice(0, 50));
-  },
-
-  openSource(event) {
-    const id = event.currentTarget.dataset.id;
-    if (id) wx.navigateTo({ url: `/pages/campus/post-detail/index?id=${id}` });
+  scrollToBottom() {
+    wx.createSelectorQuery().select('.chat-list').boundingClientRect(res => {
+      if (res) {
+        this.setData({
+          scrollTop: res.height + 9999
+        });
+      }
+    }).exec();
   }
 });

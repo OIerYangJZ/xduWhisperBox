@@ -1,35 +1,24 @@
-<view class="page ai-page safe-bottom">
-  <view class="assistant-panel">
-    <view class="assistant-title">校园问答</view>
-    <view class="assistant-subtitle">基于树洞内容和本地规则检索</view>
-    <view class="ask-row">
-      <input value="{{question}}" placeholder="输入校园问题" confirm-type="send" bindinput="onInput" bindconfirm="ask" />
-      <view class="ask-button" bindtap="ask">提问</view>
-    </view>
+<view class="container">
+  <view class="header">
+    <image class="ai-logo" src="/assets/default-avatar.png" mode="aspectFill"></image>
+    <view class="title">XDU AI 助手</view>
+    <view class="subtitle">基于校内知识库的智能问答 (RAG)</view>
+    
+    <button class="new-chat-btn" bindtap="startNewChat">
+      <text class="icon">+</text> 发起新对话
+    </button>
   </view>
 
-  <view class="prompt-grid">
-    <view class="prompt" wx:for="{{prompts}}" wx:key="*this" data-question="{{item}}" bindtap="quickAsk">{{item}}</view>
-  </view>
-
-  <view class="section">
-    <view class="section-head">
-      <view class="section-title">可检索频道</view>
-      <view class="section-more" bindtap="goHistory">历史</view>
-    </view>
-    <view class="channel-row">
-      <view class="channel-chip" wx:for="{{channels}}" wx:key="*this">{{item}}</view>
-    </view>
-  </view>
-
-  <view class="section">
-    <view class="section-title">热议来源</view>
-    <view wx:if="{{loading}}" class="empty">加载中...</view>
-    <view wx:elif="{{!hotPosts.length}}" class="empty">暂无内容</view>
-    <view wx:else>
-      <view class="source-card" wx:for="{{hotPosts}}" wx:key="id" data-id="{{item.id}}" bindtap="goPostDetail">
-        <view class="source-title">{{item.displayTitle}}</view>
-        <view class="source-meta">{{item.channel}} · {{item.likeCount}} 赞 · {{item.commentCount}} 评</view>
+  <view class="history-section">
+    <view class="section-title">历史对话</view>
+    <view class="history-list">
+      <view class="history-item" wx:for="{{history}}" wx:key="id" data-id="{{item.id}}" bindtap="continueChat">
+        <view class="item-icon">💬</view>
+        <view class="item-content">
+          <view class="item-title">{{item.title}}</view>
+          <view class="item-date">{{item.date}}</view>
+        </view>
+        <view class="item-arrow">></view>
       </view>
     </view>
   </view>

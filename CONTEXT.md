@@ -1,87 +1,151 @@
 # Project Context (XDUWhisperBox)
 
-This file (`CONTEXT.md`) serves as the central source of truth for AI coding assistants (Gemini CLI, Cursor, Claude Code, etc.) to understand the project architecture, tech stack, and development conventions.
+This file (`CONTEXT.md`) is the central handoff context for AI coding assistants working on this repository. Read it before making code changes.
 
-**Please read this file carefully before making any codebase modifications.**
+## Project Mission
 
-## 1. Project Overview
-XDUWhisperBox is a cross-platform anonymous social application (Treehole). It features a shared backend servicing multiple frontends.
+西电树洞是一个面向西电校内用户的匿名社区 Web 应用，当前形态是 `Flutter Web + Python 后端` 的可内测版本。仓库也包含正在开发中的微信小程序端，复用同一套后端 API。
 
-## 2. Monorepo Architecture
-This repository follows a multi-package Monorepo structure. All code is segregated into specific directories based on their domain.
+当前阶段：
+
+- 前台已具备登录/注册、发帖、评论、搜索、收藏、举报、私信、个人中心、头像上传、管理员后台等主流程
+- 后端已从 JSON 迁移到 SQLite Repository/DAO + 事务
+- 图片上传、图片审核、账号注销审核、管理员后台、真实邮箱验证码、私信持久化已完成
+- 通知中心已在本地代码完成：评论/回复/点赞/收藏/举报结果/系统公告通知、未读数、已读逻辑
+- 通知中心这批改动当前仍是本地工作区变更，尚未部署到现网、尚未推送到 Git
+
+## Repository Layout
 
 ```text
 XDUWhisperBox/
-├── backend/            # Python Backend Services (FastAPI/Flask/etc.)
-├── flutter_app/        # Flutter Client (Mobile - Android/iOS & Web)
-├── miniprogram/        # WeChat Mini Program (Upcoming)
-├── docs/               # Project documentation and specifications
-├── scripts/            # Shell scripts for building and deployment
-├── deploy/             # Deployment configurations (e.g., Docker, Nginx)
-├── test/               # Root-level integration or utility tests (if applicable)
-└── CONTEXT.md          # THIS FILE: Global AI assistant context
+├── backend/            # Python backend, SQLite repository, upload storage helpers
+├── flutter_app/        # Flutter client for Web / mobile targets
+├── miniprogram/        # Native WeChat Mini Program client
+├── docs/               # Project docs and specifications
+├── scripts/            # Local build/deploy/ops scripts
+├── deploy/             # Deployment configs, including Tencent Cloud assets
+├── CONTEXT.md          # Global AI assistant handoff context
+└── AGENTS.md           # Codex-specific project instructions
 ```
 
-### 2.1 Backend (`backend/`)
-- **Language:** Python 3.x
-- **Responsibilities:** API endpoints, database interactions (MySQL/PostgreSQL), authentication, business logic, object storage.
-- **Note:** All frontends (Flutter, Mini Program) consume these APIs.
+Do not place Flutter-specific files such as `pubspec.yaml` at the repository root. Flutter commands should run from `flutter_app/`.
 
-### 2.2 Flutter App (`flutter_app/`)
-- **Framework:** Flutter / Dart
-- **Target Platforms:** Android, iOS, Web
-- **Structure:** Standard Flutter project structure. 
-- **Important:** When running Flutter commands (e.g., `flutter pub get`, `flutter build`), you **MUST** execute them from within the `flutter_app/` directory, not the repository root.
+## Tech Stack
 
-### 2.3 WeChat Mini Program (`miniprogram/`)
-- **Status:** Development Phase. Native WXML/WXSS structure initialized.
-- **Framework:** Native WeChat Mini Program (WXML, WXSS, JS, JSON).
-- **Responsibilities:** WeChat ecosystem integration, utilizing the shared `backend/` APIs.
+### Frontend
 
-## 3. Current Work Progress (Handoff Context)
-*This section tracks the latest progress to facilitate seamless handoffs between AI assistants (e.g., from Gemini CLI to Codex/Cursor).*
+- Flutter Web
+- Dart SDK: `>=3.3.0 <4.0.0`
+- `flutter_riverpod: ^2.6.1`
+- `http: ^1.2.2`
+- `shared_preferences: ^2.3.2`
+- `cupertino_icons: ^1.0.8`
+- `flutter_lints: ^4.0.0`
 
-**Latest Updates (May 18, 2026):**
-1. **Monorepo Restructuring:** Moved all Flutter root files into `flutter_app/`, moved Nginx certs to `deploy/certs/`, and created the `miniprogram/` directory.
-2. **Mini Program Initialization:** Scaffolded the native WeChat Mini Program according to `架构说明.md`.
-   - Setup TabBar (Campus, AI, Profile).
-   - Created pages for News, College, Community, Chat, Settings, etc.
-   - Fixed empty JSON and WXML file issues for WeChat DevTools compatibility.
-3. **Backend Integration:**
-   - Implemented `miniprogram/config/env.js` (dev environment points to `http://localhost:8080`).
-   - Created `miniprogram/utils/request.js` as a wrapper for `wx.request` handling JWT tokens, 401 redirects, and error toasts.
-   - Created `miniprogram/api/auth.js` for login endpoints.
-4. **UI Implementation:**
-   - Designed `pages/profile/index` (Avatar, Student ID display, Login Prompt, Menus).
-   - Designed `pages/profile/auth/index` (Email/Student ID + Password login form).
-   - Resolved DevTools proxy timeout and 403 errors (Backend only accepts valid `@stu.xidian.edu.cn` emails or student IDs for normal login, not `admin`).
+### Backend
 
-**Next Steps for the next AI Assistant:**
-- Implement real backend data fetching for the "Campus" and "AI" tab placeholders.
-- Expand the Mini Program API endpoints in `miniprogram/api/` based on existing Python backend routes.
-- Build out the Post List (Treehole) and Post Detail UI in the `campus` pages.
+- Python 3
+- Standard-library HTTP service: `http.server + ThreadingHTTPServer`
+- SQLite persistence through `backend/sql_repository.py`
+- Local object storage defaults to `backend/storage/objects`
+- Optional S3-compatible object storage: `boto3 >=1.34,<2.0`
 
-## 4. General AI Guidelines & Conventions
+### Deployment
 
-### 3.1 Directory Context Awareness
-- **Always verify your working directory.** 
-- If asked to fix a Flutter UI bug, target `flutter_app/lib/...`.
-- If asked to modify an API endpoint, target `backend/handlers/...`.
-- **Never** place Flutter-specific configurations (`pubspec.yaml`, etc.) at the project root anymore.
+- Local development: Flutter Web + `python3 backend/server.py`
+- Current internal-test server: Tencent Cloud Ubuntu 22.04
+- Nginx + systemd deployment scripts live under `scripts/` and `deploy/tencent/`
+- Production Web builds should use same-origin API by default: `--dart-define=API_BASE_URL=/api`
 
-### 3.2 Code Style and Integrity
-- **Idiomatic Code:** Follow the standard conventions of the target language (Dart for Flutter, Python for Backend).
-- **Type Safety:** Maintain strict typing. Do not bypass type checkers or linters unless explicitly requested.
-- **Testing:** When adding features or fixing bugs, verify if tests exist and update them accordingly.
+## Context Anchors
 
-### 3.3 State Management & Architecture
-- **Flutter:** Adhere to the existing state management solutions established in `flutter_app/lib/`.
-- **Backend:** Maintain the separation of concerns between `handlers/`, `services/`, and `helpers/`.
+1. `backend/server.py`
+   - Core backend entry point
+   - HTTP APIs, authentication, business logic, and static Web hosting live here
 
-### 3.4 Operational Safety
-- **No Unprompted Commits:** Do not stage or commit code (`git add`, `git commit`) unless the user explicitly asks you to.
-- **Security:** Do not log, print, or expose API keys, secrets, or database credentials. Be cautious when modifying files in `deploy/` or `.env` files.
+2. `backend/sql_repository.py`
+   - SQLite schema, initialization, JSON import, transactions, and persistence logic
+   - Check this first for schema or data-persistence changes
 
-## 4. How to use this file
-When starting a new session with an AI tool, if the tool does not automatically read workspace context, you can prompt it with:
-> "Please review CONTEXT.md to understand the current monorepo structure and tech stack before proceeding."
+3. `flutter_app/lib/widgets/home_shell.dart`
+   - Main shell after user login
+   - Bottom navigation, message badges, notification entry, and page switching start here
+
+4. `flutter_app/lib/features/admin/admin_console_page.dart`
+   - Main admin console
+   - Content review, report handling, image review, account-deletion review, system config, and announcements live here
+
+5. `flutter_app/lib/repositories/app_repositories.dart`
+   - Frontend repository assembly point
+   - API client, user-facing repositories, and admin repositories are wired here
+
+6. `flutter_app/lib/core/network/api_endpoints.dart`
+   - Shared frontend API path definitions
+
+7. `miniprogram/`
+   - Native WeChat Mini Program implementation
+   - API wrappers should stay under `miniprogram/api/`, common request/auth helpers under `miniprogram/utils/`
+
+## Architecture Conventions
+
+- Frontend code should go through the `Repository` layer; do not build ad hoc HTTP calls directly in pages
+- Core page state should prefer Riverpod `StateNotifier`
+- Shared API paths belong in `flutter_app/lib/core/network/api_endpoints.dart`
+- Shared loading/error UI should reuse existing `AsyncPageState` patterns where available
+- Backend should continue the single-file `server.py` style for HTTP handlers and helpers; do not introduce a new web framework without explicit direction
+- Add backend serialization helpers using the existing `serialize_*` naming style
+- Add backend creation/publishing helpers using the existing `create_*` / `publish_*` naming style
+
+## Async and State Rules
+
+- Page initialization async loading should use `initState + Future.microtask(...)` or a controller `loadInitial()` pattern
+- User-triggered async operations need explicit busy state to prevent duplicate clicks
+- Prefer optimistic frontend state updates for interactive changes, then refresh or roll back on failure
+
+## Product and Logic Rules
+
+- Posts should appear immediately after publishing; do not add a frontend flow where posts wait for review before becoming visible
+- Anonymous posting is allowed, but the admin console must still expose the real account to admins
+- Normal user login and admin login are separate entry points with separate tokens
+- Do not edit generated `build/web/*` output by hand
+- Do not treat runtime data as source code:
+  - `backend/data/treehole.db`
+  - `backend/storage/objects`
+
+## UI and Copy Rules
+
+- Keep the current light theme and visual direction unless the task explicitly calls for redesign
+- UI copy should stay Chinese, concise, and direct
+- This project does not use a Flutter routing framework; continue using `Navigator` / `MaterialPageRoute`
+
+## Current Unfinished Tasks
+
+1. Deploy the current notification-center changes to the Tencent Cloud production/internal-test environment
+2. Push the current notification-center changes to GitHub
+3. After notification center rollout, continue strengthening the admin console:
+   - Batch review
+   - Stronger filtering / sorting / search
+   - Data export
+4. Medium-term production work still needed:
+   - Domain + HTTPS
+   - ICP filing
+   - Backup / rollback
+   - Logging and alerting
+5. **Mini Program Migration (Ongoing):**
+   - Successfully initialized Native WeChat Mini Program structure (`miniprogram/`).
+   - Implemented Profile Page & Email/StudentID Login (`pages/profile/index`, `pages/profile/auth/index`).
+   - Implemented Campus Community Feed (`pages/campus/index`) and Post Detail + Comments (`pages/campus/post-detail/index`).
+   - Implemented AI Assistant Chat UI (`pages/ai/index`, `pages/ai/chat/index`) with mock API waiting for backend RAG integration.
+   - API wrappers created in `miniprogram/api/` and `utils/request.js`.
+   - **Next:** Implement Create Post flow, handle local media uploads for avatars/posts, and complete News/College Tabs.
+
+## Operational Safety
+
+- Do not stage, commit, push, or deploy unless the user explicitly asks
+- Before touching deployment or secret-adjacent files, inspect the current state carefully
+- Do not log, print, or expose API keys, private keys, database credentials, tokens, or other secrets
+- Preserve unrelated local changes; this workspace may be dirty
+
+## How To Use This File
+
+When starting a new AI-assisted session, ask the assistant to read `CONTEXT.md` first so it understands the current architecture, active changes, and project conventions.

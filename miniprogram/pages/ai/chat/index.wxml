@@ -1,22 +1,29 @@
-<view class="page chat-page safe-bottom">
-  <scroll-view class="message-list" scroll-y>
-    <view class="message {{item.role}}" wx:for="{{messages}}" wx:key="index">
-      <view class="bubble">
-        <view class="message-content">{{item.content}}</view>
-        <view class="hint" wx:if="{{item.hint}}">{{item.hint}}</view>
-        <view class="sources" wx:if="{{item.sources && item.sources.length}}">
-          <view class="source" wx:for="{{item.sources}}" wx:for-item="source" wx:key="id" data-id="{{source.id}}" bindtap="openSource">
-            <view class="source-title">{{source.title}}</view>
-            <view class="source-summary">{{source.channel}} · {{source.summary}}</view>
+<view class="container">
+  <scroll-view class="chat-scroll" scroll-y scroll-top="{{scrollTop}}" scroll-with-animation>
+    <view class="chat-list">
+      <view wx:for="{{messages}}" wx:key="id" class="message-item {{item.role === 'user' ? 'message-user' : 'message-assistant'}}">
+        <image class="avatar" src="{{item.role === 'user' ? '/assets/default-avatar.png' : '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+        <view class="message-bubble">
+          <text class="message-text">{{item.content}}</text>
+        </view>
+      </view>
+      
+      <!-- Loading indicator for assistant -->
+      <view class="message-item message-assistant" wx:if="{{isSending}}">
+        <image class="avatar" src="/assets/default-avatar.png" mode="aspectFill"></image>
+        <view class="message-bubble">
+          <view class="typing-indicator">
+            <view class="dot"></view>
+            <view class="dot"></view>
+            <view class="dot"></view>
           </view>
         </view>
       </view>
     </view>
-    <view class="empty small" wx:if="{{loading}}">思考中...</view>
   </scroll-view>
 
   <view class="input-bar">
-    <input value="{{input}}" placeholder="继续提问" confirm-type="send" bindinput="onInput" bindconfirm="send" />
-    <button loading="{{loading}}" bindtap="send">发送</button>
+    <input class="input" placeholder="输入问题..." value="{{inputVal}}" bindinput="onInput" confirm-type="send" bindconfirm="sendMessage" cursor-spacing="20" />
+    <button class="send-btn" bindtap="sendMessage" disabled="{{isSending || !inputVal}}">发送</button>
   </view>
 </view>

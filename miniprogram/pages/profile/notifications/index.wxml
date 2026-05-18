@@ -1,0 +1,19 @@
+<view class="page notification-page">
+  <view class="head" wx:if="{{items.length}}">
+    <view class="count">{{unreadCount}} 条未读</view>
+    <view class="read-all" bindtap="markAllRead">全部已读</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:elif="{{!items.length}}" class="empty">暂无通知</view>
+  <view wx:else>
+    <view class="notice {{item.isRead ? 'read' : ''}}" wx:for="{{items}}" wx:key="id" data-index="{{index}}" bindtap="openItem">
+      <view class="dot" wx:if="{{!item.isRead}}"></view>
+      <view class="notice-body">
+        <view class="notice-title">{{item.title}}</view>
+        <view class="notice-content">{{item.content}}</view>
+        <view class="notice-time">{{item.timeText}}</view>
+      </view>
+    </view>
+  </view>
+</view>

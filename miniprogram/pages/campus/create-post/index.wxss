@@ -1,0 +1,68 @@
+.create-page {
+  padding-top: 24rpx;
+}
+
+.form-section {
+  margin-bottom: 22rpx;
+  padding: 26rpx;
+  border-bottom: 1rpx solid #e8e8e8;
+  background: #fff;
+}
+
+.title-input {
+  height: 74rpx;
+  color: #1d1d1f;
+  font-size: 34rpx;
+  font-weight: 650;
+}
+
+.content-input {
+  width: 100%;
+  min-height: 300rpx;
+  margin-top: 20rpx;
+  color: #1d1d1f;
+  font-size: 30rpx;
+  line-height: 1.6;
+}
+
+.field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 92rpx;
+  border-bottom: 1rpx solid #e8e8e8;
+}
+
+.field-row:last-child {
+  border-bottom: none;
+}
+
+.field-label {
+  color: #1d1d1f;
+  font-size: 29rpx;
+  font-weight: 600;
+}
+
+.field-desc {
+  margin-top: 8rpx;
+  color: #8e8e93;
+  font-size: 24rpx;
+}
+
+.picker-value {
+  color: #155e75;
+  font-size: 28rpx;
+}
+
+.field-input {
+  flex: 1;
+  min-width: 0;
+  margin-left: 24rpx;
+  color: #1d1d1f;
+  font-size: 28rpx;
+  text-align: right;
+}
+
+.submit {
+  margin-top: 34rpx;
+}

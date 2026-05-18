@@ -1,41 +1,68 @@
 page {
-  background-color: #f5f7fb;
+  background-color: #ffffff;
 }
 
 .container {
   padding: 0;
 }
 
-.header {
+.profile-cover {
+  height: 188rpx;
+  background: rgba(21, 94, 117, .08);
+}
+
+.profile-head {
   display: flex;
   align-items: center;
-  padding: 40rpx 30rpx;
+  justify-content: space-between;
+  padding: 0 32rpx;
   background-color: #fff;
-  margin-bottom: 20rpx;
 }
 
 .avatar {
-  width: 120rpx;
-  height: 120rpx;
-  border-radius: 60rpx;
-  background-color: #eee;
-  margin-right: 30rpx;
+  width: 144rpx;
+  height: 144rpx;
+  margin-top: -56rpx;
+  border: 8rpx solid #fff;
+  border-radius: 50%;
+  background-color: #e8e8e8;
 }
 
-.user-info {
-  flex: 1;
+.edit-pill {
+  height: 56rpx;
+  margin-top: -22rpx;
+  padding: 0 28rpx;
+  border: 1rpx solid #e8e8e8;
+  border-radius: 28rpx;
+  color: #1d1d1f;
+  font-size: 26rpx;
+  font-weight: 600;
+  line-height: 56rpx;
+}
+
+.profile-info {
+  padding: 12rpx 32rpx 28rpx;
+  border-bottom: 1rpx solid #e8e8e8;
+  background: #fff;
 }
 
 .nickname {
   font-size: 36rpx;
   font-weight: bold;
-  color: #333;
+  color: #1d1d1f;
   margin-bottom: 10rpx;
 }
 
 .student-id {
   font-size: 28rpx;
-  color: #999;
+  color: #8e8e93;
+}
+
+.bio {
+  margin-top: 20rpx;
+  color: #1d1d1f;
+  font-size: 28rpx;
+  line-height: 1.5;
 }
 
 .login-prompt {
@@ -45,13 +72,13 @@ page {
 .login-title {
   font-size: 36rpx;
   font-weight: bold;
-  color: #333;
+  color: #1d1d1f;
   margin-bottom: 10rpx;
 }
 
 .login-desc {
   font-size: 28rpx;
-  color: #999;
+  color: #8e8e93;
 }
 
 .menu-list {
@@ -62,8 +89,9 @@ page {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30rpx;
-  border-bottom: 1rpx solid #eee;
+  min-height: 96rpx;
+  padding: 0 32rpx;
+  border-bottom: 1rpx solid #e8e8e8;
 }
 
 .menu-item:last-child {
@@ -72,10 +100,28 @@ page {
 
 .menu-text {
   font-size: 30rpx;
-  color: #333;
+  color: #1d1d1f;
 }
 
 .menu-arrow {
-  color: #ccc;
+  color: #c7c7cc;
   font-size: 30rpx;
+}
+
+.menu-right {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+
+.badge {
+  min-width: 34rpx;
+  height: 34rpx;
+  padding: 0 10rpx;
+  border-radius: 17rpx;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 22rpx;
+  line-height: 34rpx;
+  text-align: center;
 }

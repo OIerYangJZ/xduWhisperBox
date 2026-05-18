@@ -1,1 +1,50 @@
-<!-- miniprogram/pages/profile/settings/index.wxml -->
+<view class="page settings-page">
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:else>
+    <view class="section">
+      <view class="section-title">账号</view>
+      <view class="info-row">
+        <text>昵称</text>
+        <text>{{profile.nickname || profile.alias || '西电同学'}}</text>
+      </view>
+      <view class="info-row">
+        <text>学号</text>
+        <text>{{profile.studentId || '未绑定'}}</text>
+      </view>
+      <view class="info-row">
+        <text>邮箱</text>
+        <text>{{profile.email || '-'}}</text>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">通知</view>
+      <view class="switch-row">
+        <text>评论通知</text>
+        <switch checked="{{prefs.notifyComment}}" data-key="notifyComment" bindchange="onSwitchChange" color="#155E75" />
+      </view>
+      <view class="switch-row">
+        <text>回复通知</text>
+        <switch checked="{{prefs.notifyReply}}" data-key="notifyReply" bindchange="onSwitchChange" color="#155E75" />
+      </view>
+      <view class="switch-row">
+        <text>点赞通知</text>
+        <switch checked="{{prefs.notifyLike}}" data-key="notifyLike" bindchange="onSwitchChange" color="#155E75" />
+      </view>
+      <view class="switch-row">
+        <text>收藏通知</text>
+        <switch checked="{{prefs.notifyFavorite}}" data-key="notifyFavorite" bindchange="onSwitchChange" color="#155E75" />
+      </view>
+      <view class="switch-row">
+        <text>举报结果</text>
+        <switch checked="{{prefs.notifyReportResult}}" data-key="notifyReportResult" bindchange="onSwitchChange" color="#155E75" />
+      </view>
+      <view class="switch-row">
+        <text>系统公告</text>
+        <switch checked="{{prefs.notifySystem}}" data-key="notifySystem" bindchange="onSwitchChange" color="#155E75" />
+      </view>
+    </view>
+
+    <button class="logout-button" loading="{{loggingOut}}" bindtap="handleLogout">退出登录</button>
+  </view>
+</view>

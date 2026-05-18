@@ -1,0 +1,26 @@
+.form-panel {
+  padding: 24rpx;
+  border-bottom: 1rpx solid #e8e8e8;
+  background: #fff;
+}
+
+.content-input {
+  width: 100%;
+  min-height: 280rpx;
+  color: #1d1d1f;
+  font-size: 29rpx;
+  line-height: 1.6;
+}
+
+.contact-input {
+  height: 82rpx;
+  margin-top: 22rpx;
+  padding-top: 18rpx;
+  border-top: 1rpx solid #e8e8e8;
+  color: #1d1d1f;
+  font-size: 28rpx;
+}
+
+.submit {
+  margin-top: 28rpx;
+}

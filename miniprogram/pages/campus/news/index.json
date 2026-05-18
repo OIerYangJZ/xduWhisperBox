@@ -1,1 +1,4 @@
-{}
+{
+  "navigationBarTitleText": "校园动态",
+  "enablePullDownRefresh": true
+}

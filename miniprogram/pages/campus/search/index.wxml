@@ -1,1 +1,38 @@
-<!-- miniprogram/pages/campus/search/index.wxml -->
+<view class="page search-page">
+  <view class="search-row">
+    <input value="{{keyword}}" placeholder="输入关键词" confirm-type="search" bindinput="onInput" bindconfirm="search" focus />
+    <view class="search-button" bindtap="search">搜索</view>
+  </view>
+
+  <view class="history" wx:if="{{history.length && !searched}}">
+    <view class="section-head">
+      <view class="section-title">最近搜索</view>
+      <view class="clear" bindtap="clearHistory">清空</view>
+    </view>
+    <view class="history-tags">
+      <view class="history-tag" wx:for="{{history}}" wx:key="*this" data-keyword="{{item}}" bindtap="onHistoryTap">{{item}}</view>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">搜索中...</view>
+  <view wx:elif="{{searched && !posts.length}}" class="empty">没有找到相关内容</view>
+  <view wx:else>
+    <view class="feed-card" wx:for="{{posts}}" wx:key="id" data-id="{{item.id}}" bindtap="goPostDetail">
+      <view class="feed-avatar">{{item.authorInitial}}</view>
+      <view class="feed-body">
+        <view class="feed-head">
+          <text class="feed-author">{{item.authorAlias}}</text>
+          <text class="feed-dot" style="background: {{item.channelColor}}"></text>
+          <text class="feed-channel" style="color: {{item.channelColor}}">{{item.channel}}</text>
+          <text class="feed-time">{{item.timeText}}</text>
+        </view>
+        <view class="feed-title">{{item.displayTitle}}</view>
+        <view class="feed-summary">{{item.summary}}</view>
+        <view class="feed-actions">
+          <text>♡ {{item.likeCount}}</text>
+          <text>☰ {{item.commentCount}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

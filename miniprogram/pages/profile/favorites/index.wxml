@@ -1,1 +1,24 @@
-<!-- miniprogram/pages/profile/favorites/index.wxml -->
+<view class="page favorite-page">
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:elif="{{!posts.length}}" class="empty">暂无收藏</view>
+  <view wx:else>
+    <view class="feed-card" wx:for="{{posts}}" wx:key="id" data-id="{{item.id}}" bindtap="goPostDetail">
+      <view class="feed-avatar">{{item.authorInitial}}</view>
+      <view class="feed-body">
+        <view class="feed-head">
+          <text class="feed-author">{{item.authorAlias}}</text>
+          <text class="feed-dot" style="background: {{item.channelColor}}"></text>
+          <text class="feed-channel" style="color: {{item.channelColor}}">{{item.channel}}</text>
+          <text class="feed-time">{{item.timeText}}</text>
+        </view>
+        <view class="feed-title">{{item.displayTitle}}</view>
+        <view class="feed-summary">{{item.summary}}</view>
+        <view class="feed-actions">
+          <text>♡ {{item.likeCount}}</text>
+          <text>☰ {{item.commentCount}}</text>
+          <text class="remove" data-index="{{index}}" catchtap="removeFavorite">取消收藏</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

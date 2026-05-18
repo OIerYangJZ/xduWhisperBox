@@ -1,1 +1,44 @@
-<!-- miniprogram/pages/campus/college/index.wxml -->
+<view class="page college-page safe-bottom">
+  <scroll-view class="college-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+    <view class="college-row">
+      <view
+        wx:for="{{colleges}}"
+        wx:key="*this"
+        class="college-chip {{activeCollege === item ? 'active' : ''}}"
+        data-name="{{item}}"
+        bindtap="onCollegeTap"
+      >{{item}}</view>
+    </view>
+  </scroll-view>
+
+  <view class="college-card">
+    <view class="college-name">{{activeCollege}}</view>
+    <view class="college-actions">
+      <view class="secondary-button" bindtap="searchCollege">搜索内容</view>
+      <view class="secondary-button" bindtap="askCollege">问 AI</view>
+    </view>
+  </view>
+
+  <view class="section-title">相关讨论</view>
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:elif="{{!posts.length}}" class="empty">暂无相关讨论</view>
+  <view wx:else>
+    <view class="feed-card" wx:for="{{posts}}" wx:key="id" data-id="{{item.id}}" bindtap="goPostDetail">
+      <view class="feed-avatar">{{item.authorInitial}}</view>
+      <view class="feed-body">
+        <view class="feed-head">
+          <text class="feed-author">{{item.authorAlias}}</text>
+          <text class="feed-dot" style="background: {{item.channelColor}}"></text>
+          <text class="feed-channel" style="color: {{item.channelColor}}">{{item.channel}}</text>
+          <text class="feed-time">{{item.timeText}}</text>
+        </view>
+        <view class="feed-title">{{item.displayTitle}}</view>
+        <view class="feed-summary">{{item.summary}}</view>
+        <view class="feed-actions">
+          <text>♡ {{item.likeCount}}</text>
+          <text>☰ {{item.commentCount}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

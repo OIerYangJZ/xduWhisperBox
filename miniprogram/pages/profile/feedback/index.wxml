@@ -1,1 +1,7 @@
-<!-- miniprogram/pages/profile/feedback/index.wxml -->
+<view class="page feedback-page safe-bottom">
+  <view class="form-panel">
+    <textarea class="content-input" maxlength="800" value="{{content}}" placeholder="请输入反馈内容" bindinput="onContentInput" auto-height />
+    <input class="contact-input" maxlength="80" value="{{contact}}" placeholder="联系方式（可选）" bindinput="onContactInput" />
+  </view>
+  <button class="primary-button submit" loading="{{submitting}}" bindtap="submitFeedback">提交</button>
+</view>

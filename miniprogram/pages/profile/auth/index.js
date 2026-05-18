@@ -34,6 +34,18 @@ Page({
             fail: () => wx.switchTab({ url: '/pages/profile/index' })
           });
         }, 1500);
+      } else if (res && res.data && res.data.needVerify) {
+        wx.showModal({
+          title: '需要邮箱验证',
+          content: '账号尚未完成邮箱验证，是否现在验证？',
+          success: (modal) => {
+            if (modal.confirm) {
+              wx.navigateTo({
+                url: `/pages/profile/register/index?email=${encodeURIComponent(res.data.email || '')}&password=${encodeURIComponent(password)}&debugCode=${encodeURIComponent(res.data.debugCode || '')}`
+              });
+            }
+          }
+        });
       }
     } catch (err) {
       wx.hideLoading();
@@ -42,6 +54,6 @@ Page({
   },
 
   handleRegister() {
-    wx.showToast({ title: '小程序暂不支持注册，请前往App或Web端注册', icon: 'none' });
+    wx.navigateTo({ url: '/pages/profile/register/index' });
   }
 });

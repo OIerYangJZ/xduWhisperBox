@@ -1,0 +1,59 @@
+.college-scroll {
+  padding: 18rpx 0;
+  border-bottom: 1rpx solid #e8e8e8;
+  background: #fff;
+  white-space: nowrap;
+}
+
+.college-row {
+  display: flex;
+  gap: 14rpx;
+  padding: 0 24rpx;
+}
+
+.college-chip {
+  flex: 0 0 auto;
+  height: 62rpx;
+  padding: 0 24rpx;
+  border-radius: 31rpx;
+  background: #f5f5f7;
+  color: #1d1d1f;
+  font-size: 26rpx;
+  line-height: 62rpx;
+}
+
+.college-chip.active {
+  background: #155e75;
+  color: #fff;
+  font-weight: 600;
+}
+
+.college-card {
+  margin-top: 0;
+  padding: 28rpx 24rpx;
+  border-bottom: 1rpx solid #e8e8e8;
+  background: #fff;
+}
+
+.college-name {
+  color: #1d1d1f;
+  font-size: 36rpx;
+  font-weight: 700;
+}
+
+.college-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+
+.section-title {
+  margin: 0;
+  padding: 24rpx 24rpx 12rpx;
+  border-bottom: 1rpx solid #e8e8e8;
+  background: #fff;
+  color: #1d1d1f;
+  font-size: 31rpx;
+  font-weight: 700;
+}

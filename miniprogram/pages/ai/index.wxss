@@ -1,0 +1,125 @@
+.assistant-panel {
+  padding: 32rpx 28rpx 28rpx;
+  border-bottom: 1rpx solid #e8e8e8;
+  background: #fff;
+}
+
+.assistant-title {
+  color: #1d1d1f;
+  font-size: 42rpx;
+  font-weight: 700;
+}
+
+.assistant-subtitle {
+  margin-top: 10rpx;
+  color: #8e8e93;
+  font-size: 26rpx;
+}
+
+.ask-row {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-top: 28rpx;
+}
+
+.ask-row input {
+  flex: 1;
+  height: 76rpx;
+  padding: 0 22rpx;
+  border-radius: 22rpx;
+  background: #f5f5f7;
+  color: #1d1d1f;
+  font-size: 28rpx;
+}
+
+.ask-button {
+  width: 108rpx;
+  height: 76rpx;
+  border-radius: 22rpx;
+  background: #155e75;
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: 600;
+  line-height: 76rpx;
+  text-align: center;
+}
+
+.prompt-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin-top: 20rpx;
+  border-top: 1rpx solid #e8e8e8;
+  border-left: 1rpx solid #e8e8e8;
+}
+
+.prompt {
+  min-height: 86rpx;
+  padding: 20rpx;
+  border-right: 1rpx solid #e8e8e8;
+  border-bottom: 1rpx solid #e8e8e8;
+  background: #fff;
+  color: #1d1d1f;
+  font-size: 27rpx;
+  line-height: 1.4;
+}
+
+.section {
+  margin-top: 0;
+  border-bottom: 1rpx solid #e8e8e8;
+  background: #fff;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26rpx 28rpx 16rpx;
+  margin-bottom: 0;
+}
+
+.section-title {
+  color: #1d1d1f;
+  font-size: 31rpx;
+  font-weight: 700;
+}
+
+.section-more {
+  color: #155e75;
+  font-size: 26rpx;
+}
+
+.channel-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  padding: 0 28rpx 24rpx;
+}
+
+.channel-chip {
+  padding: 12rpx 18rpx;
+  border-radius: 24rpx;
+  background: #f5f5f7;
+  color: #1d1d1f;
+  font-size: 25rpx;
+}
+
+.source-card {
+  margin-top: 0;
+  padding: 22rpx 28rpx;
+  border-top: 1rpx solid #e8e8e8;
+  background: #fff;
+}
+
+.source-title {
+  color: #1d1d1f;
+  font-size: 29rpx;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.source-meta {
+  margin-top: 12rpx;
+  color: #8e8e93;
+  font-size: 24rpx;
+}

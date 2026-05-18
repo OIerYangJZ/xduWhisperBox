@@ -1,0 +1,42 @@
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18rpx;
+}
+
+.count {
+  color: #8e8e93;
+  font-size: 26rpx;
+}
+
+.clear {
+  color: #155e75;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.history-card {
+  padding: 24rpx 4rpx;
+  border-bottom: 1rpx solid #e8e8e8;
+  background: #fff;
+}
+
+.question {
+  color: #1d1d1f;
+  font-size: 30rpx;
+  font-weight: 650;
+}
+
+.answer {
+  margin-top: 12rpx;
+  color: #1d1d1f;
+  font-size: 27rpx;
+  line-height: 1.5;
+}
+
+.time {
+  margin-top: 14rpx;
+  color: #8e8e93;
+  font-size: 23rpx;
+}

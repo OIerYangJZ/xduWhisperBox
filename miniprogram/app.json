@@ -7,23 +7,26 @@
     "pages/campus/college/index",
     "pages/campus/community/index",
     "pages/campus/post-detail/index",
+    "pages/campus/create-post/index",
     "pages/campus/search/index",
     "pages/ai/chat/index",
     "pages/ai/history/index",
     "pages/profile/auth/index",
+    "pages/profile/register/index",
     "pages/profile/favorites/index",
+    "pages/profile/notifications/index",
     "pages/profile/settings/index",
     "pages/profile/feedback/index"
   ],
   "window": {
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#fff",
+    "navigationBarBackgroundColor": "#ffffff",
     "navigationBarTitleText": "XDU WhisperBox",
     "navigationBarTextStyle": "black"
   },
   "tabBar": {
-    "color": "#999999",
-    "selectedColor": "#0052D9",
+    "color": "#8E8E93",
+    "selectedColor": "#155E75",
     "backgroundColor": "#ffffff",
     "list": [
       {

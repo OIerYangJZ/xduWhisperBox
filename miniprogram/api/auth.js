@@ -17,6 +17,13 @@ export const register = (data) => {
 };
 
 /**
+ * 邮箱验证码验证
+ */
+export const verifyEmail = (email, code, password = '') => {
+  return request.post('/api/auth/verify', { email, code, password });
+};
+
+/**
  * 获取当前用户信息（包含认证状态）
  */
 export const getUserInfo = () => {

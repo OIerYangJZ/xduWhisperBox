@@ -1,1 +1,51 @@
-<!-- miniprogram/pages/campus/post-detail/index.wxml -->
+<view class="container" wx:if="{{!loading && post}}">
+  <scroll-view scroll-y class="main-scroll">
+    <!-- 帖子主体 -->
+    <view class="post-card">
+      <view class="post-header">
+        <image class="post-avatar" src="{{post.authorAvatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+        <view class="post-meta">
+          <view class="post-author">{{post.authorName || '匿名用户'}}</view>
+          <view class="post-time">{{post.createdAt}}</view>
+        </view>
+      </view>
+      <view class="post-content">
+        <text>{{post.content}}</text>
+      </view>
+      <view class="post-images" wx:if="{{post.images && post.images.length > 0}}">
+        <image wx:for="{{post.images}}" wx:for-item="img" wx:key="*this" src="{{img}}" mode="widthFix" class="post-image"></image>
+      </view>
+      <view class="post-footer">
+        <view class="action-item" bindtap="handleLike">
+          <text class="icon" style="color: {{post.isLiked ? '#0052D9' : '#999'}}">👍</text>
+          <text style="color: {{post.isLiked ? '#0052D9' : '#999'}}">{{post.likeCount || 0}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 评论区 -->
+    <view class="comments-section">
+      <view class="section-title">全部评论 ({{post.commentCount || 0}})</view>
+      <view class="empty-state" wx:if="{{comments.length === 0}}">暂无评论，快来抢沙发吧~</view>
+      
+      <view class="comment-item" wx:for="{{comments}}" wx:key="id">
+        <image class="comment-avatar" src="{{item.authorAvatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+        <view class="comment-content-box">
+          <view class="comment-header">
+            <text class="comment-author">{{item.authorName || '匿名用户'}}</text>
+            <text class="comment-time">{{item.createdAt}}</text>
+          </view>
+          <view class="comment-text"><text>{{item.content}}</text></view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部输入框 -->
+  <view class="bottom-bar">
+    <input class="comment-input" placeholder="写下你的评论..." value="{{commentContent}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="submitComment" cursor-spacing="20" />
+    <button class="send-btn" bindtap="submitComment" disabled="{{isSending || !commentContent}}">发送</button>
+  </view>
+</view>
+
+<view class="loading-state" wx:if="{{loading}}">加载中...</view>

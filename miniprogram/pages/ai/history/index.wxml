@@ -1,1 +1,14 @@
-<!-- miniprogram/pages/ai/history/index.wxml -->
+<view class="page history-page">
+  <view class="head" wx:if="{{rows.length}}">
+    <view class="count">{{rows.length}} 条记录</view>
+    <view class="clear" bindtap="clearHistory">清空</view>
+  </view>
+  <view wx:if="{{!rows.length}}" class="empty">暂无历史</view>
+  <view wx:else>
+    <view class="history-card" wx:for="{{rows}}" wx:key="createdAt" data-question="{{item.question}}" bindtap="openChat">
+      <view class="question">{{item.questionText}}</view>
+      <view class="answer">{{item.answerText}}</view>
+      <view class="time">{{item.timeText}}</view>
+    </view>
+  </view>
+</view>

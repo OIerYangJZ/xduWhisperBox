@@ -1,4 +1,20 @@
-import { baseUrl } from '../config/env';
+import { baseUrl, envName } from '../config/env';
+import { clearLoginAndRedirect } from './auth_guard';
+
+const buildUrl = (url) => {
+  if (url.startsWith('http')) return url;
+  return `${baseUrl.replace(/\/$/, '')}${url}`;
+};
+
+const networkErrorMessage = () => {
+  if (/localhost|127\.0\.0\.1/i.test(baseUrl)) {
+    return '真机无法访问 localhost，请改用电脑局域网 IP';
+  }
+  if (envName === 'lan') {
+    return '请确认手机和电脑在同一 Wi-Fi，且后端已启动';
+  }
+  return '网络异常，请检查域名和 HTTPS 配置';
+};
 
 /**
  * 封装微信的 wx.request
@@ -7,6 +23,23 @@ const request = (options) => {
   return new Promise((resolve, reject) => {
     // 获取本地存储的 token
     const token = wx.getStorageSync('token');
+    const requestUrl = options.url || '';
+    const publicAuthPaths = [
+      '/api/auth/login',
+      '/api/auth/register',
+      '/api/auth/verify',
+      '/api/auth/send-code',
+      '/api/auth/resend-code',
+      '/api/auth/password/send-code',
+      '/api/auth/password/reset'
+    ];
+    const isPublicAuthPath = publicAuthPaths.some((path) => requestUrl === path);
+
+    if (!token && !isPublicAuthPath) {
+      clearLoginAndRedirect();
+      reject({ statusCode: 401, data: { message: '请先登录' } });
+      return;
+    }
 
     // 默认 header
     const header = {
@@ -15,12 +48,14 @@ const request = (options) => {
       ...options.header
     };
 
-    if (token) {
+    if (token && !isPublicAuthPath) {
       header['Authorization'] = `Bearer ${token}`;
     }
 
+    const url = buildUrl(options.url);
+
     wx.request({
-      url: options.url.startsWith('http') ? options.url : baseUrl + options.url,
+      url,
       method: options.method || 'GET',
       data: options.data || {},
       header: header,
@@ -31,15 +66,13 @@ const request = (options) => {
         // HTTP 状态码 2xx 表示成功
         if (statusCode >= 200 && statusCode < 300) {
           resolve(data);
-        } else if (statusCode === 401) {
+        } else if (statusCode === 401 && token) {
           // 未登录或 token 过期
-          wx.removeStorageSync('token');
+          clearLoginAndRedirect();
           wx.showToast({
             title: '登录已过期，请重新登录',
             icon: 'none'
           });
-          // 可以在这里做自动跳转登录页的逻辑
-          // wx.navigateTo({ url: '/pages/profile/auth/index' });
           reject(res);
         } else {
           // 其他服务器错误
@@ -51,8 +84,9 @@ const request = (options) => {
         }
       },
       fail: (err) => {
+        console.error('[request failed]', url, err);
         wx.showToast({
-          title: '网络异常，请检查网络',
+          title: networkErrorMessage(),
           icon: 'none'
         });
         reject(err);
@@ -76,6 +110,10 @@ request.put = (url, data, options = {}) => {
 
 request.delete = (url, data, options = {}) => {
   return request({ url, method: 'DELETE', data, ...options });
+};
+
+request.patch = (url, data, options = {}) => {
+  return request({ url, method: 'PATCH', data, ...options });
 };
 
 export default request;

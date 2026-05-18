@@ -1,12 +1,19 @@
 import { getUserInfo } from '../../api/auth';
+import { getNotifications } from '../../api/notifications';
+import { requireLoginPage } from '../../utils/auth_guard';
 
 Page({
   data: {
     isLoggedIn: false,
-    userInfo: null
+    userInfo: null,
+    unreadCount: 0
   },
 
   onShow() {
+    if (!requireLoginPage()) {
+      this.setData({ isLoggedIn: false, userInfo: null, unreadCount: 0 });
+      return;
+    }
     this.checkLoginStatus();
   },
 
@@ -17,6 +24,7 @@ Page({
       this.fetchUserInfo();
     } else {
       this.setData({ isLoggedIn: false, userInfo: null });
+      requireLoginPage();
     }
   },
 
@@ -26,6 +34,8 @@ Page({
       if (res.data) {
         this.setData({ userInfo: res.data });
       }
+      const notifications = await getNotifications();
+      this.setData({ unreadCount: notifications.unreadCount });
     } catch (err) {
       console.error('获取用户信息失败', err);
     }
@@ -38,6 +48,11 @@ Page({
   goToFavorites() {
     if (!this.data.isLoggedIn) return this.goToLogin();
     wx.navigateTo({ url: '/pages/profile/favorites/index' });
+  },
+
+  goToNotifications() {
+    if (!this.data.isLoggedIn) return this.goToLogin();
+    wx.navigateTo({ url: '/pages/profile/notifications/index' });
   },
 
   goToFeedback() {

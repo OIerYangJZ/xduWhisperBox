@@ -1,10 +1,15 @@
 <view class="container">
-  <view class="header">
+  <view class="profile-cover"></view>
+  <view class="profile-head">
     <image class="avatar" src="{{userInfo ? (userInfo.avatarUrl || '/assets/default-avatar.png') : '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+    <view class="edit-pill" bindtap="goToSettings">设置</view>
+  </view>
+  <view class="profile-info">
     <view class="user-info" wx:if="{{isLoggedIn}}">
       <view class="nickname">{{userInfo.nickname || '西电同学'}}</view>
-      <view class="student-id" wx:if="{{userInfo.studentId}}">学号: {{userInfo.studentId}}</view>
-      <view class="student-id" wx:else>尚未绑定学号</view>
+      <view class="student-id" wx:if="{{userInfo.studentId}}">@{{userInfo.studentId}}</view>
+      <view class="student-id" wx:else>@未绑定学号</view>
+      <view class="bio">{{userInfo.bio || '匿名交流，理性表达。'}}</view>
     </view>
     <view class="login-prompt" wx:else bindtap="goToLogin">
       <view class="login-title">点击登录/注册</view>
@@ -16,6 +21,13 @@
     <view class="menu-item" bindtap="goToFavorites">
       <text class="menu-text">我的收藏</text>
       <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="goToNotifications">
+      <text class="menu-text">通知中心</text>
+      <view class="menu-right">
+        <text wx:if="{{unreadCount}}" class="badge">{{unreadCount}}</text>
+        <text class="menu-arrow">></text>
+      </view>
     </view>
     <view class="menu-item" bindtap="goToFeedback">
       <text class="menu-text">意见反馈</text>

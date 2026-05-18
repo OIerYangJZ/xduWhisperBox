@@ -156,6 +156,16 @@ def _get_version_info() -> dict[str, Any]:
 
 class TreeholeHandler(BaseHTTPRequestHandler):
     server_version = "XduTreeholeBackend/0.2"
+    miniprogram_public_paths = {
+        "/api/auth/login",
+        "/api/auth/register",
+        "/api/auth/verify",
+        "/api/auth/send-code",
+        "/api/auth/resend-code",
+        "/api/auth/password/send-code",
+        "/api/auth/password/reset",
+        "/api/announcements",
+    }
 
     def do_OPTIONS(self) -> None:  # noqa: N802
         send_json(self, HTTPStatus.OK, {"message": "ok"})
@@ -187,6 +197,9 @@ class TreeholeHandler(BaseHTTPRequestHandler):
                 json_error(self, HTTPStatus.NOT_FOUND, "Not Found")
                 return
 
+            if not self._authorize_miniprogram_request(path):
+                return
+
             if method == "GET":
                 self._handle_get(path, query)
                 return
@@ -204,6 +217,25 @@ class TreeholeHandler(BaseHTTPRequestHandler):
         except Exception as error:  # pragma: no cover
             _logger.exception("Unhandled error in _handle_web_delete")
             json_error(self, HTTPStatus.INTERNAL_SERVER_ERROR, "Internal server error")
+
+    def _authorize_miniprogram_request(self, path: str) -> bool:
+        client_type = (self.headers.get("X-Client-Type", "") or "").strip().lower()
+        if client_type != "wechat-miniprogram":
+            return True
+        if path in self.miniprogram_public_paths:
+            return True
+
+        with DB_LOCK:
+            db = load_db()
+            user, _ = auth_user_helper(self, db)
+
+        if user is None or user.get("deleted"):
+            json_error(self, HTTPStatus.UNAUTHORIZED, "请先登录")
+            return False
+        if user.get("banned"):
+            json_error(self, HTTPStatus.FORBIDDEN, "账号已被封禁")
+            return False
+        return True
 
     def _handle_web_get(self, path: str) -> None:
         index_file = WEB_ROOT_DIR / "index.html"
@@ -267,6 +299,12 @@ class TreeholeHandler(BaseHTTPRequestHandler):
 
         with DB_LOCK:
             db = load_db()
+
+            if path == "/api/announcements":
+                rows = [serialize_system_announcement(row) for row in db.get("systemAnnouncements", [])]
+                rows.sort(key=lambda x: x.get("createdAt", ""), reverse=True)
+                send_json(self, HTTPStatus.OK, {"data": rows})
+                return
 
             # Channels
             if path == "/api/channels":

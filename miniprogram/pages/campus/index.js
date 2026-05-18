@@ -1,9 +1,12 @@
 import { getPosts } from '../../api/post';
+import { getAnnouncements, getColleges } from '../../api/campus';
 
 Page({
   data: {
     currentTab: 'community', // 'community' | 'news' | 'college'
     posts: [],
+    news: [],
+    colleges: [],
     loading: false,
     hasMore: true,
     page: 1,
@@ -11,7 +14,7 @@ Page({
   },
 
   onLoad() {
-    this.fetchPosts();
+    this.fetchData();
   },
 
   onPullDownRefresh() {
@@ -20,18 +23,17 @@ Page({
       posts: [],
       hasMore: true
     }, () => {
-      this.fetchPosts().then(() => {
+      this.fetchData().then(() => {
         wx.stopPullDownRefresh();
       });
     });
   },
 
-  onReachBottom() {
-    if (this.data.hasMore && !this.data.loading) {
-      this.setData({ page: this.data.page + 1 }, () => {
-        this.fetchPosts();
-      });
-    }
+  fetchData() {
+    const { currentTab } = this.data;
+    if (currentTab === 'community') return this.fetchPosts();
+    if (currentTab === 'news') return this.fetchNews();
+    if (currentTab === 'college') return this.fetchColleges();
   },
 
   switchTab(e) {
@@ -43,9 +45,7 @@ Page({
       page: 1,
       hasMore: true
     }, () => {
-      if (tab === 'community') {
-        this.fetchPosts();
-      }
+      this.fetchData();
     });
   },
 
@@ -73,10 +73,44 @@ Page({
     }
   },
 
+  async fetchNews() {
+    this.setData({ loading: true });
+    try {
+      const res = await getAnnouncements();
+      if (res && res.data) {
+        this.setData({ news: res.data, loading: false });
+      }
+    } catch (err) {
+      this.setData({ loading: false });
+    }
+  },
+
+  async fetchColleges() {
+    this.setData({ loading: true });
+    try {
+      const res = await getColleges();
+      if (res && res.data) {
+        this.setData({ colleges: res.data, loading: false });
+      }
+    } catch (err) {
+      this.setData({ loading: false });
+    }
+  },
+
   goToDetail(e) {
     const postId = e.currentTarget.dataset.id;
     wx.navigateTo({
       url: `/pages/campus/post-detail/index?id=${postId}`
+    });
+  },
+
+  goToNewsDetail(e) {
+    // 暂时弹窗展示，后续可增加详情页
+    const item = e.currentTarget.dataset.item;
+    wx.showModal({
+      title: item.title,
+      content: item.content,
+      showCancel: false
     });
   }
 });

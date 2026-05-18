@@ -134,10 +134,11 @@ Do not place Flutter-specific files such as `pubspec.yaml` at the repository roo
 5. **Mini Program Migration (Ongoing):**
    - Successfully initialized Native WeChat Mini Program structure (`miniprogram/`).
    - Implemented Profile Page & Email/StudentID Login (`pages/profile/index`, `pages/profile/auth/index`).
-   - Implemented Campus Community Feed (`pages/campus/index`) and Post Detail + Comments (`pages/campus/post-detail/index`).
-   - Implemented AI Assistant Chat UI (`pages/ai/index`, `pages/ai/chat/index`) with mock API waiting for backend RAG integration.
-   - API wrappers created in `miniprogram/api/` and `utils/request.js`.
-   - **Next:** Implement Create Post flow, handle local media uploads for avatars/posts, and complete News/College Tabs.
+   - Implemented Campus Feed with 3 Tabs: Community (Treehole), News (Announcements), and College Zone.
+   - Designed Post Detail + Comments page UI.
+   - Implemented AI Assistant Chat UI (`pages/ai/index`, `pages/ai/chat/index`) with mock API.
+   - Added public `/api/announcements` endpoint to backend to support Mini Program news tab.
+   - **Next:** Implement Create Post flow, handle local media uploads for avatars/posts, and refine search/filter.
 
 ## Operational Safety
 

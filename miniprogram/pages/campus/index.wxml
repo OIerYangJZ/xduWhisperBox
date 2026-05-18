@@ -7,7 +7,7 @@
   </view>
 
   <!-- 树洞列表 -->
-  <scroll-view class="feed-list" wx:if="{{currentTab === 'community'}}">
+  <scroll-view class="feed-list" scroll-y wx:if="{{currentTab === 'community'}}" bindscrolltolower="onReachBottom">
     <view class="post-card" wx:for="{{posts}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
       <view class="post-header">
         <image class="post-avatar" src="{{item.authorAvatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
@@ -33,15 +33,32 @@
         </view>
       </view>
     </view>
-
-    <!-- 加载状态 -->
     <view class="loading-state" wx:if="{{loading}}">加载中...</view>
     <view class="empty-state" wx:if="{{!loading && posts.length === 0}}">暂无内容</view>
     <view class="no-more" wx:if="{{!loading && !hasMore && posts.length > 0}}">没有更多了</view>
   </scroll-view>
 
-  <!-- 其他 Tab 占位 -->
-  <view class="placeholder-box" wx:if="{{currentTab !== 'community'}}">
-    <text>正在开发中，敬请期待</text>
+  <!-- 校园新闻/公告 -->
+  <scroll-view class="news-list" scroll-y wx:if="{{currentTab === 'news'}}">
+    <view class="news-card" wx:for="{{news}}" wx:key="id" bindtap="goToNewsDetail" data-item="{{item}}">
+      <view class="news-tag">校园公告</view>
+      <view class="news-title">{{item.title}}</view>
+      <view class="news-excerpt">{{item.content}}</view>
+      <view class="news-footer">
+        <text class="news-time">{{item.createdAt}}</text>
+        <text class="news-more-link">查看详情 ></text>
+      </view>
+    </view>
+    <view class="loading-state" wx:if="{{loading}}">加载中...</view>
+    <view class="empty-state" wx:if="{{!loading && news.length === 0}}">暂无公告</view>
+  </scroll-view>
+
+  <!-- 学院专区 -->
+  <view class="college-grid" wx:if="{{currentTab === 'college'}}">
+    <view class="college-item" wx:for="{{colleges}}" wx:key="id">
+      <view class="college-icon">{{item.icon}}</view>
+      <view class="college-name">{{item.name}}</view>
+    </view>
+    <view class="empty-state" wx:if="{{!loading && colleges.length === 0}}">加载中...</view>
   </view>
 </view>

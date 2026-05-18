@@ -91,7 +91,7 @@ def is_valid_student_id(student_id: str) -> bool:
 
 def is_campus_email(email: str) -> bool:
     lower = email.lower().strip()
-    return lower.endswith("@stu.xidian.edu.cn") or lower.endswith("@xidian.edu.cn")
+    return lower.endswith("@stu.xidian.edu.cn")
 
 
 def student_id_from_email(email: str) -> str:

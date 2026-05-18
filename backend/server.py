@@ -810,14 +810,10 @@ def main() -> None:
         )
     else:
         _logger.info("SMTP: not configured (set BACKEND_SMTP_* to enable email verification)")
-    _logger.info("User auth: 浏览器统一认证回调登录（树洞后端不接收统一认证密码）")
+    _logger.info("User auth: 学生邮箱注册 / 验证码验证 / 账号密码登录")
     if getattr(_globals, "BACKEND_XIDIAN_PUBLIC_ORIGIN", ""):
-        _logger.info(f"Xidian auth public origin: {getattr(_globals, 'BACKEND_XIDIAN_PUBLIC_ORIGIN')}")
-    else:
-        _logger.warning(
-            "Xidian auth public origin is empty. "
-            "If IDS browser/mobile login is enabled behind domain/proxy/IP, "
-            "set BACKEND_XIDIAN_PUBLIC_ORIGIN to the IDS-registered HTTPS origin."
+        _logger.info(
+            f"Optional IDS callback origin configured: {getattr(_globals, 'BACKEND_XIDIAN_PUBLIC_ORIGIN')}",
         )
     _logger.info(f"Admin account: {DEFAULT_ADMIN_USERNAME} / {DEFAULT_ADMIN_PASSWORD}")
     if verify_code_debug_enabled():

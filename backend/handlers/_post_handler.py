@@ -1195,7 +1195,7 @@ def handle_submit_appeal(
     content = str(body.get("content", "")).strip()
 
     if not is_campus_email(email):
-        json_error(handler, HTTPStatus.BAD_REQUEST, "仅支持西电校内邮箱")
+        json_error(handler, HTTPStatus.BAD_REQUEST, "仅支持西电学生邮箱（@stu.xidian.edu.cn）")
         return
     if appeal_type not in {"account_restore", "ban_revoke", "wrong_punishment", "account_cancel_reject"}:
         json_error(handler, HTTPStatus.BAD_REQUEST, "无效的申诉类型")

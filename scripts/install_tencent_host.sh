@@ -72,9 +72,10 @@ systemctl restart xdu-whisperbox
 systemctl enable nginx
 systemctl restart nginx
 
-if ! grep -q '^BACKEND_XIDIAN_PUBLIC_ORIGIN=https://' "$ENV_FILE"; then
-  echo "[install] WARNING: BACKEND_XIDIAN_PUBLIC_ORIGIN is empty or not HTTPS"
-  echo "[install] WARNING: IDS browser/mobile login will fail with '应用未注册' until you set the IDS-registered HTTPS origin"
+if grep -q '^BACKEND_XIDIAN_PUBLIC_ORIGIN=https://' "$ENV_FILE"; then
+  echo "[install] Optional IDS callback origin detected"
+else
+  echo "[install] BACKEND_XIDIAN_PUBLIC_ORIGIN is empty; default student-email login remains available"
 fi
 
 for _ in $(seq 1 15); do

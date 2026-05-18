@@ -1,18 +1,12 @@
 # XDU Treehole Backend (Python)
 
-一个本地后端，核心 API 使用 Python 标准库实现；普通用户统一认证登录依赖 `requests + Pillow + openssl`；启用 S3/OSS 对象存储时需额外安装 `boto3`。
+一个本地后端，核心 API 使用 Python 标准库实现；普通用户默认使用学生邮箱注册 / 验证码验证 / 账号密码登录；启用 S3/OSS 对象存储时需额外安装 `boto3`。
 后端也可直接托管 Flutter Web 构建产物（默认 `build/web`），用于单端口内测发布。
 
 ## 启动
 
 ```bash
 python3 backend/server.py
-```
-
-如果你的环境缺少统一认证登录依赖，先安装：
-
-```bash
-python3 -m pip install requests Pillow
 ```
 
 推荐（显式环境变量）：
@@ -31,7 +25,7 @@ python3 backend/server.py
 
 - `BACKEND_HOST`（默认 `0.0.0.0`）
 - `BACKEND_PORT`（默认 `8080`）
-- `BACKEND_XIDIAN_PUBLIC_ORIGIN`（可选，统一认证回调固定外网 Origin，例如 `https://treehole.example.com`；当站点会通过 IP、测试域名、反向代理端口等多入口访问时，建议设置为 IDS 已登记的 HTTPS 地址）
+- `BACKEND_XIDIAN_PUBLIC_ORIGIN`（可选，仅在启用统一认证回调桥接时填写；普通学生邮箱登录可留空）
 - `BACKEND_DB_FILE`（默认 `backend/data/treehole.db`）
 - `BACKEND_STORAGE_DIR`（默认 `backend/storage/objects`）
 - `BACKEND_WEB_ROOT`（默认 `<项目根目录>/build/web`，用于托管前端静态文件）
@@ -88,7 +82,7 @@ BACKEND_HOST=0.0.0.0 BACKEND_PORT=8080 ./scripts/run_backend_beta.sh
    - `BACKEND_SMTP_USERNAME`
    - `BACKEND_SMTP_PASSWORD`
    - `BACKEND_SMTP_FROM_EMAIL`
-   - `BACKEND_XIDIAN_PUBLIC_ORIGIN=https://<service-name>.onrender.com`（若启用统一认证浏览器登录）
+   - `BACKEND_XIDIAN_PUBLIC_ORIGIN=https://<service-name>.onrender.com`（仅在启用可选统一认证桥接时填写）
 4. 部署成功后访问：
    - `https://<service-name>.onrender.com`
    - `https://<service-name>.onrender.com/api/channels`
@@ -131,31 +125,16 @@ DEPLOY_SSH_KEY=~/.ssh/tencent-cloud.pem \
 sudo sed -n '1,200p' /etc/xdu-whisperbox.env
 ```
 
-如果要启用统一认证浏览器/移动端登录，再额外完成：
+普通学生邮箱登录不依赖统一认证回调。部署时重点确认：
 
-1. 将 `/etc/xdu-whisperbox.env` 中 `BACKEND_XIDIAN_PUBLIC_ORIGIN` 改成 IDS 已登记的正式 HTTPS 域名，例如：
-
-```bash
-BACKEND_XIDIAN_PUBLIC_ORIGIN=https://treehole.example.com
-```
-
-2. 修改 Nginx `server_name` 为同一域名，并启用 HTTPS 证书。
-3. 在 IDS 侧登记以下两个回调地址：
-
-```text
-https://treehole.example.com/api/auth/xidian/callback
-https://treehole.example.com/api/auth/xidian/mobile/callback
-```
-
-4. 移动端正式构建时使用：
+1. `/etc/xdu-whisperbox.env` 中已正确填写 `BACKEND_SMTP_*`
+2. Nginx `server_name` 与 HTTPS 证书已配置完成
+3. 移动端正式构建时使用：
 
 ```bash
 flutter build apk --release \
-  --dart-define=MOBILE_API_BASE_URL=https://treehole.example.com/api \
-  --dart-define=MOBILE_XIDIAN_PUBLIC_ORIGIN=https://treehole.example.com
+  --dart-define=MOBILE_API_BASE_URL=https://www.seediantreehole.cn/api
 ```
-
-只要 `BACKEND_XIDIAN_PUBLIC_ORIGIN`、Nginx 域名、IDS 已登记域名三者不一致，就会出现“应用未注册”。
 
 重点修改：
 
@@ -185,7 +164,7 @@ curl http://127.0.0.1:8080/api/channels
 
 ## 真实邮箱验证码配置
 
-普通用户登录已改为西电统一身份认证，不再使用注册/邮箱验证码/本地密码找回；SMTP 仍可用于项目内其他邮件通知能力。
+普通用户默认使用学生邮箱验证码认证。注册、验证码验证和密码找回仅支持 `@stu.xidian.edu.cn`，SMTP 配置同时也可复用于项目内其他邮件通知能力。
 
 QQ 邮箱示例：
 
@@ -210,7 +189,7 @@ BACKEND_INCLUDE_DEBUG_CODE=true
 
 ## 已实现接口
 
-- 认证：`/auth/login`（普通用户统一认证登录） `/auth/logout`
+- 认证：`/auth/send-code` `/auth/register` `/auth/verify` `/auth/login` `/auth/password/send-code` `/auth/password/reset` `/auth/logout`
 - 用户：`/users/me` `/users/privacy`
 - 频道/帖子：`/channels` `/posts` `/posts/mine` `/posts/favorites` `/posts/{id}`
 - 上传/图片：`/uploads/images` `/uploads/mine` `/storage/{key}`

@@ -27,7 +27,7 @@
 
 ### 用户体系
 
-- **统一身份认证登录**：学号 + 统一认证密码（`@stu.xidian.edu.cn` 自动拼接），单次登录凭证跨端同步
+- **学生邮箱认证**：支持 `@stu.xidian.edu.cn` 学生邮箱注册、验证码验证、账号密码登录与密码找回
 - **用户等级体系**：一级用户（享有直接置顶帖子权限）、二级用户
 - **匿名发帖**：前台完全匿名，管理员后台可追溯真实账号
 - **个人中心**：资料查看、头像上传、我的帖子、我的评论、我的收藏、我的举报
@@ -146,7 +146,7 @@ xduWhisperBox/
 │   │   └── theme/                  # MobileTheme + SharedColors
 │   ├── features/                   # 功能模块（移动端独立实现）
 │   │   ├── admin/                  # 管理员后台（移动端）
-│   │   ├── auth/                   # XduLoginPage（统一身份认证登录）
+│   │   ├── auth/                   # 登录 / 注册 / 验证码认证
 │   │   ├── feed/                   # 首页信息流
 │   │   ├── messages/               # 消息页（会话列表 + 聊天）
 │   │   ├── notifications/           # 通知中心
@@ -258,7 +258,7 @@ flutter build apk --release
 ```
 
 **移动端 API 地址：** 移动端默认连接 `http://81.69.16.134/api`（腾讯云公网 IP），可通过 `--dart-define=MOBILE_API_BASE_URL=...` 覆盖。  
-**统一认证注意：** 正式分发时，若移动端 API 仍走 IP / 非 HTTPS 地址，必须额外注入 `--dart-define=MOBILE_XIDIAN_PUBLIC_ORIGIN=https://IDS已登记域名`，否则会出现“应用未注册”。
+**学生邮箱登录说明：** 普通用户登录、注册和密码找回仅支持 `@stu.xidian.edu.cn` 学生邮箱，不依赖西电统一认证回调。
 
 **Android Release 分发说明：**
 
@@ -306,7 +306,7 @@ docker compose up -d
 |------|--------|------|
 | `BACKEND_HOST` | `0.0.0.0` | 监听地址 |
 | `BACKEND_PORT` | `8080` | 监听端口 |
-| `BACKEND_XIDIAN_PUBLIC_ORIGIN` | — | 统一认证固定回调外网 Origin，必须填写 IDS 已登记的 HTTPS 域名，例如 `https://treehole.example.com` |
+| `BACKEND_XIDIAN_PUBLIC_ORIGIN` | — | 可选：仅在启用统一认证回调桥接时填写，普通学生邮箱登录可留空 |
 | `BACKEND_DB_FILE` | `backend/data/treehole.db` | SQLite 数据库路径 |
 | `BACKEND_STORAGE_DIR` | `backend/storage/objects` | 本地对象存储目录 |
 | `BACKEND_WEB_ROOT` | `build/web` | Flutter Web 构建产物目录 |
@@ -332,24 +332,20 @@ docker compose up -d
 
 ---
 
-## 统一认证一次性对齐
+## 学生邮箱认证
 
-如果你要启用“西电统一认证”并避免出现“应用未注册”，请一次性完成下面 4 件事：
+当前普通用户默认使用学生邮箱认证：
 
-1. 在 IDS 侧登记回调地址：
-   `https://你的正式域名/api/auth/xidian/callback`
-   `https://你的正式域名/api/auth/xidian/mobile/callback`
-2. 服务器环境变量 `/etc/xdu-whisperbox.env` 中设置：
-   `BACKEND_XIDIAN_PUBLIC_ORIGIN=https://你的正式域名`
-3. Nginx 配置 `server_name` 改为同一个正式域名，并启用 HTTPS；80 端口只做跳转到 443。
+1. 注册、验证码验证和密码找回仅支持 `@stu.xidian.edu.cn`
+2. 服务器需正确配置 `BACKEND_SMTP_*` 发信参数
+3. Web 端构建保持 `API_BASE_URL=/api` 即可
 4. 移动端正式构建使用：
-   `flutter build apk --release --dart-define=MOBILE_API_BASE_URL=https://你的正式域名/api --dart-define=MOBILE_XIDIAN_PUBLIC_ORIGIN=https://你的正式域名`
+   `flutter build apk --release --dart-define=MOBILE_API_BASE_URL=https://www.seediantreehole.cn/api`
 
 说明：
 
-- Web 端构建保持 `API_BASE_URL=/api` 即可，因为它通过同源 `/api` 访问后端。
-- `BACKEND_XIDIAN_PUBLIC_ORIGIN`、Nginx `server_name`、IDS 已登记域名，这三者必须完全一致。
-- 不建议用公网 IP 直接做统一认证回调；IDS 通常要求已登记的正式 HTTPS 域名。
+- 普通用户邮箱登录不依赖西电统一认证回调。
+- `BACKEND_XIDIAN_PUBLIC_ORIGIN` 默认可留空，只有启用可选统一认证桥接时才需要填写。
 
 ---
 

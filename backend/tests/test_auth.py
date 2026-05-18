@@ -23,13 +23,13 @@ class TestAuthHelpers:
         from server import is_campus_email
 
         assert is_campus_email("student@stu.xidian.edu.cn") is True
-        assert is_campus_email("teacher@xidian.edu.cn") is True
         assert is_campus_email("STUDENT@Stu.Xidian.EDU.CN") is True
 
     def test_is_campus_email_invalid(self):
         """测试校园邮箱验证 - 无效邮箱。"""
         from server import is_campus_email
 
+        assert is_campus_email("teacher@xidian.edu.cn") is False
         assert is_campus_email("student@gmail.com") is False
         assert is_campus_email("student@qq.com") is False
         assert is_campus_email("notanemail") is False
@@ -88,7 +88,6 @@ class TestAuthHelpers:
         from server import student_id_from_email
 
         assert student_id_from_email("2111111@stu.xidian.edu.cn") == "2111111"
-        assert student_id_from_email("2023000001@xidian.edu.cn") == "2023000001"
 
     def test_is_valid_student_id(self):
         """测试学号格式验证。"""

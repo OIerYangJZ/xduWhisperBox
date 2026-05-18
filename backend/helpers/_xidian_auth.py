@@ -431,7 +431,7 @@ def _build_login_payload(student_id: str, password: str, inputs: dict[str, str])
 
 def _build_campus_email(student_id: str, *, email_hint: str = "") -> str:
     hint = email_hint.strip().lower()
-    if hint.endswith("@stu.xidian.edu.cn") or hint.endswith("@xidian.edu.cn"):
+    if hint.endswith("@stu.xidian.edu.cn"):
         return hint
     return f"{student_id}@stu.xidian.edu.cn"
 

@@ -1341,7 +1341,7 @@ def default_db() -> dict[str, Any]:
             },
             {
                 "id": "seed-user-1",
-                "email": "seed1@xidian.edu.cn",
+                "email": "seed1@stu.xidian.edu.cn",
                 "password": "",
                 "alias": "洞主-极光",
                 "nickname": "洞主-极光",
@@ -1366,7 +1366,7 @@ def default_db() -> dict[str, Any]:
             },
             {
                 "id": "seed-user-2",
-                "email": "seed2@xidian.edu.cn",
+                "email": "seed2@stu.xidian.edu.cn",
                 "password": "",
                 "alias": "洞主-银杏",
                 "nickname": "洞主-银杏",

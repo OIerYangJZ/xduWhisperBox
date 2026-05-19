@@ -33,6 +33,9 @@ backend/__pycache__/
 
 # Local env
 .venv/
+.env
+.env.local
+.env.*.local
 __pycache__/
 dist/
 

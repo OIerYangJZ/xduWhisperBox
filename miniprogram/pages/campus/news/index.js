@@ -19,11 +19,16 @@ Page({
 
   onLoad() {
     if (!requireLoginPage()) return;
+    this._didLoadData = true;
     this.loadData();
   },
 
   onShow() {
-    requireLoginPage();
+    if (!requireLoginPage()) return;
+    if (!this._didLoadData) {
+      this._didLoadData = true;
+      this.loadData();
+    }
   },
 
   onPullDownRefresh() {

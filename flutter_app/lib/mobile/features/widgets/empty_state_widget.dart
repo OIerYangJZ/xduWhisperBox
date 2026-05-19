@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/mobile_theme.dart';
 import '../../core/theme/mobile_colors.dart';
 
 class EmptyStateWidget extends StatelessWidget {
@@ -28,11 +27,7 @@ class EmptyStateWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 72,
-              color: colors.textTertiary,
-            ),
+            Icon(icon, size: 72, color: colors.textTertiary),
             const SizedBox(height: 16),
             Text(
               title,
@@ -47,19 +42,13 @@ class EmptyStateWidget extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 subtitle!,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: colors.textTertiary,
-                ),
+                style: TextStyle(fontSize: 14, color: colors.textTertiary),
                 textAlign: TextAlign.center,
               ),
             ],
             if (actionLabel != null && onAction != null) ...[
               const SizedBox(height: 24),
-              OutlinedButton(
-                onPressed: onAction,
-                child: Text(actionLabel!),
-              ),
+              OutlinedButton(onPressed: onAction, child: Text(actionLabel!)),
             ],
           ],
         ),

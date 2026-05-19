@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/theme/mobile_theme.dart';
 import '../../core/theme/mobile_colors.dart';
 
 /// 我的评论列表页
@@ -44,8 +43,8 @@ class _MyCommentsPageState extends ConsumerState<MyCommentsPage> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _comments.isEmpty
-              ? _buildEmptyView()
-              : _buildList(),
+          ? _buildEmptyView()
+          : _buildList(),
     );
   }
 
@@ -55,11 +54,12 @@ class _MyCommentsPageState extends ConsumerState<MyCommentsPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.comment_outlined,
-              size: 64, color: colors.textTertiary),
+          Icon(Icons.comment_outlined, size: 64, color: colors.textTertiary),
           SizedBox(height: 16),
-          Text('暂无评论',
-              style: TextStyle(fontSize: 16, color: colors.textSecondary)),
+          Text(
+            '暂无评论',
+            style: TextStyle(fontSize: 16, color: colors.textSecondary),
+          ),
         ],
       ),
     );
@@ -77,19 +77,20 @@ class _MyCommentsPageState extends ConsumerState<MyCommentsPage> {
           decoration: BoxDecoration(
             color: colors.surface,
             borderRadius: BorderRadius.circular(12),
-            border:
-                Border.all(color: colors.divider.withValues(alpha: 0.5)),
+            border: Border.all(color: colors.divider.withValues(alpha: 0.5)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('评论内容...',
-                  style:
-                      TextStyle(fontSize: 14, color: colors.textPrimary)),
+              Text(
+                '评论内容...',
+                style: TextStyle(fontSize: 14, color: colors.textPrimary),
+              ),
               SizedBox(height: 8),
-              Text('发表于 帖子标题',
-                  style:
-                      TextStyle(fontSize: 12, color: colors.textTertiary)),
+              Text(
+                '发表于 帖子标题',
+                style: TextStyle(fontSize: 12, color: colors.textTertiary),
+              ),
             ],
           ),
         );

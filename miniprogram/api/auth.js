@@ -1,4 +1,13 @@
 import request from '../utils/request';
+import { resolveUrl } from '../utils/format';
+
+const normalizeUser = (user = {}) => {
+  return {
+    ...user,
+    avatarUrl: resolveUrl(user.avatarUrl || ''),
+    backgroundImageUrl: resolveUrl(user.backgroundImageUrl || '')
+  };
+};
 
 /**
  * 账号密码登录
@@ -26,8 +35,12 @@ export const verifyEmail = (email, code, password = '') => {
 /**
  * 获取当前用户信息（包含认证状态）
  */
-export const getUserInfo = () => {
-  return request.get('/api/users/me');
+export const getUserInfo = async () => {
+  const response = await request.get('/api/users/me');
+  return {
+    ...response,
+    data: normalizeUser(response.data || {})
+  };
 };
 
 /**

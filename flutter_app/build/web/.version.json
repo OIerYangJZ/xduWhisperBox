@@ -1,0 +1,12 @@
+{
+  "appVersion": "0.1.0+20",
+  "gitHash": "7ad2a48",
+  "gitBranch": "main",
+  "gitTag": "",
+  "gitDirty": true,
+  "buildDate": "2026-04-02",
+  "buildTime": "04:03:07",
+  "buildTimestamp": "20260402040307",
+  "buildType": "release",
+  "fullVersion": "0.1.0+20+7ad2a48"
+}

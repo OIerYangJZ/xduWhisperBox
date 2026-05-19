@@ -25,7 +25,7 @@ void main() {
           return http.Response(
             jsonEncode(MockApiResponses.dmRequestsSuccess()),
             200,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -36,7 +36,7 @@ void main() {
           return http.Response(
             jsonEncode(<String, dynamic>{'message': '处理成功'}),
             200,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -45,7 +45,7 @@ void main() {
           return http.Response(
             jsonEncode(<String, dynamic>{'message': '请求已发送'}),
             201,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -54,7 +54,7 @@ void main() {
           return http.Response(
             jsonEncode(MockApiResponses.conversationsSuccess()),
             200,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -64,7 +64,7 @@ void main() {
           return http.Response(
             jsonEncode(MockApiResponses.messagesSuccess()),
             200,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -81,7 +81,7 @@ void main() {
               'senderAlias': '我',
             }),
             201,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -92,7 +92,7 @@ void main() {
           return http.Response(
             jsonEncode(<String, dynamic>{'message': '会话已删除'}),
             200,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -107,14 +107,14 @@ void main() {
               'blockedByMe': path.contains('/block'),
             }),
             200,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
         return http.Response(
           jsonEncode(MockApiResponses.notFound()),
           404,
-          headers: {'Content-Type': 'application/json'},
+          headers: {'content-type': 'application/json; charset=utf-8'},
         );
       });
 

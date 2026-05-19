@@ -28,20 +28,20 @@ void main() {
             return http.Response(
               jsonEncode(MockApiResponses.loginSuccess()),
               200,
-              headers: {'Content-Type': 'application/json'},
+              headers: {'content-type': 'application/json; charset=utf-8'},
             );
           }
           if (identifier == 'unverified@example.com') {
             return http.Response(
               jsonEncode(MockApiResponses.loginNeedsVerification()),
               200,
-              headers: {'Content-Type': 'application/json'},
+              headers: {'content-type': 'application/json; charset=utf-8'},
             );
           }
           return http.Response(
             jsonEncode(MockApiResponses.badRequest('用户名或密码错误')),
             400,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -53,13 +53,13 @@ void main() {
             return http.Response(
               jsonEncode(MockApiResponses.registerSuccess()),
               201,
-              headers: {'Content-Type': 'application/json'},
+              headers: {'content-type': 'application/json; charset=utf-8'},
             );
           }
           return http.Response(
             jsonEncode(MockApiResponses.badRequest('邮箱格式不正确')),
             400,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -67,7 +67,7 @@ void main() {
           return http.Response(
             jsonEncode(MockApiResponses.sendEmailCodeSuccess()),
             200,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -79,13 +79,13 @@ void main() {
             return http.Response(
               jsonEncode(MockApiResponses.verifyEmailSuccess()),
               200,
-              headers: {'Content-Type': 'application/json'},
+              headers: {'content-type': 'application/json; charset=utf-8'},
             );
           }
           return http.Response(
             jsonEncode(MockApiResponses.badRequest('验证码错误')),
             400,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -93,14 +93,14 @@ void main() {
           return http.Response(
             jsonEncode(<String, dynamic>{'message': '已退出登录'}),
             200,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
         return http.Response(
           jsonEncode(MockApiResponses.notFound()),
           404,
-          headers: {'Content-Type': 'application/json'},
+          headers: {'content-type': 'application/json; charset=utf-8'},
         );
       });
     });

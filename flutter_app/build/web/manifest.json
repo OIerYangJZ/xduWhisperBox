@@ -1,0 +1,10 @@
+{
+  "name": "西电树洞",
+  "short_name": "XDUTreehole",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#F6F8FB",
+  "theme_color": "#0F4C81",
+  "description": "仅限西电学生的匿名校园社区。",
+  "orientation": "portrait-primary"
+}

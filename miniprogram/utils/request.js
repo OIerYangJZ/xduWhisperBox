@@ -10,7 +10,7 @@ const networkErrorMessage = () => {
   if (/localhost|127\.0\.0\.1/i.test(baseUrl)) {
     return '真机无法访问 localhost，请改用电脑局域网 IP';
   }
-  if (envName === 'lan') {
+  if (envName === 'lan' || envName === 'auto:lan') {
     return '请确认手机和电脑在同一 Wi-Fi，且后端已启动';
   }
   return '网络异常，请检查域名和 HTTPS 配置';
@@ -76,8 +76,9 @@ const request = (options) => {
           reject(res);
         } else {
           // 其他服务器错误
+          console.error('[request http error]', url, res);
           wx.showToast({
-            title: data.message || '网络请求错误',
+            title: (data && data.message) || networkErrorMessage(),
             icon: 'none'
           });
           reject(res);

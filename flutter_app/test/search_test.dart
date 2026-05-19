@@ -30,7 +30,7 @@ void main() {
             return http.Response(
               jsonEncode(MockApiResponses.searchPostsSuccess()),
               200,
-              headers: {'Content-Type': 'application/json'},
+              headers: {'content-type': 'application/json; charset=utf-8'},
             );
           }
 
@@ -39,7 +39,7 @@ void main() {
             return http.Response(
               jsonEncode(MockApiResponses.postsSuccess()),
               200,
-              headers: {'Content-Type': 'application/json'},
+              headers: {'content-type': 'application/json; charset=utf-8'},
             );
           }
 
@@ -48,14 +48,14 @@ void main() {
             return http.Response(
               jsonEncode(MockApiResponses.postsSuccess()),
               200,
-              headers: {'Content-Type': 'application/json'},
+              headers: {'content-type': 'application/json; charset=utf-8'},
             );
           }
 
           return http.Response(
             jsonEncode(MockApiResponses.postsSuccess()),
             200,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -64,14 +64,14 @@ void main() {
           return http.Response(
             jsonEncode(MockApiResponses.channelsSuccess()),
             200,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
         return http.Response(
           jsonEncode(MockApiResponses.notFound()),
           404,
-          headers: {'Content-Type': 'application/json'},
+          headers: {'content-type': 'application/json; charset=utf-8'},
         );
       });
 

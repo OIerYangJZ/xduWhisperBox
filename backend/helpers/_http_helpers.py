@@ -40,7 +40,7 @@ def send_json(
     handler.send_header("Content-Type", "application/json; charset=utf-8")
     handler.send_header("Access-Control-Allow-Origin", "*")
     handler.send_header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
-    handler.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    handler.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Client-Type")
     if no_cache:
         handler.send_header("Cache-Control", "no-store")
     handler.send_header("Content-Length", str(len(body.encode("utf-8"))))
@@ -104,7 +104,7 @@ def send_static_file(
     handler.send_header("Content-Type", content_type)
     handler.send_header("Content-Length", str(len(data)))
     handler.send_header("Access-Control-Allow-Origin", "*")
-    handler.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    handler.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Client-Type")
     handler.send_header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
     # Beta deployment prefers freshness over caching to avoid stale Flutter bundles.
     handler.send_header("Cache-Control", "no-cache")

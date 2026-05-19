@@ -1,4 +1,5 @@
 import { getUserInfo, logout } from '../../../api/auth';
+import { uploadAvatarImage } from '../../../api/uploads';
 import { updateNotificationPreferences } from '../../../api/user';
 import { requireLoginPage } from '../../../utils/auth_guard';
 
@@ -23,7 +24,8 @@ Page({
       notifyReportResult: true,
       notifySystem: true
     },
-    loggingOut: false
+    loggingOut: false,
+    uploadingAvatar: false
   },
 
   onShow() {
@@ -57,6 +59,51 @@ Page({
     } catch (error) {
       await this.loadProfile();
     }
+  },
+
+  chooseAvatar() {
+    if (this.data.uploadingAvatar) return;
+    const onPicked = async (filePath) => {
+      if (!filePath) return;
+      this.setData({ uploadingAvatar: true });
+      wx.showLoading({ title: '上传中' });
+      try {
+        const result = await uploadAvatarImage(filePath);
+        this.setData({
+          profile: {
+            ...this.data.profile,
+            avatarUrl: result.avatarUrl
+          },
+          uploadingAvatar: false
+        });
+        wx.hideLoading();
+        wx.showToast({ title: '头像已更新', icon: 'success' });
+      } catch (error) {
+        wx.hideLoading();
+        this.setData({ uploadingAvatar: false });
+      }
+    };
+
+    if (wx.chooseMedia) {
+      wx.chooseMedia({
+        count: 1,
+        mediaType: ['image'],
+        sizeType: ['compressed'],
+        sourceType: ['album', 'camera'],
+        success: (res) => {
+          const file = (res.tempFiles || [])[0];
+          onPicked(file && file.tempFilePath);
+        }
+      });
+      return;
+    }
+
+    wx.chooseImage({
+      count: 1,
+      sizeType: ['compressed'],
+      sourceType: ['album', 'camera'],
+      success: (res) => onPicked((res.tempFilePaths || [])[0])
+    });
   },
 
   async handleLogout() {

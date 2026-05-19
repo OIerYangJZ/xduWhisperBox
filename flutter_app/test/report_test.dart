@@ -28,20 +28,20 @@ void main() {
             return http.Response(
               jsonEncode(MockApiResponses.reportSuccess()),
               201,
-              headers: {'Content-Type': 'application/json'},
+              headers: {'content-type': 'application/json; charset=utf-8'},
             );
           }
           return http.Response(
             jsonEncode(<String, dynamic>{'message': '参数不完整'}),
             400,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
         return http.Response(
           jsonEncode(MockApiResponses.notFound()),
           404,
-          headers: {'Content-Type': 'application/json'},
+          headers: {'content-type': 'application/json; charset=utf-8'},
         );
       });
 

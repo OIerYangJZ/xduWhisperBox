@@ -1,4 +1,22 @@
 import { sendAiMessage } from '../../../api/ai';
+import { requireLoginPage } from '../../../utils/auth_guard';
+
+const normalizeAiReply = (response) => {
+  const data = response && response.data ? response.data : response || {};
+  return String(data.reply || data.answer || data.content || '').trim();
+};
+
+const saveAiHistory = (question, answer) => {
+  const row = {
+    question,
+    answer,
+    createdAt: new Date().toISOString()
+  };
+  const rows = [row, ...(wx.getStorageSync('aiHistory') || [])]
+    .filter((item) => item && item.question)
+    .slice(0, 30);
+  wx.setStorageSync('aiHistory', rows);
+};
 
 Page({
   data: {
@@ -14,7 +32,22 @@ Page({
   onLoad(options) {
     if (options.id) {
       this.setData({ chatId: options.id });
-      // 如果传入了 id，可以发起请求获取该对话的历史记录
+    }
+    if (options.q) {
+      this.setData({ inputVal: decodeURIComponent(options.q) });
+    }
+    if (!requireLoginPage()) return;
+    if (this.data.inputVal) {
+      this._autoSendQueued = true;
+      setTimeout(() => this.sendMessage(), 0);
+    }
+  },
+
+  onShow() {
+    if (!requireLoginPage()) return;
+    if (this.data.inputVal && this.data.messages.length === 1 && !this.data.isSending && !this._autoSendQueued) {
+      this._autoSendQueued = true;
+      setTimeout(() => this.sendMessage(), 0);
     }
   },
 
@@ -25,6 +58,7 @@ Page({
   async sendMessage() {
     const text = this.data.inputVal.trim();
     if (!text || this.data.isSending) return;
+    this._autoSendQueued = false;
 
     const newMsg = {
       id: Date.now().toString(),
@@ -40,15 +74,17 @@ Page({
 
     try {
       const res = await sendAiMessage(text);
-      if (res && res.data) {
+      const reply = normalizeAiReply(res);
+      if (reply) {
         const replyMsg = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: res.data.reply
+          content: reply
         };
         this.setData({
           messages: [...this.data.messages, replyMsg]
         }, this.scrollToBottom);
+        saveAiHistory(text, reply);
       }
     } catch (err) {
       wx.showToast({ title: '网络异常，请重试', icon: 'none' });

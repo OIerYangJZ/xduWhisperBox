@@ -1,5 +1,6 @@
 import { getPosts } from '../../api/post';
 import { getAnnouncements, getColleges } from '../../api/campus';
+import { requireLoginPage } from '../../utils/auth_guard';
 
 Page({
   data: {
@@ -14,7 +15,17 @@ Page({
   },
 
   onLoad() {
+    if (!requireLoginPage()) return;
+    this._didLoadData = true;
     this.fetchData();
+  },
+
+  onShow() {
+    if (!requireLoginPage()) return;
+    if (!this._didLoadData) {
+      this._didLoadData = true;
+      this.fetchData();
+    }
   },
 
   onPullDownRefresh() {

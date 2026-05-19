@@ -247,17 +247,31 @@ python3 server.py
 ### 3. 前端启动
 
 ```bash
+cd flutter_app
+
 # 安装依赖（CI 会自动拉取 traintime_pda 子模块）
 flutter pub get
 
-# Web 开发服务器（默认连接 localhost:8080）
+# Web 开发服务器（默认连接本机 127.0.0.1:8080 后端）
 flutter run -d chrome
 
-# Android APK（需要 Android SDK）
+# Android 模拟器（默认通过 10.0.2.2 访问本机 8080 后端）
+flutter run -d android
+
+# iOS 模拟器（默认通过 127.0.0.1 访问本机 8080 后端）
+flutter run -d ios
+
+# 真机调试：把 <电脑局域网IP> 换成 Mac/PC 当前 Wi-Fi IP
+flutter run -d android --dart-define=MOBILE_API_BASE_URL=http://<电脑局域网IP>:8080/api
+
+# Android APK（需要 Android SDK；正式包默认连接 HTTPS 生产域名）
 flutter build apk --release
 ```
 
-**移动端 API 地址：** 移动端默认连接 `http://81.69.16.134/api`（腾讯云公网 IP），可通过 `--dart-define=MOBILE_API_BASE_URL=...` 覆盖。  
+**本地后端监听：** 真机调试前请在仓库根目录用 `BACKEND_HOST=0.0.0.0 BACKEND_PORT=8080 python3 backend/server.py` 启动后端；只在本机 Web / 模拟器调试时用默认 `127.0.0.1` / `10.0.2.2` 即可。
+
+**移动端 API 地址：** Debug Android 模拟器默认连接 `http://10.0.2.2:8080/api`，Debug iOS 模拟器默认连接 `http://127.0.0.1:8080/api`，Release 默认连接 `https://www.seediantreehole.cn/api`；真机或其他环境可通过 `--dart-define=MOBILE_API_BASE_URL=...` 覆盖。
+
 **学生邮箱登录说明：** 普通用户登录、注册和密码找回仅支持 `@stu.xidian.edu.cn` 学生邮箱，不依赖西电统一认证回调。
 
 **Android Release 分发说明：**

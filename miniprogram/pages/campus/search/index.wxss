@@ -30,6 +30,59 @@
   text-align: center;
 }
 
+.filter-scroll {
+  padding: 18rpx 0;
+  border-bottom: 1rpx solid #e8e8e8;
+  background: #fff;
+  white-space: nowrap;
+}
+
+.filter-row {
+  display: flex;
+  gap: 14rpx;
+  padding: 0 24rpx;
+}
+
+.filter-chip {
+  flex: 0 0 auto;
+  height: 58rpx;
+  padding: 0 22rpx;
+  border-radius: 29rpx;
+  background: #f5f5f7;
+  color: #1d1d1f;
+  font-size: 25rpx;
+  line-height: 58rpx;
+}
+
+.filter-chip.active {
+  background: #155e75;
+  color: #fff;
+  font-weight: 600;
+}
+
+.sort-row {
+  display: flex;
+  gap: 14rpx;
+  padding: 16rpx 24rpx;
+  border-bottom: 1rpx solid #e8e8e8;
+  background: #fff;
+}
+
+.sort-chip {
+  height: 52rpx;
+  padding: 0 20rpx;
+  border-radius: 26rpx;
+  color: #8e8e93;
+  font-size: 25rpx;
+  line-height: 52rpx;
+}
+
+.sort-chip.active {
+  background: rgba(21, 94, 117, .1);
+  color: #155e75;
+  font-weight: 600;
+}
+
 .history {
   padding: 24rpx;
   margin-top: 0;

@@ -2,37 +2,52 @@ import 'package:flutter/foundation.dart'
     show kIsWeb, kReleaseMode, TargetPlatform, defaultTargetPlatform;
 
 class AppConfig {
-  // 运行时可通过 --dart-define=API_BASE_URL=http://host:port/api 覆盖
-  // 移动端优先使用 MOBILE_API_BASE_URL（通过 MobileConfig 传入）
+  static const String _localApiBaseUrl = 'http://127.0.0.1:8080/api';
+  static const String _androidEmulatorApiBaseUrl = 'http://10.0.2.2:8080/api';
+  static const String _productionApiBaseUrl =
+      'https://www.seediantreehole.cn/api';
+
+  // Web 通常使用 API_BASE_URL 覆盖；移动端使用 MOBILE_API_BASE_URL 覆盖。
   static String get apiBaseUrl {
-    // 先尝试移动端环境变量
     const mobileUrl = String.fromEnvironment(
       'MOBILE_API_BASE_URL',
       defaultValue: '',
     );
-    if (mobileUrl.isNotEmpty) {
-      return mobileUrl;
+    if (mobileUrl.trim().isNotEmpty) {
+      return _normalizeApiBaseUrl(mobileUrl);
     }
-    // 移动端通过 --dart-define=MOBILE_API_BASE_URL=... 注入
+
+    const webUrl = String.fromEnvironment('API_BASE_URL', defaultValue: '');
+    if (kIsWeb) {
+      if (webUrl.trim().isNotEmpty) {
+        return _normalizeApiBaseUrl(webUrl);
+      }
+      return kReleaseMode ? '/api' : _localApiBaseUrl;
+    }
+
     final isMobile =
-        !kIsWeb &&
-        (defaultTargetPlatform == TargetPlatform.android ||
-            defaultTargetPlatform == TargetPlatform.iOS);
+        defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.iOS;
     if (isMobile) {
-      // 移动端默认直连现网 HTTP（腾讯云公网 IP）；后续切 HTTPS 后应改回域名地址。
-      // 如果通过 --dart-define 注入了真实地址，则优先使用注入值
-      return const String.fromEnvironment(
-        'MOBILE_API_BASE_URL',
-        defaultValue: 'http://81.69.16.134/api',
-      );
+      return _defaultMobileApiBaseUrl;
     }
+
+    if (webUrl.trim().isNotEmpty) {
+      return _normalizeApiBaseUrl(webUrl);
+    }
+    return kReleaseMode ? _productionApiBaseUrl : _localApiBaseUrl;
+  }
+
+  static String get _defaultMobileApiBaseUrl {
     if (kReleaseMode) {
-      return const String.fromEnvironment('API_BASE_URL', defaultValue: '/api');
+      return _productionApiBaseUrl;
     }
-    return const String.fromEnvironment(
-      'API_BASE_URL',
-      defaultValue: 'http://localhost:8080/api',
-    );
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      // Android 模拟器访问宿主机 localhost 需要使用 10.0.2.2。
+      return _androidEmulatorApiBaseUrl;
+    }
+    // iOS 模拟器可以直接访问宿主机 127.0.0.1；真机调试请注入局域网 IP。
+    return _localApiBaseUrl;
   }
 
   // 统一认证回调固定外网 Origin。
@@ -161,5 +176,13 @@ class AppConfig {
         host == '127.0.0.1' ||
         host == '0.0.0.0' ||
         host == '::1';
+  }
+
+  static String _normalizeApiBaseUrl(String value) {
+    final String trimmed = value.trim();
+    if (trimmed == '/') {
+      return trimmed;
+    }
+    return trimmed.replaceAll(RegExp(r'/+$'), '');
   }
 }

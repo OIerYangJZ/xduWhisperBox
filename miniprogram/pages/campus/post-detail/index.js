@@ -1,5 +1,6 @@
 import { getPostById, likePost } from '../../../api/post';
 import { getComments, createComment } from '../../../api/comment';
+import { requireLoginPage } from '../../../utils/auth_guard';
 
 Page({
   data: {
@@ -14,6 +15,20 @@ Page({
   onLoad(options) {
     if (options.id) {
       this.setData({ postId: options.id });
+    }
+    if (!requireLoginPage()) return;
+    if (this.data.postId) {
+      this._detailRequested = true;
+      this.fetchPostDetail();
+      this.fetchComments();
+    }
+  },
+
+  onShow() {
+    if (!requireLoginPage()) return;
+    if (this.data.postId && !this.data.post && !this._detailRequested) {
+      this._detailRequested = true;
+      this.setData({ loading: true });
       this.fetchPostDetail();
       this.fetchComments();
     }
@@ -26,6 +41,7 @@ Page({
         this.setData({ post: res.data, loading: false });
       }
     } catch (err) {
+      this._detailRequested = false;
       this.setData({ loading: false });
       wx.showToast({ title: '加载帖子失败', icon: 'none' });
     }

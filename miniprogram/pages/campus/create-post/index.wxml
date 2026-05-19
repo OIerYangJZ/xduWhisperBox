@@ -5,6 +5,23 @@
   </view>
 
   <view class="form-section">
+    <view class="image-head">
+      <view>
+        <view class="field-label">图片</view>
+        <view class="field-desc">最多 9 张，单张不超过 5MB</view>
+      </view>
+      <view class="add-image" bindtap="chooseImages">添加</view>
+    </view>
+    <view class="image-grid" wx:if="{{images.length}}">
+      <view class="image-cell" wx:for="{{images}}" wx:key="localPath">
+        <image src="{{item.localPath}}" mode="aspectFill" data-path="{{item.localPath}}" bindtap="previewImage"></image>
+        <view class="image-loading" wx:if="{{item.uploading}}">上传中</view>
+        <view class="image-remove" data-index="{{index}}" catchtap="removeImage">×</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
     <view class="field-row">
       <view class="field-label">频道</view>
       <picker mode="selector" range="{{channels}}" value="{{channelIndex}}" bindchange="onChannelChange">

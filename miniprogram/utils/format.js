@@ -96,9 +96,11 @@ export const normalizePost = (raw = {}) => {
   const title = String(raw.title || '').trim();
   const content = String(raw.content || '').trim();
   const tags = toArray(raw.tags).map((item) => String(item || '').trim()).filter(Boolean);
-  const imageUrls = toArray(raw.imageUrls).map(resolveUrl).filter(Boolean);
+  const rawImageUrls = toArray(raw.imageUrls);
+  const sourceImageUrls = rawImageUrls.length ? rawImageUrls : toArray(raw.images);
+  const imageUrls = sourceImageUrls.map(resolveUrl).filter(Boolean);
   const displayTitle = title || truncate(content, 24) || '无标题帖子';
-  const authorAlias = String(raw.authorAlias || raw.alias || '匿名同学');
+  const authorAlias = String(raw.authorAlias || raw.alias || raw.authorName || '匿名同学');
   const channel = String(raw.channel || raw.channelName || '综合');
   return {
     ...raw,
@@ -130,7 +132,7 @@ export const normalizePost = (raw = {}) => {
 };
 
 export const normalizeComment = (raw = {}) => {
-  const authorAlias = String(raw.authorAlias || '匿名同学');
+  const authorAlias = String(raw.authorAlias || raw.authorName || '匿名同学');
   return {
     ...raw,
     id: String(raw.id || raw.commentId || ''),

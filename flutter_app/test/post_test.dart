@@ -23,17 +23,17 @@ void main() {
           return http.Response(
             jsonEncode(MockApiResponses.postsSuccess()),
             200,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
         // 获取单个帖子详情
-        final postDetailPattern = RegExp(r'/posts/(p\d+|new_post_id)');
+        final postDetailPattern = RegExp(r'/posts/(p\d+|new_post_id)$');
         if (postDetailPattern.hasMatch(path) && method == 'GET') {
           return http.Response(
             jsonEncode(MockApiResponses.postDetailSuccess()),
             200,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -46,13 +46,13 @@ void main() {
             return http.Response(
               jsonEncode(MockApiResponses.createPostSuccess()),
               201,
-              headers: {'Content-Type': 'application/json'},
+              headers: {'content-type': 'application/json; charset=utf-8'},
             );
           }
           return http.Response(
             jsonEncode(<String, dynamic>{'message': '标题不能为空'}),
             400,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -62,7 +62,14 @@ void main() {
           return http.Response(
             jsonEncode(MockApiResponses.commentsSuccess()),
             200,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
+          );
+        }
+        if (commentsPattern.hasMatch(path) && method == 'POST') {
+          return http.Response(
+            jsonEncode(<String, dynamic>{'message': '评论已发布'}),
+            201,
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -72,7 +79,7 @@ void main() {
           return http.Response(
             jsonEncode(<String, dynamic>{'message': '已点赞'}),
             200,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -82,7 +89,7 @@ void main() {
           return http.Response(
             jsonEncode(MockApiResponses.favoriteSuccess()),
             200,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -91,7 +98,7 @@ void main() {
           return http.Response(
             jsonEncode(MockApiResponses.channelsSuccess()),
             200,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
@@ -100,14 +107,22 @@ void main() {
           return http.Response(
             jsonEncode(MockApiResponses.searchPostsSuccess()),
             200,
-            headers: {'Content-Type': 'application/json'},
+            headers: {'content-type': 'application/json; charset=utf-8'},
+          );
+        }
+
+        if (path.endsWith('/reports') && method == 'POST') {
+          return http.Response(
+            jsonEncode(MockApiResponses.reportSuccess()),
+            201,
+            headers: {'content-type': 'application/json; charset=utf-8'},
           );
         }
 
         return http.Response(
           jsonEncode(MockApiResponses.notFound()),
           404,
-          headers: {'Content-Type': 'application/json'},
+          headers: {'content-type': 'application/json; charset=utf-8'},
         );
       });
 
@@ -241,10 +256,7 @@ void main() {
     group('createComment', () {
       test('创建评论成功不抛出异常', () async {
         await expectLater(
-          postRepository.createComment(
-            postId: 'p1',
-            content: '这是一条测试评论',
-          ),
+          postRepository.createComment(postId: 'p1', content: '这是一条测试评论'),
           completes,
         );
       });
@@ -263,10 +275,7 @@ void main() {
 
     group('likePost', () {
       test('点赞帖子成功', () async {
-        await expectLater(
-          postRepository.likePost('p1'),
-          completes,
-        );
+        await expectLater(postRepository.likePost('p1'), completes);
       });
     });
 
@@ -331,15 +340,25 @@ void main() {
 
       test('fromJson 处理不同状态值', () {
         expect(
-            PostStatusCodec.fromDynamic('ongoing'), equals(PostStatus.ongoing));
-        expect(PostStatusCodec.fromDynamic('resolved'),
-            equals(PostStatus.resolved));
+          PostStatusCodec.fromDynamic('ongoing'),
+          equals(PostStatus.ongoing),
+        );
         expect(
-            PostStatusCodec.fromDynamic('closed'), equals(PostStatus.closed));
+          PostStatusCodec.fromDynamic('resolved'),
+          equals(PostStatus.resolved),
+        );
         expect(
-            PostStatusCodec.fromDynamic('solved'), equals(PostStatus.resolved));
+          PostStatusCodec.fromDynamic('closed'),
+          equals(PostStatus.closed),
+        );
         expect(
-            PostStatusCodec.fromDynamic('unknown'), equals(PostStatus.ongoing));
+          PostStatusCodec.fromDynamic('solved'),
+          equals(PostStatus.resolved),
+        );
+        expect(
+          PostStatusCodec.fromDynamic('unknown'),
+          equals(PostStatus.ongoing),
+        );
       });
 
       test('fromJson 处理空数据', () {
@@ -368,10 +387,7 @@ void main() {
           allowDm: false,
         );
 
-        final modified = original.copyWith(
-          title: '修改后的标题',
-          likeCount: 15,
-        );
+        final modified = original.copyWith(title: '修改后的标题', likeCount: 15);
 
         expect(modified.id, equals('p1'));
         expect(modified.title, equals('修改后的标题'));

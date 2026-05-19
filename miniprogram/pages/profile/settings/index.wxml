@@ -3,6 +3,10 @@
   <view wx:else>
     <view class="section">
       <view class="section-title">账号</view>
+      <view class="avatar-row">
+        <image class="avatar-preview" src="{{profile.avatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+        <button class="avatar-button" loading="{{uploadingAvatar}}" bindtap="chooseAvatar">更换头像</button>
+      </view>
       <view class="info-row">
         <text>昵称</text>
         <text>{{profile.nickname || profile.alias || '西电同学'}}</text>

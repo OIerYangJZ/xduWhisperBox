@@ -4,6 +4,28 @@
     <view class="search-button" bindtap="search">搜索</view>
   </view>
 
+  <scroll-view class="filter-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+    <view class="filter-row">
+      <view
+        wx:for="{{channels}}"
+        wx:key="*this"
+        data-channel="{{item}}"
+        class="filter-chip {{activeChannel === item ? 'active' : ''}}"
+        bindtap="onChannelTap"
+      >{{item}}</view>
+    </view>
+  </scroll-view>
+
+  <view class="sort-row">
+    <view
+      wx:for="{{sortOptions}}"
+      wx:key="value"
+      data-sort="{{item.value}}"
+      class="sort-chip {{activeSort === item.value ? 'active' : ''}}"
+      bindtap="onSortTap"
+    >{{item.label}}</view>
+  </view>
+
   <view class="history" wx:if="{{history.length && !searched}}">
     <view class="section-head">
       <view class="section-title">最近搜索</view>

@@ -1,26 +1,44 @@
+import { formatTime, truncate } from '../../utils/format';
+import { requireLoginPage } from '../../utils/auth_guard';
+
 Page({
   data: {
-    history: [
-      { id: 1, title: "关于西电选课系统的使用方法", date: "今天 14:20" },
-      { id: 2, title: "如何申请南北校区班车？", date: "昨天 09:15" },
-      { id: 3, title: "奖学金评定最新政策解读", date: "3天前" }
-    ]
+    history: []
   },
 
   onLoad() {
-    // 页面加载逻辑
+    if (!requireLoginPage()) return;
+    this.loadHistory();
+  },
+
+  onShow() {
+    if (!requireLoginPage()) return;
+    this.loadHistory();
+  },
+
+  loadHistory() {
+    const rows = (wx.getStorageSync('aiHistory') || []).slice(0, 5).map((item) => ({
+      id: item.createdAt || item.question,
+      title: truncate(item.question, 28),
+      date: formatTime(item.createdAt),
+      question: item.question
+    }));
+    this.setData({ history: rows });
   },
 
   startNewChat() {
+    if (!requireLoginPage()) return;
     wx.navigateTo({
       url: '/pages/ai/chat/index'
     });
   },
 
   continueChat(e) {
+    if (!requireLoginPage()) return;
     const id = e.currentTarget.dataset.id;
+    const question = e.currentTarget.dataset.question || '';
     wx.navigateTo({
-      url: `/pages/ai/chat/index?id=${id}`
+      url: `/pages/ai/chat/index?id=${encodeURIComponent(id)}&q=${encodeURIComponent(question)}`
     });
   }
 });

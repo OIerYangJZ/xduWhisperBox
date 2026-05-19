@@ -142,7 +142,7 @@ class ApiClient {
     final Uri uri = _buildUri(path, queryParameters: queryParameters);
     final Map<String, String> headers = <String, String>{
       'Accept': 'application/json',
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json; charset=utf-8',
     };
 
     if (auth) {
@@ -162,17 +162,32 @@ class ApiClient {
           break;
         case 'POST':
           response = await _http
-              .post(uri, headers: headers, body: _encodeBody(body))
+              .post(
+                uri,
+                headers: headers,
+                body: _encodeBody(body),
+                encoding: utf8,
+              )
               .timeout(AppConfig.requestTimeout);
           break;
         case 'PATCH':
           response = await _http
-              .patch(uri, headers: headers, body: _encodeBody(body))
+              .patch(
+                uri,
+                headers: headers,
+                body: _encodeBody(body),
+                encoding: utf8,
+              )
               .timeout(AppConfig.requestTimeout);
           break;
         case 'DELETE':
           response = await _http
-              .delete(uri, headers: headers, body: _encodeBody(body))
+              .delete(
+                uri,
+                headers: headers,
+                body: _encodeBody(body),
+                encoding: utf8,
+              )
               .timeout(AppConfig.requestTimeout);
           break;
         default:

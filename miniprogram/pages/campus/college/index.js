@@ -22,11 +22,16 @@ Page({
 
   onLoad() {
     if (!requireLoginPage()) return;
+    this._didLoadData = true;
     this.loadCollege();
   },
 
   onShow() {
-    requireLoginPage();
+    if (!requireLoginPage()) return;
+    if (!this._didLoadData) {
+      this._didLoadData = true;
+      this.loadCollege();
+    }
   },
 
   async loadCollege() {

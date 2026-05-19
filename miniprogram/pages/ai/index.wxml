@@ -12,7 +12,7 @@
   <view class="history-section">
     <view class="section-title">历史对话</view>
     <view class="history-list">
-      <view class="history-item" wx:for="{{history}}" wx:key="id" data-id="{{item.id}}" bindtap="continueChat">
+      <view class="history-item" wx:for="{{history}}" wx:key="id" data-id="{{item.id}}" data-question="{{item.question}}" bindtap="continueChat">
         <view class="item-icon">💬</view>
         <view class="item-content">
           <view class="item-title">{{item.title}}</view>
@@ -20,6 +20,7 @@
         </view>
         <view class="item-arrow">></view>
       </view>
+      <view wx:if="{{!history.length}}" class="empty">暂无历史对话</view>
     </view>
   </view>
 </view>

@@ -389,10 +389,12 @@ def build_admin_report_rows(
     *,
     status: str = "all",
     reason: str = "",
+    keyword: str = "",
 ) -> list[dict[str, Any]]:
     """Return serialised report rows for admin."""
     normalized_status = status.strip().lower() or "all"
     normalized_reason = reason.strip()
+    normalized_keyword = keyword.strip().lower()
     rows: list[dict[str, Any]] = []
     for report in db.get("reports", []):
         row_status = str(report.get("status", "pending")).strip().lower() or "pending"
@@ -400,22 +402,37 @@ def build_admin_report_rows(
             continue
         if normalized_reason and str(report.get("reason", "")) != normalized_reason:
             continue
-        rows.append(
-            {
-                "id": report.get("id", ""),
-                "targetType": report.get("targetType", "other"),
-                "targetId": report.get("targetId", "unknown"),
-                "reason": report.get("reason", "其他"),
-                "description": report.get("description", ""),
-                "status": row_status,
-                "result": report.get("result", ""),
-                "reporterAlias": report.get("reporterAlias", "匿名同学"),
-                "createdAt": report.get("createdAt", ""),
-                "handledAt": report.get("handledAt", ""),
-                "handledBy": report.get("handledBy", ""),
-            }
-        )
+        
+        row = {
+            "id": report.get("id", ""),
+            "targetType": report.get("targetType", "other"),
+            "targetId": report.get("targetId", "unknown"),
+            "reason": report.get("reason", "其他"),
+            "description": report.get("description", ""),
+            "status": row_status,
+            "result": report.get("result", ""),
+            "reporterAlias": report.get("reporterAlias", "匿名同学"),
+            "createdAt": report.get("createdAt", ""),
+            "handledAt": report.get("handledAt", ""),
+            "handledBy": report.get("handledBy", ""),
+        }
+
+        if normalized_keyword:
+            merged = " ".join([
+                str(row.get("id", "")).lower(),
+                str(row.get("reason", "")).lower(),
+                str(row.get("description", "")).lower(),
+                str(row.get("reporterAlias", "")).lower(),
+                str(row.get("targetId", "")).lower(),
+                str(row.get("result", "")).lower(),
+            ])
+            if normalized_keyword not in merged:
+                continue
+        
+        rows.append(row)
+    
     rows.sort(key=lambda x: x.get("createdAt", ""), reverse=True)
+    rows.sort(key=lambda x: 0 if x.get("status") == "pending" else 1)
     return rows
 
 
@@ -493,12 +510,14 @@ def build_admin_review_rows(
     *,
     target_type: str = "",
     status: str = "",
+    keyword: str = "",
 ) -> list[dict[str, Any]]:
     """Return combined review rows (posts + comments)."""
     from services._user_service import find_user_by_id, user_nickname
 
     normalized_type = target_type.strip().lower() or "post"
     normalized_status = status.strip().lower() or "pending"
+    normalized_keyword = keyword.strip().lower()
     rows: list[dict[str, Any]] = []
 
     if normalized_type == "post":
@@ -506,28 +525,44 @@ def build_admin_review_rows(
             row_status = str(post.get("reviewStatus", "approved")).strip().lower() or "approved"
             if normalized_status != "all" and row_status != normalized_status:
                 continue
+            
             author_user = find_user_by_id(
                 db,
                 str(post.get("authorId", "")).strip(),
                 include_deleted=True,
             )
-            rows.append(
-                {
-                    "id": post.get("id", ""),
-                    "targetType": "post",
-                    "title": post.get("title", ""),
-                    "content": post.get("content", ""),
-                    "authorAlias": post.get("authorAlias", "匿名同学"),
-                    "authorUserId": str(post.get("authorId", "")),
-                    "authorNickname": user_nickname(author_user),
-                    "authorEmail": str(author_user.get("email", "")) if author_user else "",
-                    "authorStudentId": str(author_user.get("studentId", "")) if author_user else "",
-                    "createdAt": post.get("createdAt", ""),
-                    "reviewStatus": row_status,
-                    "riskMarked": bool(post.get("riskMarked", False)),
-                    "deleted": bool(post.get("deleted", False)),
-                }
-            )
+            
+            row = {
+                "id": post.get("id", ""),
+                "targetType": "post",
+                "title": post.get("title", ""),
+                "content": post.get("content", ""),
+                "authorAlias": post.get("authorAlias", "匿名同学"),
+                "authorUserId": str(post.get("authorId", "")),
+                "authorNickname": user_nickname(author_user),
+                "authorEmail": str(author_user.get("email", "")) if author_user else "",
+                "authorStudentId": str(author_user.get("studentId", "")) if author_user else "",
+                "createdAt": post.get("createdAt", ""),
+                "reviewStatus": row_status,
+                "riskMarked": bool(post.get("riskMarked", False)),
+                "deleted": bool(post.get("deleted", False)),
+            }
+
+            if normalized_keyword:
+                merged = " ".join([
+                    str(row["id"]).lower(),
+                    str(row["title"]).lower(),
+                    str(row["content"]).lower(),
+                    str(row["authorNickname"]).lower(),
+                    str(row["authorEmail"]).lower(),
+                    str(row["authorStudentId"]).lower(),
+                ])
+                if normalized_keyword not in merged:
+                    continue
+            
+            rows.append(row)
+        
+        rows.sort(key=lambda x: str(x.get("createdAt", "")), reverse=True)
         return rows
 
     if normalized_type == "comment":
@@ -535,28 +570,43 @@ def build_admin_review_rows(
             row_status = str(comment.get("reviewStatus", "approved")).strip().lower() or "approved"
             if normalized_status != "all" and row_status != normalized_status:
                 continue
+            
             author_user = find_user_by_id(
                 db,
                 str(comment.get("userId", "")).strip(),
                 include_deleted=True,
             )
-            rows.append(
-                {
-                    "id": comment.get("id", ""),
-                    "targetType": "comment",
-                    "title": f"评论 @ 帖子 {comment.get('postId', '-')}",
-                    "content": comment.get("content", ""),
-                    "authorAlias": comment.get("authorAlias", "匿名同学"),
-                    "authorUserId": str(comment.get("userId", "")),
-                    "authorNickname": user_nickname(author_user),
-                    "authorEmail": str(author_user.get("email", "")) if author_user else "",
-                    "authorStudentId": str(author_user.get("studentId", "")) if author_user else "",
-                    "createdAt": comment.get("createdAt", ""),
-                    "reviewStatus": row_status,
-                    "riskMarked": bool(comment.get("riskMarked", False)),
-                    "deleted": bool(comment.get("deleted", False)),
-                }
-            )
+            
+            row = {
+                "id": comment.get("id", ""),
+                "targetType": "comment",
+                "title": f"评论 @ 帖子 {comment.get('postId', '-')}",
+                "content": comment.get("content", ""),
+                "authorAlias": comment.get("authorAlias", "匿名同学"),
+                "authorUserId": str(comment.get("userId", "")),
+                "authorNickname": user_nickname(author_user),
+                "authorEmail": str(author_user.get("email", "")) if author_user else "",
+                "authorStudentId": str(author_user.get("studentId", "")) if author_user else "",
+                "createdAt": comment.get("createdAt", ""),
+                "reviewStatus": row_status,
+                "riskMarked": bool(comment.get("riskMarked", False)),
+                "deleted": bool(comment.get("deleted", False)),
+            }
+
+            if normalized_keyword:
+                merged = " ".join([
+                    str(row["id"]).lower(),
+                    str(row["content"]).lower(),
+                    str(row["authorNickname"]).lower(),
+                    str(row["authorEmail"]).lower(),
+                    str(row["authorStudentId"]).lower(),
+                ])
+                if normalized_keyword not in merged:
+                    continue
+
+            rows.append(row)
+        
+        rows.sort(key=lambda x: str(x.get("createdAt", "")), reverse=True)
         return rows
 
     raise ValueError("type 仅支持 post/comment")
@@ -773,10 +823,14 @@ def build_export_payload(
     """Build export payload for admin data export."""
     import csv
     import io
+    import json
 
     rows: list[list[str]] = []
     headers: list[str] = []
-    if scope == "users":
+    
+    normalized_scope = scope.strip().lower() or "users"
+    
+    if normalized_scope == "users":
         headers = ["id", "email", "nickname", "studentId", "userLevel", "verified", "banned", "createdAt"]
         for user in db.get("users", []):
             if user.get("deleted"):
@@ -791,27 +845,122 @@ def build_export_payload(
                 str(bool(user.get("banned"))),
                 str(user.get("createdAt", "")),
             ])
-    elif scope == "posts":
-        headers = ["id", "title", "channel", "authorAlias", "createdAt", "reviewStatus"]
+            
+    elif normalized_scope == "posts" or (normalized_scope == "reviews" and review_type == "post"):
+        headers = ["id", "title", "channel", "authorId", "authorAlias", "createdAt", "reviewStatus", "deleted"]
         for post in db.get("posts", []):
-            if post.get("deleted"):
+            status = str(post.get("reviewStatus", "approved")).strip().lower() or "approved"
+            if review_status != "all" and status != review_status:
                 continue
             rows.append([
                 str(post.get("id", "")),
                 str(post.get("title", "")),
                 str(post.get("channel", "")),
+                str(post.get("authorId", "")),
                 str(post.get("authorAlias", "")),
                 str(post.get("createdAt", "")),
-                str(post.get("reviewStatus", "")),
+                status,
+                str(bool(post.get("deleted"))),
             ])
-    elif scope == "reports":
-        headers = ["id", "reason", "status", "createdAt"]
+
+    elif normalized_scope == "comments" or (normalized_scope == "reviews" and review_type == "comment"):
+        headers = ["id", "postId", "userId", "authorAlias", "content", "createdAt", "reviewStatus", "deleted"]
+        for comment in db.get("comments", []):
+            status = str(comment.get("reviewStatus", "approved")).strip().lower() or "approved"
+            if review_status != "all" and status != review_status:
+                continue
+            rows.append([
+                str(comment.get("id", "")),
+                str(comment.get("postId", "")),
+                str(comment.get("userId", "")),
+                str(comment.get("authorAlias", "")),
+                str(comment.get("content", "")),
+                str(comment.get("createdAt", "")),
+                status,
+                str(bool(comment.get("deleted"))),
+            ])
+
+    elif normalized_scope == "reports":
+        headers = ["id", "user_id", "reporterAlias", "targetType", "targetId", "reason", "status", "createdAt"]
         for report in db.get("reports", []):
+            status = str(report.get("status", "pending")).strip().lower()
+            if report_status != "all" and status != report_status:
+                continue
             rows.append([
                 str(report.get("id", "")),
+                str(report.get("userId", "")),
+                str(report.get("reporterAlias", "")),
+                str(report.get("targetType", "")),
+                str(report.get("targetId", "")),
                 str(report.get("reason", "")),
-                str(report.get("status", "")),
+                status,
                 str(report.get("createdAt", "")),
+            ])
+
+    elif normalized_scope == "cancellations":
+        headers = ["id", "userId", "reason", "status", "createdAt"]
+        for req in db.get("accountCancellationRequests", []):
+            rows.append([
+                str(req.get("id", "")),
+                str(req.get("userId", "")),
+                str(req.get("reason", "")),
+                str(req.get("status", "")),
+                str(req.get("createdAt", "")),
+            ])
+
+    elif normalized_scope == "appeals":
+        headers = ["id", "userId", "userEmail", "appealType", "targetType", "targetId", "title", "content", "status", "createdAt"]
+        for appeal in db.get("appeals", []):
+            status = str(appeal.get("status", "pending")).strip().lower()
+            if appeal_status != "all" and status != appeal_status:
+                continue
+            rows.append([
+                str(appeal.get("id", "")),
+                str(appeal.get("userId", "")),
+                str(appeal.get("userEmail", "")),
+                str(appeal.get("appealType", "")),
+                str(appeal.get("targetType", "")),
+                str(appeal.get("targetId", "")),
+                str(appeal.get("title", "")),
+                str(appeal.get("content", "")),
+                status,
+                str(appeal.get("createdAt", "")),
+            ])
+
+    elif normalized_scope == "userlevelrequests":
+        headers = ["id", "userId", "targetLevel", "reason", "status", "createdAt"]
+        for req in db.get("userLevelRequests", []):
+            rows.append([
+                str(req.get("id", "")),
+                str(req.get("userId", "")),
+                str(req.get("targetLevel", "")),
+                str(req.get("reason", "")),
+                str(req.get("status", "")),
+                str(req.get("createdAt", "")),
+            ])
+
+    elif normalized_scope == "postpinrequests":
+        headers = ["id", "postId", "userId", "durationMinutes", "reason", "status", "createdAt"]
+        for req in db.get("postPinRequests", []):
+            rows.append([
+                str(req.get("id", "")),
+                str(req.get("postId", "")),
+                str(req.get("userId", "")),
+                str(req.get("durationMinutes", "")),
+                str(req.get("reason", "")),
+                str(req.get("status", "")),
+                str(req.get("createdAt", "")),
+            ])
+
+    elif normalized_scope == "auditlogs":
+        headers = ["id", "actorId", "action", "detail", "createdAt"]
+        for log in db.get("auditLogs", []):
+            rows.append([
+                str(log.get("id", "")),
+                str(log.get("actorId", "")),
+                str(log.get("action", "")),
+                str(log.get("detail", "")),
+                str(log.get("createdAt", "")),
             ])
 
     output = ""

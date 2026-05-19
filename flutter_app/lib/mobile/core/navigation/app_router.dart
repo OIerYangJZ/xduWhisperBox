@@ -21,6 +21,10 @@ import '../../features/messages/chat_page.dart';
 import '../../features/notifications/notification_center_page.dart';
 import '../../features/profile/edit_profile_page.dart';
 import '../../features/profile/settings_main_page.dart';
+import '../../features/profile/privacy_settings_page.dart';
+import '../../features/profile/account_security_page.dart';
+import '../../features/profile/display_settings_page.dart';
+import '../../features/profile/about_page.dart';
 import '../../features/profile/notification_settings_page.dart';
 import '../../features/profile/my_posts_page.dart';
 import '../../features/profile/my_comments_page.dart';
@@ -28,7 +32,10 @@ import '../../features/profile/my_reports_page.dart';
 import '../../features/profile/help_and_feedback_page.dart';
 import '../../features/profile/acknowledgements_page.dart';
 import '../../features/admin/admin_login_page.dart';
-import 'package:xdu_treehole_web/features/admin/admin_console_page.dart';
+import '../../features/admin/admin_console_page.dart';
+import '../../features/admin/admin_review_list_page.dart';
+import '../../features/admin/admin_report_list_page.dart';
+import '../../features/admin/admin_image_review_list_page.dart';
 import 'package:xdu_treehole_web/features/legal/terms_of_service_page.dart';
 import 'package:xdu_treehole_web/features/legal/privacy_policy_page.dart';
 import 'package:xdu_treehole_web/features/legal/community_guidelines_page.dart';
@@ -188,10 +195,6 @@ final appRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/profile/change-password',
-      builder: (context, state) => const SettingsMainPage(),
-    ),
-    GoRoute(
       path: '/profile/edit',
       builder: (context, state) => const EditProfilePage(),
     ),
@@ -200,8 +203,20 @@ final appRouter = GoRouter(
       builder: (context, state) => const SettingsMainPage(),
     ),
     GoRoute(
-      path: '/profile/settings/main',
-      builder: (context, state) => const SettingsMainPage(),
+      path: '/profile/settings/privacy',
+      builder: (context, state) => const PrivacySettingsPage(),
+    ),
+    GoRoute(
+      path: '/profile/settings/account',
+      builder: (context, state) => const AccountSecurityPage(),
+    ),
+    GoRoute(
+      path: '/profile/settings/display',
+      builder: (context, state) => const DisplaySettingsPage(),
+    ),
+    GoRoute(
+      path: '/profile/settings/about',
+      builder: (context, state) => const AboutPage(),
     ),
     GoRoute(
       path: '/profile/settings/notifications',
@@ -251,15 +266,19 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/admin',
-      builder: (context, state) => AdminConsolePage(
-        repository: AppRepositories.adminPortal,
-        onLogout: () async {
-          try {
-            await AppRepositories.adminAuth.logout();
-          } catch (_) {}
-          AdminAuthStore.instance.clear();
-        },
-      ),
+      builder: (context, state) => const AdminConsolePage(),
+    ),
+    GoRoute(
+      path: '/admin/reviews',
+      builder: (context, state) => const AdminReviewListPage(),
+    ),
+    GoRoute(
+      path: '/admin/reports',
+      builder: (context, state) => const AdminReportListPage(),
+    ),
+    GoRoute(
+      path: '/admin/images',
+      builder: (context, state) => const AdminImageReviewListPage(),
     ),
   ],
 );

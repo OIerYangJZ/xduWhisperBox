@@ -12,6 +12,11 @@ This file (`CONTEXT.md`) is the central handoff context for AI coding assistants
 - 后端已从 JSON 迁移到 SQLite Repository/DAO + 事务
 - 图片上传、图片审核、账号注销审核、管理员后台、真实邮箱验证码、私信持久化已完成
 - 通知中心已在本地代码完成：评论/回复/点赞/收藏/举报结果/系统公告通知、未读数、已读逻辑
+- AI 助手后端 RAG 接口已完成（关键词检索模式），并与小程序端完成联调
+- 管理员后台已强化：支持审核/举报关键字搜索、批量审核操作、全量数据导出（用户/帖子/评论/举报/申诉/日志等）
+- 设置页面已重构：拆分为账号安全、隐私、通知、界面外观、关于等子页面，并采用列表式菜单布局
+- 移动端管理员功能已补齐：实现了内容审核、举报管理、图片审核的移动端子页面及概览数据实时对接
+- 后端服务已启动并运行在 127.0.0.1:8080，修复了 AI 接口的参数调用 bug
 - 通知中心这批改动当前仍是本地工作区变更，尚未部署到现网、尚未推送到 Git
 
 ## Repository Layout
@@ -122,10 +127,7 @@ Do not place Flutter-specific files such as `pubspec.yaml` at the repository roo
 
 1. Deploy the current notification-center changes to the Tencent Cloud production/internal-test environment
 2. Push the current notification-center changes to GitHub
-3. After notification center rollout, continue strengthening the admin console:
-   - Batch review
-   - Stronger filtering / sorting / search
-   - Data export
+3. **Mobile Admin (Next):** Implement the remaining placeholder functions (User Management, User Level upgrade review, System Config).
 4. Medium-term production work still needed:
    - Domain + HTTPS
    - ICP filing
@@ -134,11 +136,20 @@ Do not place Flutter-specific files such as `pubspec.yaml` at the repository roo
 5. **Mini Program Migration (Ongoing):**
    - Successfully initialized Native WeChat Mini Program structure (`miniprogram/`).
    - Implemented Profile Page & Email/StudentID Login (`pages/profile/index`, `pages/profile/auth/index`).
+   - Added a local real-device login setup: `miniprogram/config/env.js` supports `auto` / `devtools` / `lan` / `prod`.
+   - Enforced the Mini Program login gate: Mini Program API requests other than public auth endpoints require a token.
    - Implemented Campus Feed with 3 Tabs: Community (Treehole), News (Announcements), and College Zone.
-   - Designed Post Detail + Comments page UI.
-   - Implemented AI Assistant Chat UI (`pages/ai/index`, `pages/ai/chat/index`) with mock API.
-   - Added public `/api/announcements` endpoint to backend to support Mini Program news tab.
-   - **Next:** Implement Create Post flow, handle local media uploads for avatars/posts, and refine search/filter.
+   - Implemented Post Detail + Comments page UI and wired it to backend post/comment APIs.
+   - Implemented Create Post flow with image selection and upload.
+   - Implemented Search page refinement with keyword history and channel filtering.
+   - Implemented Profile extras: favorites, notifications, settings, feedback, notification preferences, and avatar upload.
+   - Implemented AI Assistant Chat UI and connected it to the real backend `/api/ai/chat` RAG endpoint.
+   - **Audit Results (Missing/To-do):**
+     - **Missing Pages:** "My Posts" (我的发布), "My Comments" (我的评论), "My Reports" (我的举报).
+     - **Missing Legal:** "Terms of Service" (用户协议), "Privacy Policy" (隐私政策), "Acknowledgements" (致谢页).
+     - **Missing Features:** Privacy Settings (Allow stranger DM, show contactable), Account Deletion request.
+     - **Polish:** Infinite scroll/pagination for feeds, Pull-to-refresh on all list pages, Empty states for all list pages.
+   - **Next:** Implement missing activity pages (My Posts/Comments); fix production HTTPS/domain setup before preview/release.
 
 ## Operational Safety
 

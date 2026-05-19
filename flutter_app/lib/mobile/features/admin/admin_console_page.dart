@@ -5,6 +5,16 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/mobile_theme.dart';
 import '../../core/theme/mobile_colors.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../models/admin_models.dart';
+import '../../../repositories/admin_repository.dart';
+import '../../core/state/mobile_providers.dart';
+import '../../core/theme/mobile_colors.dart';
+import '../../core/theme/mobile_theme.dart';
+
 /// 管理员控制台页
 class AdminConsolePage extends ConsumerStatefulWidget {
   const AdminConsolePage({super.key});
@@ -14,7 +24,11 @@ class AdminConsolePage extends ConsumerStatefulWidget {
 }
 
 class _AdminConsolePageState extends ConsumerState<AdminConsolePage> {
+  AdminOverview? _overview;
   bool _isLoading = true;
+  String? _error;
+
+  AdminRepository get _repo => ref.read(adminRepositoryProvider);
 
   @override
   void initState() {
@@ -23,9 +37,22 @@ class _AdminConsolePageState extends ConsumerState<AdminConsolePage> {
   }
 
   Future<void> _loadData() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    if (mounted) {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final overview = await _repo.fetchOverview();
+      if (!mounted) return;
       setState(() {
+        _overview = overview;
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
         _isLoading = false;
       });
     }
@@ -34,11 +61,14 @@ class _AdminConsolePageState extends ConsumerState<AdminConsolePage> {
   @override
   Widget build(BuildContext context) {
     final colors = MobileColors.of(context);
+    final overview = _overview;
+
     return Scaffold(
       backgroundColor: colors.background,
       appBar: AppBar(
         backgroundColor: colors.surface,
         title: const Text('管理员后台'),
+        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/'),
@@ -47,150 +77,204 @@ class _AdminConsolePageState extends ConsumerState<AdminConsolePage> {
           IconButton(icon: const Icon(Icons.refresh), onPressed: _loadData),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 概览卡片
-                  _buildOverviewCards(),
+      body: RefreshIndicator(
+        onRefresh: _loadData,
+        child: _isLoading && overview == null
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (_error != null)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: MobileTheme.error.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '加载失败: $_error',
+                          style: const TextStyle(color: MobileTheme.error, fontSize: 13),
+                        ),
+                      ),
+                    
+                    // 概览卡片
+                    _buildOverviewCards(overview),
 
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                  // 功能入口
-                  const _SectionTitle(title: '内容管理'),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: colors.surface,
-                      borderRadius: BorderRadius.circular(12),
+                    // 功能入口
+                    const _SectionTitle(title: '内容管理'),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: colors.surface,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: [
+                          _AdminMenuItem(
+                            icon: Icons.article_outlined,
+                            title: '内容审核',
+                            subtitle: '审核帖子和评论',
+                            badge: overview != null && overview.pendingReviews > 0
+                                ? overview.pendingReviews.toString()
+                                : null,
+                            onTap: () => context.push('/admin/reviews'),
+                          ),
+                          const Divider(height: 1, indent: 56),
+                          _AdminMenuItem(
+                            icon: Icons.image_outlined,
+                            title: '图片审核',
+                            subtitle: '管理用户上传图片',
+                            badge: null,
+                            onTap: () => context.push('/admin/images'),
+                          ),
+                          const Divider(height: 1, indent: 56),
+                          _AdminMenuItem(
+                            icon: Icons.flag_outlined,
+                            title: '举报管理',
+                            subtitle: '处理内容举报',
+                            badge: overview != null && overview.todayReports > 0
+                                ? overview.todayReports.toString()
+                                : null,
+                            onTap: () => context.push('/admin/reports'),
+                          ),
+                          const Divider(height: 1, indent: 56),
+                          _AdminMenuItem(
+                            icon: Icons.person_off_outlined,
+                            title: '注销申请',
+                            subtitle: '审核账号注销请求',
+                            badge: overview != null && overview.pendingCancellationRequests > 0
+                                ? overview.pendingCancellationRequests.toString()
+                                : null,
+                            onTap: () {
+                              _showComingSoon('注销审核功能即将上线');
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                    child: Column(
-                      children: [
-                        _AdminMenuItem(
-                          icon: Icons.article_outlined,
-                          title: '帖子审核',
-                          subtitle: '审核用户发布的帖子',
-                          badge: '3',
-                          onTap: () {},
-                        ),
-                        const Divider(height: 1, indent: 56),
-                        _AdminMenuItem(
-                          icon: Icons.comment_outlined,
-                          title: '评论审核',
-                          subtitle: '审核用户评论',
-                          badge: null,
-                          onTap: () {},
-                        ),
-                        const Divider(height: 1, indent: 56),
-                        _AdminMenuItem(
-                          icon: Icons.image_outlined,
-                          title: '图片审核',
-                          subtitle: '审核用户上传的图片',
-                          badge: '5',
-                          onTap: () {},
-                        ),
-                        const Divider(height: 1, indent: 56),
-                        _AdminMenuItem(
-                          icon: Icons.flag_outlined,
-                          title: '举报管理',
-                          subtitle: '处理用户举报',
-                          badge: '2',
-                          onTap: () {},
-                        ),
-                      ],
-                    ),
-                  ),
 
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                  const _SectionTitle(title: '用户管理'),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: colors.surface,
-                      borderRadius: BorderRadius.circular(12),
+                    const _SectionTitle(title: '用户管理'),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: colors.surface,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: [
+                          _AdminMenuItem(
+                            icon: Icons.people_outline,
+                            title: '用户列表',
+                            subtitle: '查看、禁言或封禁用户',
+                            badge: null,
+                            onTap: () {
+                              _showComingSoon('用户管理功能即将上线');
+                            },
+                          ),
+                          const Divider(height: 1, indent: 56),
+                          _AdminMenuItem(
+                            icon: Icons.workspace_premium_outlined,
+                            title: '等级申请',
+                            subtitle: '审核一级用户申请',
+                            badge: null,
+                            onTap: () {
+                              _showComingSoon('等级审核功能即将上线');
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                    child: Column(
-                      children: [
-                        _AdminMenuItem(
-                          icon: Icons.people_outline,
-                          title: '用户列表',
-                          subtitle: '查看和管理用户',
-                          badge: null,
-                          onTap: () {},
-                        ),
-                        const Divider(height: 1, indent: 56),
-                        _AdminMenuItem(
-                          icon: Icons.block_outlined,
-                          title: '禁言管理',
-                          subtitle: '管理被禁言用户',
-                          badge: null,
-                          onTap: () {},
-                        ),
-                      ],
-                    ),
-                  ),
 
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                  const _SectionTitle(title: '系统管理'),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: colors.surface,
-                      borderRadius: BorderRadius.circular(12),
+                    const _SectionTitle(title: '系统管理'),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: colors.surface,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: [
+                          _AdminMenuItem(
+                            icon: Icons.campaign_outlined,
+                            title: '发布公告',
+                            subtitle: '编辑和发布系统公告',
+                            badge: null,
+                            onTap: () {
+                              _showComingSoon('公告管理功能即将上线');
+                            },
+                          ),
+                          const Divider(height: 1, indent: 56),
+                          _AdminMenuItem(
+                            icon: Icons.settings_outlined,
+                            title: '系统配置',
+                            subtitle: '风控、速率与存储配置',
+                            badge: null,
+                            onTap: () {
+                              _showComingSoon('系统配置逻辑正在迁移');
+                            },
+                          ),
+                          const Divider(height: 1, indent: 56),
+                          _AdminMenuItem(
+                            icon: Icons.download_outlined,
+                            title: '数据导出',
+                            subtitle: '导出用户/内容/日志数据',
+                            badge: null,
+                            onTap: () {
+                              _showComingSoon('数据导出功能请暂使用 Web 端');
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                    child: Column(
-                      children: [
-                        _AdminMenuItem(
-                          icon: Icons.campaign_outlined,
-                          title: '发布公告',
-                          subtitle: '向用户发送系统公告',
-                          badge: null,
-                          onTap: () {},
-                        ),
-                        const Divider(height: 1, indent: 56),
-                        _AdminMenuItem(
-                          icon: Icons.settings_outlined,
-                          title: '系统配置',
-                          subtitle: '配置平台参数',
-                          badge: null,
-                          onTap: () {},
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 
-  Widget _buildOverviewCards() {
+  void _showComingSoon(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  Widget _buildOverviewCards(AdminOverview? overview) {
     return Row(
       children: [
         Expanded(
           child: _StatCard(
-            title: '用户总数',
-            value: '1,234',
-            icon: Icons.people,
+            title: '今日用户',
+            value: overview?.todayNewUsers.toString() ?? '-',
+            icon: Icons.person_add_alt_1,
             color: MobileTheme.primaryOf(context),
           ),
         ),
-        SizedBox(width: 12),
+        const SizedBox(width: 12),
         Expanded(
           child: _StatCard(
-            title: '今日帖子',
-            value: '56',
+            title: '今日发帖',
+            value: overview?.todayPosts.toString() ?? '-',
             icon: Icons.article,
             color: MobileTheme.success,
           ),
         ),
-        SizedBox(width: 12),
+        const SizedBox(width: 12),
         Expanded(
           child: _StatCard(
-            title: '待审核',
-            value: '10',
+            title: '待审核项',
+            value: overview?.pendingReviews.toString() ?? '-',
             icon: Icons.pending_actions,
             color: MobileTheme.warning,
           ),

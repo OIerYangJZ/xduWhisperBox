@@ -288,7 +288,12 @@ def handle_admin_reviews(
         return
     target_type = (query.get("type", [""])[0] or "").strip().lower()
     status = (query.get("status", [""])[0] or "").strip().lower()
-    send_json(handler, HTTPStatus.OK, {"data": build_admin_review_rows(db, target_type=target_type, status=status)})
+    keyword = (query.get("keyword", [""])[0] or "").strip()
+    send_json(
+        handler,
+        HTTPStatus.OK,
+        {"data": build_admin_review_rows(db, target_type=target_type, status=status, keyword=keyword)},
+    )
 
 
 def handle_admin_reports(
@@ -302,7 +307,12 @@ def handle_admin_reports(
         return
     status = (query.get("status", [""])[0] or "").strip().lower()
     reason = (query.get("reason", [""])[0] or "").strip()
-    send_json(handler, HTTPStatus.OK, {"data": build_admin_report_rows(db, status=status, reason=reason)})
+    keyword = (query.get("keyword", [""])[0] or "").strip()
+    send_json(
+        handler,
+        HTTPStatus.OK,
+        {"data": build_admin_report_rows(db, status=status, reason=reason, keyword=keyword)},
+    )
 
 
 def handle_admin_images_reviews(

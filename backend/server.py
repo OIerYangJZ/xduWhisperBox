@@ -21,6 +21,7 @@ import _globals
 # Handler modules (extracted from this file)
 import handlers as _handlers
 import handlers._admin_handler as _admin_handler
+import handlers._ai_handler as _ai_handler
 import handlers._auth_handler as _auth_handler
 import handlers._comment_handler as _comment_handler
 import handlers._message_handler as _message_handler
@@ -485,6 +486,11 @@ class TreeholeHandler(BaseHTTPRequestHandler):
 
             if path == "/api/admin/auth/logout":
                 _admin_handler.handle_admin_auth_logout(self, db)
+                return
+
+            # AI assistant
+            if path == "/api/ai/chat":
+                _ai_handler.handle_ai_chat(self, db)
                 return
 
             if path == "/api/admin/admin-accounts":

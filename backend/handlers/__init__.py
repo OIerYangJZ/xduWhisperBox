@@ -45,6 +45,9 @@ from handlers._admin_handler import (
     handle_admin_cancellation_action,
     handle_admin_export,
 )
+from handlers._ai_handler import (
+    handle_ai_chat,
+)
 from handlers._auth_handler import (
     handle_login,
     handle_logout,
@@ -158,8 +161,10 @@ __all__ = [
     "handle_admin_appeal_action",
     "handle_admin_post_pin_request_action",
     "handle_admin_post_pin_requests",
-    "handle_admin_cancellation_action",
-    "handle_admin_export",
+    handle_admin_cancellation_action,
+    handle_admin_export,
+    # ai
+    "handle_ai_chat",
     # auth
     "handle_login",
     "handle_logout",

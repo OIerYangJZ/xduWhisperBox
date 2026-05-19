@@ -25,10 +25,16 @@ class AdminRepository {
   Future<List<AdminReviewItem>> fetchReviews({
     required String type,
     required String status,
+    String? keyword,
   }) async {
     final dynamic response = await _apiClient.get(
       ApiEndpoints.adminReviews,
-      queryParameters: <String, dynamic>{'type': type, 'status': status},
+      queryParameters: <String, dynamic>{
+        'type': type,
+        'status': status,
+        if (keyword != null && keyword.trim().isNotEmpty)
+          'keyword': keyword.trim(),
+      },
     );
     final List<dynamic> list = extractList(response);
     return list
@@ -56,9 +62,11 @@ class AdminRepository {
     return _apiClient.post(
       ApiEndpoints.adminReviewBatch,
       body: <String, dynamic>{
-        'targetType': targetType,
-        'targetIds': targetIds,
-        'action': action,
+        'items': targetIds.map((String id) => <String, String>{
+          'type': targetType,
+          'id': id,
+          'action': action,
+        }).toList(),
       },
     );
   }
@@ -66,12 +74,15 @@ class AdminRepository {
   Future<List<AdminReportEntry>> fetchReports({
     String status = 'all',
     String? reason,
+    String? keyword,
   }) async {
     final dynamic response = await _apiClient.get(
       ApiEndpoints.adminReports,
       queryParameters: <String, dynamic>{
         'status': status,
         if (reason != null && reason.trim().isNotEmpty) 'reason': reason.trim(),
+        if (keyword != null && keyword.trim().isNotEmpty)
+          'keyword': keyword.trim(),
       },
     );
 

@@ -71,6 +71,7 @@ class _AdminConsolePageState extends State<AdminConsolePage> {
   final TextEditingController _androidReleaseNotesController =
       TextEditingController();
   final TextEditingController _reportReasonController = TextEditingController();
+  final TextEditingController _reviewKeywordController = TextEditingController();
   final TextEditingController _reportKeywordController =
       TextEditingController();
   final TextEditingController _userKeywordController = TextEditingController();
@@ -129,6 +130,7 @@ class _AdminConsolePageState extends State<AdminConsolePage> {
     _androidVersionCodeController.dispose();
     _androidReleaseNotesController.dispose();
     _reportReasonController.dispose();
+    _reviewKeywordController.dispose();
     _reportKeywordController.dispose();
     _userKeywordController.dispose();
     _imageKeywordController.dispose();
@@ -541,6 +543,18 @@ class _AdminConsolePageState extends State<AdminConsolePage> {
                         child: Text('注销申请'),
                       ),
                       DropdownMenuItem(value: 'appeals', child: Text('申诉记录')),
+                      DropdownMenuItem(
+                        value: 'postpinrequests',
+                        child: Text('置顶申请'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'userlevelrequests',
+                        child: Text('一级用户申请'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'auditlogs',
+                        child: Text('审计日志'),
+                      ),
                     ],
                     onChanged: (String? value) {
                       if (value == null) {
@@ -636,6 +650,18 @@ class _AdminConsolePageState extends State<AdminConsolePage> {
                       });
                       _loadReviews();
                     },
+                  ),
+                ),
+                SizedBox(
+                  width: 200,
+                  child: TextField(
+                    controller: _reviewKeywordController,
+                    decoration: const InputDecoration(
+                      labelText: '内容/用户/邮箱搜索',
+                      hintText: '回车搜索',
+                      prefixIcon: Icon(Icons.search, size: 20),
+                    ),
+                    onSubmitted: (_) => _loadReviews(),
                   ),
                 ),
                 FilledButton.tonalIcon(
@@ -3064,8 +3090,10 @@ class _AdminConsolePageState extends State<AdminConsolePage> {
       final List<AdminReviewItem> reviews = await _repo.fetchReviews(
         type: _reviewType,
         status: _reviewStatus,
+        keyword: _reviewKeywordController.text.trim(),
       );
       final List<AdminReportEntry> reports = await _repo.fetchReports(
+
         status: _reportStatus,
       );
       final List<AdminImageReviewItem> imageReviews = await _repo
@@ -3143,6 +3171,7 @@ class _AdminConsolePageState extends State<AdminConsolePage> {
       final List<AdminReviewItem> reviews = await _repo.fetchReviews(
         type: _reviewType,
         status: _reviewStatus,
+        keyword: _reviewKeywordController.text.trim(),
       );
       if (!mounted) {
         return;
@@ -3160,6 +3189,7 @@ class _AdminConsolePageState extends State<AdminConsolePage> {
     try {
       final List<AdminReportEntry> reports = await _repo.fetchReports(
         status: _reportStatus,
+        keyword: _reportKeywordController.text.trim(),
       );
       if (!mounted) {
         return;

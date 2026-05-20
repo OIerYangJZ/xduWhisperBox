@@ -21,8 +21,8 @@ const networkErrorMessage = () => {
  */
 const request = (options) => {
   return new Promise((resolve, reject) => {
-    // 获取本地存储的 token
-    const token = wx.getStorageSync('token');
+    const tokenKey = options.tokenKey || 'token';
+    const token = wx.getStorageSync(tokenKey);
     const requestUrl = options.url || '';
     const publicAuthPaths = [
       '/api/auth/login',
@@ -31,9 +31,16 @@ const request = (options) => {
       '/api/auth/send-code',
       '/api/auth/resend-code',
       '/api/auth/password/send-code',
-      '/api/auth/password/reset'
+      '/api/auth/password/reset',
+      '/api/admin/auth/login'
     ];
     const isPublicAuthPath = publicAuthPaths.some((path) => requestUrl === path);
+
+    if (!token && !isPublicAuthPath && tokenKey === 'adminToken') {
+      wx.redirectTo({ url: '/pages/admin/login/index' });
+      reject({ statusCode: 401, data: { message: '请先登录管理员账号' } });
+      return;
+    }
 
     if (!token && !isPublicAuthPath) {
       clearLoginAndRedirect();

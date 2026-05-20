@@ -692,11 +692,29 @@ def build_overview(db: dict[str, Any]) -> dict[str, Any]:
     users = [u for u in db.get("users", []) if not u.get("deleted")]
     posts = [p for p in db.get("posts", []) if not p.get("deleted")]
     reports_pending = [r for r in db.get("reports", []) if r.get("status") == "pending"]
+    pending_reviews = [
+        *[p for p in posts if str(p.get("reviewStatus", "approved")).lower() == "pending"],
+        *[
+            c
+            for c in db.get("comments", [])
+            if not c.get("deleted") and str(c.get("reviewStatus", "approved")).lower() == "pending"
+        ],
+    ]
+    pending_images = [
+        u
+        for u in db.get("mediaUploads", [])
+        if not u.get("deleted") and str(u.get("status", "approved")).lower() in {"pending", "risk"}
+    ]
     return {
         "totalUsers": len(users),
         "totalPosts": len(posts),
         "totalReports": len(db.get("reports", [])),
         "pendingReports": len(reports_pending),
+        "pendingReportCount": len(reports_pending),
+        "pendingReviews": len(pending_reviews),
+        "pendingReviewCount": len(pending_reviews),
+        "pendingImages": len(pending_images),
+        "pendingImageCount": len(pending_images),
         "totalComments": len([c for c in db.get("comments", []) if not c.get("deleted")]),
         "channels": list(db.get("channels", [])),
         "tags": list(db.get("tags", [])),

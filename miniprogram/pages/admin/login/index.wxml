@@ -1,0 +1,7 @@
+<view class="admin-login">
+  <view class="title">管理员登录</view>
+  <view class="subtitle">进入小程序管理后台</view>
+  <input class="input" placeholder="管理员账号" value="{{username}}" data-key="username" bindinput="onInput" />
+  <input class="input" placeholder="密码" type="password" value="{{password}}" data-key="password" bindinput="onInput" />
+  <button class="primary-button" loading="{{submitting}}" bindtap="submit">登录</button>
+</view>

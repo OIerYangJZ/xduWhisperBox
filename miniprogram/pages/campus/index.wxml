@@ -5,6 +5,22 @@
     <view class="tab-item {{currentTab === 'news' ? 'active' : ''}}" data-tab="news" bindtap="switchTab">新闻</view>
     <view class="tab-item {{currentTab === 'college' ? 'active' : ''}}" data-tab="college" bindtap="switchTab">学院</view>
   </view>
+  <view class="community-tools" wx:if="{{currentTab === 'community'}}">
+    <view class="tool-button" bindtap="goSearch">搜索</view>
+    <scroll-view class="channel-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="channel-row">
+        <view wx:for="{{channels}}" wx:key="*this" data-channel="{{item}}" class="channel-chip {{activeChannel === item ? 'active' : ''}}" bindtap="onChannelTap">{{item}}</view>
+      </view>
+    </scroll-view>
+    <view class="notify-button" bindtap="goNotifications">
+      通知
+      <text wx:if="{{unreadCount}}" class="badge">{{unreadCount}}</text>
+    </view>
+  </view>
+  <view class="sort-row" wx:if="{{currentTab === 'community'}}">
+    <view wx:for="{{sortOptions}}" wx:key="value" data-sort="{{item.value}}" class="sort-chip {{activeSort === item.value ? 'active' : ''}}" bindtap="onSortTap">{{item.label}}</view>
+    <view class="publish-button" bindtap="goCreatePost">发布</view>
+  </view>
 
   <!-- 树洞列表 -->
   <scroll-view class="feed-list" scroll-y wx:if="{{currentTab === 'community'}}" bindscrolltolower="onReachBottom">
@@ -16,8 +32,12 @@
           <view class="post-time">{{item.createdAt}}</view>
         </view>
       </view>
+      <view class="post-title" wx:if="{{item.title}}">{{item.title}}</view>
       <view class="post-content">
         <text>{{item.content}}</text>
+      </view>
+      <view class="tag-row" wx:if="{{item.tags && item.tags.length}}">
+        <text wx:for="{{item.tags}}" wx:key="*this">#{{item}}</text>
       </view>
       <view class="post-images" wx:if="{{item.images && item.images.length > 0}}">
         <image wx:for="{{item.images}}" wx:for-item="img" wx:key="*this" src="{{img}}" mode="aspectFill" class="post-image"></image>
@@ -30,6 +50,9 @@
         <view class="action-item">
           <text class="icon">👍</text>
           <text>{{item.likeCount || 0}}</text>
+        </view>
+        <view class="action-item">
+          <text>{{item.statusLabel}}</text>
         </view>
       </view>
     </view>
@@ -61,4 +84,5 @@
     </view>
     <view class="empty-state" wx:if="{{!loading && colleges.length === 0}}">加载中...</view>
   </view>
+  <view class="floating-publish" wx:if="{{currentTab === 'community'}}" bindtap="goCreatePost">＋</view>
 </view>

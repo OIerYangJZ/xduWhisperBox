@@ -1,0 +1,18 @@
+<view class="page about-page">
+  <view class="brand-card">
+    <view class="brand-title">XDU WhisperBox</view>
+    <view class="brand-subtitle">西电树洞微信小程序</view>
+    <view class="version">版本：{{version}}</view>
+  </view>
+
+  <view class="section">
+    <view class="row" bindtap="checkUpdate">
+      <text>检查更新</text>
+      <text>查看</text>
+    </view>
+    <view class="row" wx:for="{{items}}" wx:key="type" data-type="{{item.type}}" bindtap="openLegal">
+      <text>{{item.label}}</text>
+      <text>进入</text>
+    </view>
+  </view>
+</view>

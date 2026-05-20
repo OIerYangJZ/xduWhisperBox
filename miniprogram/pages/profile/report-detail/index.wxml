@@ -1,0 +1,33 @@
+<view class="page report-page">
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:elif="{{!report}}" class="empty">举报记录不存在</view>
+  <view wx:else>
+    <view class="section">
+      <view class="row">
+        <text>举报原因</text>
+        <text>{{report.reason || '-'}}</text>
+      </view>
+      <view class="row">
+        <text>处理状态</text>
+        <text>{{report.statusText}}</text>
+      </view>
+      <view class="row">
+        <text>提交时间</text>
+        <text>{{report.createdAt || '-'}}</text>
+      </view>
+      <view class="row" wx:if="{{report.handledAt}}">
+        <text>处理时间</text>
+        <text>{{report.handledAt}}</text>
+      </view>
+    </view>
+    <view class="section">
+      <view class="block-title">举报描述</view>
+      <view class="block-text">{{report.description || '未填写补充描述'}}</view>
+    </view>
+    <view class="section">
+      <view class="block-title">处理结果</view>
+      <view class="block-text">{{report.result || '暂未处理'}}</view>
+    </view>
+    <button class="primary-button" wx:if="{{report.targetType === 'post'}}" bindtap="openTarget">查看目标内容</button>
+  </view>
+</view>

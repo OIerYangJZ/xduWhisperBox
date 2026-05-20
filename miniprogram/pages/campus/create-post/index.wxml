@@ -32,6 +32,54 @@
       <view class="field-label">标签</view>
       <input class="field-input" placeholder="用空格或逗号分隔，最多 5 个" value="{{tagText}}" bindinput="onTagInput" />
     </view>
+    <view class="tag-cloud">
+      <view
+        wx:for="{{tagOptions}}"
+        wx:key="label"
+        data-tag="{{item.label}}"
+        class="tag-chip {{item.selected ? 'active' : ''}}"
+        bindtap="toggleTag"
+      >{{item.label}}</view>
+    </view>
+    <view class="field-row">
+      <view class="field-label">状态</view>
+      <picker mode="selector" range="{{statusOptions}}" range-key="label" value="{{statusIndex}}" bindchange="onStatusChange">
+        <view class="picker-value">{{statusOptions[statusIndex].label}}</view>
+      </picker>
+    </view>
+    <view class="field-row">
+      <view class="field-label">可见性</view>
+      <picker mode="selector" range="{{visibilityOptions}}" range-key="label" value="{{visibilityIndex}}" bindchange="onVisibilityChange">
+        <view class="picker-value">{{visibilityOptions[visibilityIndex].label}}</view>
+      </picker>
+    </view>
+    <view class="field-row">
+      <view>
+        <view class="field-label">Markdown</view>
+        <view class="field-desc">正文按 Markdown 渲染</view>
+      </view>
+      <switch checked="{{contentFormat === 'markdown'}}" bindchange="onContentFormatChange" color="#155E75" />
+    </view>
+    <view class="field-row">
+      <view class="field-label">置顶申请</view>
+      <picker mode="selector" range="{{pinOptions}}" range-key="label" value="{{pinIndex}}" bindchange="onPinChange">
+        <view class="picker-value">{{pinOptions[pinIndex].label}}</view>
+      </picker>
+    </view>
+    <view class="field-row">
+      <view>
+        <view class="field-label">允许评论</view>
+        <view class="field-desc">关闭后其他人不能继续评论</view>
+      </view>
+      <switch checked="{{allowComment}}" bindchange="onAllowCommentChange" color="#155E75" />
+    </view>
+    <view class="field-row">
+      <view>
+        <view class="field-label">允许私信</view>
+        <view class="field-desc">匿名发布默认关闭私信</view>
+      </view>
+      <switch checked="{{allowDm}}" disabled="{{useAnonymousAlias}}" bindchange="onAllowDmChange" color="#155E75" />
+    </view>
     <view class="field-row">
       <view>
         <view class="field-label">匿名发布</view>
@@ -42,6 +90,7 @@
     <view class="field-row" wx:if="{{useAnonymousAlias}}">
       <view class="field-label">匿名名</view>
       <input class="field-input" placeholder="默认匿名同学" maxlength="16" value="{{anonymousAlias}}" bindinput="onAliasInput" />
+      <view class="inline-action" bindtap="randomAlias">随机</view>
     </view>
   </view>
 

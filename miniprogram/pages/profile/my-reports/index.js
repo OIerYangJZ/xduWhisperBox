@@ -38,8 +38,6 @@ Page({
 
   openTarget(event) {
     const item = this.data.reports[Number(event.currentTarget.dataset.index)];
-    if (item && item.targetType === 'post' && item.targetId) {
-      wx.navigateTo({ url: `/pages/campus/post-detail/index?id=${item.targetId}` });
-    }
+    if (item) wx.navigateTo({ url: `/pages/profile/report-detail/index?id=${item.id}` });
   }
 });

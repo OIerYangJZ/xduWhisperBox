@@ -1,4 +1,5 @@
 import { followUser, getPublicUser, unfollowUser } from '../../../api/user';
+import { getPosts } from '../../../api/posts';
 import { createDirectConversation } from '../../../api/messages';
 import { requireLoginPage } from '../../../utils/auth_guard';
 
@@ -6,6 +7,7 @@ Page({
   data: {
     userId: '',
     profile: null,
+    posts: [],
     loading: true
   },
 
@@ -19,9 +21,12 @@ Page({
   async loadProfile() {
     this.setData({ loading: true });
     try {
-      const profile = await getPublicUser(this.data.userId);
+      const [profile, posts] = await Promise.all([
+        getPublicUser(this.data.userId),
+        getPosts({ authorId: this.data.userId, page: 1, limit: 20 })
+      ]);
       wx.setNavigationBarTitle({ title: profile.nickname || profile.alias || '主页' });
-      this.setData({ profile, loading: false });
+      this.setData({ profile, posts, loading: false });
     } catch (error) {
       this.setData({ loading: false });
     }
@@ -46,5 +51,10 @@ Page({
         url: `/pages/profile/chat/index?id=${conversation.id}&name=${encodeURIComponent(conversation.name || '私信')}`
       });
     } catch (error) {}
+  },
+
+  openPost(event) {
+    const id = event.currentTarget.dataset.id;
+    if (id) wx.navigateTo({ url: `/pages/campus/post-detail/index?id=${id}` });
   }
 });

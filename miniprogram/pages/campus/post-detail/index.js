@@ -12,11 +12,18 @@ import {
   unfavoritePost
 } from '../../../api/posts';
 import { createDirectConversation } from '../../../api/messages';
+import { followUser, unfollowUser } from '../../../api/user';
 import { requireLoginPage } from '../../../utils/auth_guard';
+import { markdownToNodes } from '../../../utils/markdown';
 
 const REPORT_REASONS = ['广告引流', '人身攻击', '违规内容', '垃圾信息', '其他'];
+const COMMENT_SORTS = [
+  { label: '最新', value: 'latest' },
+  { label: '热度', value: 'hot' }
+];
+const EMOJIS = ['😀', '😂', '🥲', '😍', '👍', '🙏', '🎉', '🍉', '📚', '🔥'];
 
-const buildCommentRows = (comments) => {
+const buildCommentRows = (comments, targetCommentId = '') => {
   const byParent = {};
   comments.forEach((item) => {
     const parentId = item.parentId || '';
@@ -28,6 +35,8 @@ const buildCommentRows = (comments) => {
     (byParent[parentId] || []).forEach((item) => {
       rows.push({
         ...item,
+        anchorId: `comment-${item.id}`,
+        isTarget: item.id === targetCommentId,
         indentLevel: Math.min(level, 2),
         indentStyle: `margin-left: ${Math.min(level, 2) * 44}rpx`
       });
@@ -42,7 +51,14 @@ Page({
   data: {
     postId: '',
     post: null,
+    contentNodes: [],
     comments: [],
+    commentSorts: COMMENT_SORTS,
+    commentSort: 'latest',
+    targetCommentId: '',
+    targetAnchor: '',
+    emojis: EMOJIS,
+    showEmojiPanel: false,
     loading: true,
     commentContent: '',
     replyToId: '',
@@ -52,6 +68,12 @@ Page({
 
   onLoad(options) {
     if (options.id) this.setData({ postId: options.id });
+    if (options.commentId) {
+      this.setData({
+        targetCommentId: options.commentId,
+        targetAnchor: `comment-${options.commentId}`
+      });
+    }
     if (!requireLoginPage()) return;
     if (this.data.postId) {
       this.loadDetail();
@@ -76,11 +98,12 @@ Page({
     try {
       const [post, comments] = await Promise.all([
         getPost(this.data.postId),
-        getPostComments(this.data.postId, { page: 1, limit: 100 })
+        getPostComments(this.data.postId, { page: 1, limit: 100, sort: this.data.commentSort })
       ]);
       this.setData({
         post,
-        comments: buildCommentRows(comments),
+        contentNodes: markdownToNodes(post.contentFormat === 'markdown' ? (post.markdownSource || post.content) : post.content),
+        comments: buildCommentRows(comments, this.data.targetCommentId),
         loading: false
       });
     } catch (error) {
@@ -129,13 +152,22 @@ Page({
   chooseReportReason(targetType, targetId) {
     wx.showActionSheet({
       itemList: REPORT_REASONS,
-      success: async (res) => {
+      success: (res) => {
         const reason = REPORT_REASONS[res.tapIndex];
         if (!reason) return;
-        try {
-          await reportTarget({ targetType, targetId, reason, description: '' });
-          wx.showToast({ title: '举报已提交', icon: 'success' });
-        } catch (error) {}
+        wx.showModal({
+          title: `举报：${reason}`,
+          editable: true,
+          placeholderText: '补充描述（选填）',
+          confirmText: '提交',
+          success: async (modal) => {
+            if (!modal.confirm) return;
+            try {
+              await reportTarget({ targetType, targetId, reason, description: String(modal.content || '').trim() });
+              wx.showToast({ title: '举报已提交', icon: 'success' });
+            } catch (error) {}
+          }
+        });
       }
     });
   },
@@ -181,8 +213,45 @@ Page({
     } catch (error) {}
   },
 
+  async toggleFollowAuthor() {
+    const post = this.data.post;
+    const userId = post && post.authorUserId;
+    if (!userId) return;
+    try {
+      if (post.followingAuthor || post.isFollowingAuthor || post.isFollowing) {
+        await unfollowUser(userId);
+        this.setData({ post: { ...post, followingAuthor: false, isFollowingAuthor: false, isFollowing: false } });
+      } else {
+        await followUser(userId);
+        this.setData({ post: { ...post, followingAuthor: true, isFollowingAuthor: true, isFollowing: true } });
+      }
+    } catch (error) {}
+  },
+
+  previewPostImage(event) {
+    const current = event.currentTarget.dataset.url;
+    const urls = (this.data.post && this.data.post.imageUrls) || [];
+    if (current && urls.length) wx.previewImage({ current, urls });
+  },
+
+  onCommentSortTap(event) {
+    const sort = event.currentTarget.dataset.sort;
+    if (!sort || sort === this.data.commentSort) return;
+    this.setData({ commentSort: sort });
+    this.loadDetail();
+  },
+
   onCommentInput(event) {
     this.setData({ commentContent: event.detail.value });
+  },
+
+  toggleEmojiPanel() {
+    this.setData({ showEmojiPanel: !this.data.showEmojiPanel });
+  },
+
+  insertEmoji(event) {
+    const emoji = event.currentTarget.dataset.emoji || '';
+    this.setData({ commentContent: `${this.data.commentContent}${emoji}` });
   },
 
   setReplyTarget(event) {
@@ -209,9 +278,9 @@ Page({
       await createComment(this.data.postId, {
         content,
         isAnonymous: false,
-        replyToId: this.data.replyToId
+        parentId: this.data.replyToId
       });
-      this.setData({ commentContent: '', replyToId: '', replyToName: '' });
+      this.setData({ commentContent: '', replyToId: '', replyToName: '', showEmojiPanel: false });
       await this.loadDetail();
       wx.showToast({ title: '评论成功', icon: 'success' });
     } catch (error) {}
@@ -239,6 +308,30 @@ Page({
   reportComment(event) {
     const comment = this.data.comments[Number(event.currentTarget.dataset.index)];
     if (comment) this.chooseReportReason('comment', comment.id);
+  },
+
+  copyComment(event) {
+    const comment = this.data.comments[Number(event.currentTarget.dataset.index)];
+    if (!comment) return;
+    wx.setClipboardData({ data: comment.content || '' });
+  },
+
+  showCommentMenu(event) {
+    const index = Number(event.currentTarget.dataset.index);
+    const comment = this.data.comments[index];
+    if (!comment) return;
+    const itemList = ['回复', '复制', '举报'];
+    if (comment.isOwnComment) itemList.push('删除');
+    wx.showActionSheet({
+      itemList,
+      success: (res) => {
+        const action = itemList[res.tapIndex];
+        if (action === '回复') this.setReplyTarget({ currentTarget: { dataset: { index } } });
+        if (action === '复制') this.copyComment({ currentTarget: { dataset: { index } } });
+        if (action === '举报') this.reportComment({ currentTarget: { dataset: { index } } });
+        if (action === '删除') this.deleteOwnComment({ currentTarget: { dataset: { index } } });
+      }
+    });
   },
 
   deleteOwnComment(event) {

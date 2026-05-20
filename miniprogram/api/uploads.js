@@ -69,3 +69,14 @@ export const uploadAvatarImage = async (filePath, options = {}) => {
     avatarUrl: resolveUrl(upload.avatarUrl)
   };
 };
+
+export const uploadBackgroundImage = async (filePath, options = {}) => {
+  const upload = await uploadLocalImage(filePath, {
+    ...options,
+    url: '/api/uploads/images'
+  });
+  return {
+    ...upload,
+    url: resolveUrl(upload.url)
+  };
+};

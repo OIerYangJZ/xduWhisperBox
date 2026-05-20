@@ -7,6 +7,11 @@
         <image class="avatar-preview" src="{{profile.avatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
         <button class="avatar-button" loading="{{uploadingAvatar}}" bindtap="chooseAvatar">更换头像</button>
       </view>
+      <view class="background-row">
+        <image class="background-preview" wx:if="{{profile.backgroundImageUrl}}" src="{{profile.backgroundImageUrl}}" mode="aspectFill"></image>
+        <view class="background-empty" wx:else>个人主页背景图</view>
+        <button class="avatar-button" loading="{{uploadingBackground}}" bindtap="chooseBackground">更换背景</button>
+      </view>
       <view class="info-row">
         <text>昵称</text>
         <input class="row-input" value="{{form.nickname}}" data-key="nickname" bindinput="onProfileInput" placeholder="昵称" />
@@ -83,11 +88,27 @@
         <text>{{profile.levelUpgradeRequest.statusLabel || profile.levelUpgradeRequest.status}}</text>
       </view>
       <button class="safe-button" loading="{{submittingLevelUpgrade}}" bindtap="requestLevelUpgrade" disabled="{{profile.isLevelOneUser || profile.levelUpgradeRequest}}">申请一级用户</button>
+      <view class="info-row nav-row" bindtap="goResetPassword">
+        <text>修改/重置密码</text>
+        <text>进入</text>
+      </view>
       <view class="info-row" wx:if="{{profile.accountCancellationRequest}}">
         <text>注销申请</text>
         <text>{{profile.accountCancellationRequest.statusLabel || profile.accountCancellationRequest.status}}</text>
       </view>
       <button class="danger-outline-button" loading="{{submittingCancellation}}" bindtap="requestCancellation" disabled="{{profile.accountCancellationRequest}}">申请账号注销</button>
+    </view>
+
+    <view class="section">
+      <view class="section-title">显示与关于</view>
+      <view class="info-row nav-row" bindtap="goDisplaySettings">
+        <text>显示设置</text>
+        <text>系统 / 浅色 / 深色</text>
+      </view>
+      <view class="info-row nav-row" bindtap="goAbout">
+        <text>关于与版本</text>
+        <text>查看</text>
+      </view>
     </view>
 
     <button class="logout-button" loading="{{loggingOut}}" bindtap="handleLogout">退出登录</button>

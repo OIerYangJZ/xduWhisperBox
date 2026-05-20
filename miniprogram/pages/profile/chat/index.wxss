@@ -57,6 +57,20 @@
   border-top: 1rpx solid #e8e8e8;
 }
 
+.reply-pill {
+  max-width: 180rpx;
+  height: 58rpx;
+  padding: 0 14rpx;
+  border-radius: 29rpx;
+  background: rgba(21, 94, 117, .1);
+  color: #155e75;
+  font-size: 22rpx;
+  line-height: 58rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .block-button,
 .send-button {
   width: 104rpx;

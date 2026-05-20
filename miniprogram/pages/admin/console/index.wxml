@@ -1,0 +1,21 @@
+<view class="admin-page">
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:else>
+    <view class="hero">
+      <view class="hero-title">管理控制台</view>
+      <view class="hero-subtitle">审核、举报和图片待办</view>
+    </view>
+    <view class="grid">
+      <view class="card" wx:for="{{cards}}" wx:key="label" data-page="{{item.page}}" bindtap="openPage">
+        <view class="card-value">{{item.value}}</view>
+        <view class="card-label">{{item.label}}</view>
+      </view>
+    </view>
+    <view class="menu">
+      <view class="menu-item" data-page="reviews" bindtap="openPage">内容审核</view>
+      <view class="menu-item" data-page="reports" bindtap="openPage">举报处理</view>
+      <view class="menu-item" data-page="images" bindtap="openPage">图片审核</view>
+    </view>
+    <button class="logout" bindtap="logout">退出管理员登录</button>
+  </view>
+</view>

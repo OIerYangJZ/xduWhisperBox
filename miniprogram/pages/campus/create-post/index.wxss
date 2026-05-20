@@ -63,6 +63,35 @@
   text-align: right;
 }
 
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+  padding: 18rpx 0 8rpx;
+}
+
+.tag-chip {
+  height: 52rpx;
+  padding: 0 22rpx;
+  border-radius: 26rpx;
+  background: #f5f5f7;
+  color: #636366;
+  font-size: 25rpx;
+  line-height: 52rpx;
+}
+
+.tag-chip.active {
+  background: rgba(21, 94, 117, .12);
+  color: #155e75;
+  font-weight: 600;
+}
+
+.inline-action {
+  margin-left: 16rpx;
+  color: #155e75;
+  font-size: 26rpx;
+}
+
 .image-head {
   display: flex;
   align-items: center;

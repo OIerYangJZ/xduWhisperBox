@@ -61,6 +61,10 @@
       <text class="menu-text">意见反馈</text>
       <text class="menu-arrow">></text>
     </view>
+    <view class="menu-item" bindtap="goToAdmin">
+      <text class="menu-text">管理员后台</text>
+      <text class="menu-arrow">></text>
+    </view>
     <view class="menu-item" bindtap="goToSettings">
       <text class="menu-text">设置</text>
       <text class="menu-arrow">></text>

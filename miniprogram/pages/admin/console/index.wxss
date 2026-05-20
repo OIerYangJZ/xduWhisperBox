@@ -1,0 +1,72 @@
+.admin-page {
+  padding: 24rpx;
+}
+
+.hero,
+.card,
+.menu {
+  border-radius: 16rpx;
+  background: #fff;
+}
+
+.hero {
+  padding: 30rpx 26rpx;
+}
+
+.hero-title {
+  color: #1d1d1f;
+  font-size: 38rpx;
+  font-weight: 800;
+}
+
+.hero-subtitle {
+  margin-top: 10rpx;
+  color: #8e8e93;
+  font-size: 26rpx;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16rpx;
+  margin: 22rpx 0;
+}
+
+.card {
+  padding: 28rpx 12rpx;
+  text-align: center;
+}
+
+.card-value {
+  color: #155e75;
+  font-size: 42rpx;
+  font-weight: 800;
+}
+
+.card-label {
+  margin-top: 8rpx;
+  color: #636366;
+  font-size: 23rpx;
+}
+
+.menu-item {
+  min-height: 88rpx;
+  padding: 0 24rpx;
+  border-bottom: 1rpx solid #e8e8e8;
+  color: #1d1d1f;
+  font-size: 29rpx;
+  line-height: 88rpx;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.logout {
+  margin-top: 28rpx;
+  height: 82rpx;
+  border-radius: 14rpx;
+  background: #fff;
+  color: #ff3b30;
+  line-height: 82rpx;
+}

@@ -1,3 +1,19 @@
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 18rpx 24rpx 0;
+}
+
+.toolbar-button {
+  height: 56rpx;
+  padding: 0 20rpx;
+  border-radius: 28rpx;
+  background: rgba(21, 94, 117, .1);
+  color: #155e75;
+  font-size: 25rpx;
+  line-height: 56rpx;
+}
+
 .conversation-row {
   display: flex;
   align-items: center;

@@ -4,6 +4,24 @@ import { requireLoginPage } from '../../../utils/auth_guard';
 
 const MAX_IMAGE_COUNT = 9;
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const STATUS_OPTIONS = [
+  { label: '进行中', value: 'ongoing' },
+  { label: '已解决', value: 'resolved' },
+  { label: '已结束', value: 'closed' }
+];
+const VISIBILITY_OPTIONS = [
+  { label: '公开', value: 'public' },
+  { label: '私密', value: 'private' }
+];
+const PIN_OPTIONS = [
+  { label: '不置顶', value: 0 },
+  { label: '1 小时', value: 60 },
+  { label: '6 小时', value: 360 },
+  { label: '1 天', value: 1440 },
+  { label: '3 天', value: 4320 }
+];
+const TAG_OPTIONS = ['求助', '吐槽', '拼车', '二手', '课程', '活动', '失物', '情感'];
+const ALIAS_WORDS = ['风信子', '银杏叶', '南校同学', '北校同学', '图书馆夜猫', '操场晚风'];
 
 Page({
   data: {
@@ -12,6 +30,17 @@ Page({
     title: '',
     content: '',
     tagText: '',
+    tagOptions: TAG_OPTIONS.map((label) => ({ label, selected: false })),
+    selectedTags: [],
+    statusOptions: STATUS_OPTIONS,
+    statusIndex: 0,
+    visibilityOptions: VISIBILITY_OPTIONS,
+    visibilityIndex: 0,
+    pinOptions: PIN_OPTIONS,
+    pinIndex: 0,
+    allowComment: true,
+    allowDm: true,
+    contentFormat: 'plain',
     useAnonymousAlias: true,
     anonymousAlias: '',
     images: [],
@@ -55,8 +84,62 @@ Page({
     this.setData({ channelIndex: Number(event.detail.value || 0) });
   },
 
+  onStatusChange(event) {
+    this.setData({ statusIndex: Number(event.detail.value || 0) });
+  },
+
+  onVisibilityChange(event) {
+    this.setData({ visibilityIndex: Number(event.detail.value || 0) });
+  },
+
+  onPinChange(event) {
+    this.setData({ pinIndex: Number(event.detail.value || 0) });
+  },
+
+  onAllowCommentChange(event) {
+    this.setData({ allowComment: event.detail.value });
+  },
+
+  onAllowDmChange(event) {
+    this.setData({ allowDm: event.detail.value });
+  },
+
+  onContentFormatChange(event) {
+    this.setData({ contentFormat: event.detail.value ? 'markdown' : 'plain' });
+  },
+
   onAnonymousChange(event) {
-    this.setData({ useAnonymousAlias: event.detail.value });
+    const useAnonymousAlias = event.detail.value;
+    this.setData({
+      useAnonymousAlias,
+      allowDm: useAnonymousAlias ? false : this.data.allowDm
+    });
+  },
+
+  toggleTag(event) {
+    const tag = event.currentTarget.dataset.tag;
+    if (!tag) return;
+    const selectedTags = this.data.selectedTags.slice();
+    const tagOptions = this.data.tagOptions.map((item) => ({ ...item }));
+    const index = selectedTags.indexOf(tag);
+    if (index >= 0) {
+      selectedTags.splice(index, 1);
+    } else {
+      if (selectedTags.length >= 5) {
+        wx.showToast({ title: '最多选择 5 个标签', icon: 'none' });
+        return;
+      }
+      selectedTags.push(tag);
+    }
+    tagOptions.forEach((item) => {
+      item.selected = selectedTags.indexOf(item.label) >= 0;
+    });
+    this.setData({ selectedTags, tagOptions });
+  },
+
+  randomAlias() {
+    const index = Math.floor(Math.random() * ALIAS_WORDS.length);
+    this.setData({ anonymousAlias: ALIAS_WORDS[index] });
   },
 
   chooseImages() {
@@ -170,11 +253,15 @@ Page({
       wx.showToast({ title: '请输入正文', icon: 'none' });
       return;
     }
-    const tags = this.data.tagText
+    const customTags = this.data.tagText
       .split(/[,\s，、#]+/)
       .map((item) => item.trim())
-      .filter(Boolean)
-      .slice(0, 5);
+      .filter(Boolean);
+    const tags = Array.from(new Set([...this.data.selectedTags, ...customTags])).slice(0, 5);
+    const status = this.data.statusOptions[this.data.statusIndex].value;
+    const visibility = this.data.visibilityOptions[this.data.visibilityIndex].value;
+    const pinDurationMinutes = Number(this.data.pinOptions[this.data.pinIndex].value || 0);
+    const contentFormat = this.data.contentFormat;
 
     this.setData({ submitting: true });
     wx.showLoading({ title: '发布中' });
@@ -186,8 +273,13 @@ Page({
         channel: this.data.channels[this.data.channelIndex] || '综合',
         tags,
         imageIds,
-        status: 'ongoing',
-        visibility: 'public',
+        status,
+        visibility,
+        allowComment: this.data.allowComment,
+        allowDm: this.data.allowDm,
+        contentFormat,
+        markdownSource: contentFormat === 'markdown' ? content : '',
+        ...(pinDurationMinutes > 0 ? { pinDurationMinutes } : {}),
         useAnonymousAlias: this.data.useAnonymousAlias,
         anonymousAlias: this.data.anonymousAlias.trim()
       });

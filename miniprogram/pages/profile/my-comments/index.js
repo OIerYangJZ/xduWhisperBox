@@ -29,7 +29,10 @@ Page({
 
   openPost(event) {
     const postId = event.currentTarget.dataset.postId;
-    if (postId) wx.navigateTo({ url: `/pages/campus/post-detail/index?id=${postId}` });
+    const commentId = event.currentTarget.dataset.commentId;
+    if (postId) {
+      wx.navigateTo({ url: `/pages/campus/post-detail/index?id=${postId}${commentId ? `&commentId=${commentId}` : ''}` });
+    }
   },
 
   deleteOwnComment(event) {

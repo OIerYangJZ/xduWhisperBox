@@ -47,8 +47,17 @@ Page({
       this.setData({ items, unreadCount: Math.max(0, this.data.unreadCount - 1) });
     }
     const postId = item.postId || (item.relatedType === 'post' ? item.relatedId : '');
+    const commentId = item.commentId || (item.relatedType === 'comment' ? item.relatedId : '');
     if (postId) {
-      wx.navigateTo({ url: `/pages/campus/post-detail/index?id=${postId}` });
+      wx.navigateTo({ url: `/pages/campus/post-detail/index?id=${postId}${commentId ? `&commentId=${commentId}` : ''}` });
+      return;
+    }
+    if (item.relatedType === 'conversation' || item.type === 'message') {
+      wx.navigateTo({ url: '/pages/profile/conversations/index' });
+      return;
+    }
+    if (item.relatedType === 'user') {
+      wx.navigateTo({ url: `/pages/profile/public-user/index?id=${item.relatedId}` });
     }
   }
 });

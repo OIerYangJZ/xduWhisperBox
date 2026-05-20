@@ -1,0 +1,15 @@
+<view class="page display-page">
+  <view class="section">
+    <view class="section-title">主题</view>
+    <view
+      wx:for="{{themeOptions}}"
+      wx:key="value"
+      class="option-row {{theme === item.value ? 'active' : ''}}"
+      data-theme="{{item.value}}"
+      bindtap="onThemeTap"
+    >
+      <text>{{item.label}}</text>
+      <text wx:if="{{theme === item.value}}">已选</text>
+    </view>
+  </view>
+</view>

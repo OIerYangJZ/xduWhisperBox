@@ -55,5 +55,9 @@ Page({
 
   handleRegister() {
     wx.navigateTo({ url: '/pages/profile/register/index' });
+  },
+
+  handleResetPassword() {
+    wx.navigateTo({ url: '/pages/profile/reset-password/index' });
   }
 });

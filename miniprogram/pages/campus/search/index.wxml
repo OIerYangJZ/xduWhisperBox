@@ -4,7 +4,12 @@
     <view class="search-button" bindtap="search">搜索</view>
   </view>
 
-  <scroll-view class="filter-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+  <view class="type-row">
+    <view class="type-chip {{activeType === 'posts' ? 'active' : ''}}" data-type="posts" bindtap="onTypeTap">帖子</view>
+    <view class="type-chip {{activeType === 'users' ? 'active' : ''}}" data-type="users" bindtap="onTypeTap">用户</view>
+  </view>
+
+  <scroll-view class="filter-scroll" scroll-x enhanced show-scrollbar="{{false}}" wx:if="{{activeType === 'posts'}}">
     <view class="filter-row">
       <view
         wx:for="{{channels}}"
@@ -16,7 +21,7 @@
     </view>
   </scroll-view>
 
-  <view class="sort-row">
+  <view class="sort-row" wx:if="{{activeType === 'posts'}}">
     <view
       wx:for="{{sortOptions}}"
       wx:key="value"
@@ -37,8 +42,9 @@
   </view>
 
   <view wx:if="{{loading}}" class="empty">搜索中...</view>
-  <view wx:elif="{{searched && !posts.length}}" class="empty">没有找到相关内容</view>
-  <view wx:else>
+  <view wx:elif="{{searched && activeType === 'posts' && !posts.length}}" class="empty">没有找到相关帖子</view>
+  <view wx:elif="{{searched && activeType === 'users' && !users.length}}" class="empty">没有找到相关用户</view>
+  <view wx:if="{{activeType === 'posts' && !loading}}">
     <view class="feed-card" wx:for="{{posts}}" wx:key="id" data-id="{{item.id}}" bindtap="goPostDetail">
       <view class="feed-avatar">{{item.authorInitial}}</view>
       <view class="feed-body">
@@ -55,6 +61,16 @@
           <text>☰ {{item.commentCount}}</text>
         </view>
       </view>
+    </view>
+  </view>
+  <view wx:if="{{activeType === 'users' && !loading}}">
+    <view class="user-card" wx:for="{{users}}" wx:key="id" data-id="{{item.id}}" bindtap="goUserDetail">
+      <image class="user-avatar" src="{{item.avatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="user-main">
+        <view class="user-name">{{item.nickname || item.alias || item.name || '匿名同学'}}</view>
+        <view class="user-bio">{{item.bio || '这个同学还没有写简介'}}</view>
+      </view>
+      <view class="user-action">主页</view>
     </view>
   </view>
 </view>

@@ -50,6 +50,14 @@ export const sendCode = (email) => {
   return request.post('/api/auth/send-code', { email });
 };
 
+export const sendPasswordResetCode = (email) => {
+  return request.post('/api/auth/password/send-code', { email });
+};
+
+export const resetPassword = (email, code, newPassword) => {
+  return request.post('/api/auth/password/reset', { email, code, newPassword });
+};
+
 /**
  * 退出登录
  */

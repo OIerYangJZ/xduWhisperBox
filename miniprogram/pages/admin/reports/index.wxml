@@ -1,0 +1,22 @@
+<view class="admin-list">
+  <view class="filters">
+    <picker mode="selector" range="{{statuses}}" range-key="label" value="{{statusIndex}}" bindchange="onStatusChange">
+      <view class="filter">{{statuses[statusIndex].label}}</view>
+    </picker>
+    <input class="search" placeholder="关键词" value="{{keyword}}" bindinput="onInput" confirm-type="search" bindconfirm="loadData" />
+  </view>
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:elif="{{!rows.length}}" class="empty">暂无举报</view>
+  <view wx:else>
+    <view class="item" wx:for="{{rows}}" wx:key="id">
+      <view class="title">{{item.reason || '举报'}}</view>
+      <view class="meta">{{item.reporterAlias || item.reporterName || '-'}} · {{item.createdAt || ''}}</view>
+      <view class="content">{{item.targetTitle || item.targetContent || item.description || ''}}</view>
+      <view class="result" wx:if="{{item.result}}">结果：{{item.result}}</view>
+      <view class="actions">
+        <text data-id="{{item.id}}" data-action="resolve" bindtap="handleReport">处理</text>
+        <text data-id="{{item.id}}" data-action="misreport" bindtap="handleReport">误报</text>
+      </view>
+    </view>
+  </view>
+</view>

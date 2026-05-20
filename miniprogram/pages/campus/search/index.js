@@ -1,4 +1,5 @@
 import { getChannels, getPosts } from '../../../api/posts';
+import { searchUsers } from '../../../api/user';
 import { requireLoginPage } from '../../../utils/auth_guard';
 
 const SORT_OPTIONS = [
@@ -10,11 +11,13 @@ const SORT_OPTIONS = [
 Page({
   data: {
     keyword: '',
+    activeType: 'posts',
     channels: ['全部'],
     activeChannel: '全部',
     sortOptions: SORT_OPTIONS,
     activeSort: 'hot',
     posts: [],
+    users: [],
     history: [],
     searched: false,
     loading: false
@@ -75,24 +78,41 @@ Page({
     if (this.data.searched || this.data.keyword.trim()) this.search();
   },
 
+  onTypeTap(event) {
+    const type = event.currentTarget.dataset.type;
+    if (!type || type === this.data.activeType) return;
+    this.setData({ activeType: type });
+    if (this.data.searched || this.data.keyword.trim()) this.search();
+  },
+
   async search() {
     const keyword = this.data.keyword.trim();
-    if (!keyword && this.data.activeChannel === '全部') {
+    if (!keyword && this.data.activeChannel === '全部' && this.data.activeType === 'posts') {
       wx.showToast({ title: '请输入关键词', icon: 'none' });
+      return;
+    }
+    if (!keyword && this.data.activeType === 'users') {
+      wx.showToast({ title: '请输入用户关键词', icon: 'none' });
       return;
     }
     this.setData({ loading: true, searched: true });
     try {
-      const posts = await getPosts({
-        keyword,
-        sort: this.data.activeSort,
-        ...(this.data.activeChannel !== '全部' ? { channel: this.data.activeChannel } : {})
-      });
+      let posts = this.data.posts;
+      let users = this.data.users;
+      if (this.data.activeType === 'posts') {
+        posts = await getPosts({
+          keyword,
+          sort: this.data.activeSort,
+          ...(this.data.activeChannel !== '全部' ? { channel: this.data.activeChannel } : {})
+        });
+      } else {
+        users = await searchUsers(keyword);
+      }
       const history = keyword
         ? [keyword, ...this.data.history.filter((item) => item !== keyword)].slice(0, 8)
         : this.data.history;
       if (keyword) wx.setStorageSync('searchHistory', history);
-      this.setData({ posts, history, loading: false });
+      this.setData({ posts, users, history, loading: false });
     } catch (error) {
       this.setData({ loading: false });
     }
@@ -106,5 +126,10 @@ Page({
   goPostDetail(event) {
     const id = event.currentTarget.dataset.id;
     if (id) wx.navigateTo({ url: `/pages/campus/post-detail/index?id=${id}` });
+  },
+
+  goUserDetail(event) {
+    const id = event.currentTarget.dataset.id;
+    if (id) wx.navigateTo({ url: `/pages/profile/public-user/index?id=${id}` });
   }
 });

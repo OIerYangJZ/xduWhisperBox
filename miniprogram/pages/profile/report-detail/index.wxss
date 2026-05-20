@@ -1,0 +1,54 @@
+.report-page {
+  padding: 24rpx;
+}
+
+.section {
+  margin-bottom: 22rpx;
+  border-radius: 16rpx;
+  background: #fff;
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24rpx;
+  min-height: 88rpx;
+  padding: 0 24rpx;
+  border-bottom: 1rpx solid #e8e8e8;
+  color: #1d1d1f;
+  font-size: 28rpx;
+  align-items: center;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row text:last-child {
+  color: #8e8e93;
+  text-align: right;
+}
+
+.block-title {
+  padding: 24rpx 24rpx 8rpx;
+  color: #1d1d1f;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.block-text {
+  padding: 0 24rpx 24rpx;
+  color: #636366;
+  font-size: 27rpx;
+  line-height: 1.6;
+}
+
+.primary-button {
+  height: 82rpx;
+  border-radius: 14rpx;
+  background: #155e75;
+  color: #fff;
+  font-size: 29rpx;
+  line-height: 82rpx;
+}

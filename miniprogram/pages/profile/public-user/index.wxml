@@ -3,6 +3,7 @@
   <view wx:elif="{{!profile}}" class="empty">用户不存在</view>
   <view wx:else>
     <view class="profile-head">
+      <image class="cover" wx:if="{{profile.backgroundImageUrl}}" src="{{profile.backgroundImageUrl}}" mode="aspectFill"></image>
       <image class="avatar" src="{{profile.avatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
       <view class="name">{{profile.nickname || profile.alias || '西电同学'}}</view>
       <view class="bio">{{profile.bio || '这个同学还没有填写简介'}}</view>
@@ -14,6 +15,20 @@
     <view class="actions">
       <button class="primary" bindtap="toggleFollow">{{profile.isFollowing ? '已关注' : '关注'}}</button>
       <button class="secondary" bindtap="messageUser">私信</button>
+    </view>
+    <view class="post-section">
+      <view class="section-title">TA 的发布</view>
+      <view wx:if="{{!posts.length}}" class="empty-small">暂无公开发布</view>
+      <view class="post-card" wx:for="{{posts}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost">
+        <view class="post-title">{{item.displayTitle}}</view>
+        <view class="post-summary">{{item.summary}}</view>
+        <view class="post-meta">
+          <text>{{item.channel}}</text>
+          <text>{{item.timeText}}</text>
+          <text>赞 {{item.likeCount}}</text>
+          <text>评 {{item.commentCount}}</text>
+        </view>
+      </view>
     </view>
   </view>
 </view>

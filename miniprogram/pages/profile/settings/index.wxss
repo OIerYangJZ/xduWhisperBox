@@ -61,6 +61,34 @@
   word-break: break-all;
 }
 
+.background-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  min-height: 150rpx;
+  border-bottom: 1rpx solid #e8e8e8;
+}
+
+.background-preview,
+.background-empty {
+  flex: 1;
+  height: 112rpx;
+  border-radius: 14rpx;
+  background: #f5f5f7;
+}
+
+.background-empty {
+  color: #8e8e93;
+  font-size: 26rpx;
+  line-height: 112rpx;
+  text-align: center;
+}
+
+.nav-row {
+  color: #1d1d1f;
+}
+
 .row-input {
   width: 430rpx;
   min-height: 64rpx;

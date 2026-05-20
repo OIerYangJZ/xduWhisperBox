@@ -1,5 +1,5 @@
 import request from '../utils/request';
-import { getData, normalizePost, toArray } from '../utils/format';
+import { getData, normalizePost, resolveUrl, toArray } from '../utils/format';
 
 export const updateNotificationPreferences = async (payload) => {
   const response = await request.patch('/api/users/notification-preferences', payload);
@@ -41,9 +41,29 @@ export const getMyReports = async () => {
   return toArray(getData(response, []));
 };
 
+export const getReportDetail = async (reportId) => {
+  const response = await request.get(`/api/reports/${reportId}`);
+  return getData(response, {});
+};
+
 export const getPublicUser = async (userId) => {
   const response = await request.get(`/api/users/${userId}`);
-  return getData(response, {});
+  const data = getData(response, {});
+  return {
+    ...data,
+    avatarUrl: resolveUrl(data.avatarUrl || ''),
+    backgroundImageUrl: resolveUrl(data.backgroundImageUrl || '')
+  };
+};
+
+export const searchUsers = async (keyword) => {
+  const response = await request.get('/api/users/search', { keyword });
+  return toArray(getData(response, [])).map((item) => ({
+    ...item,
+    id: String(item.id || item.userId || ''),
+    avatarUrl: resolveUrl(item.avatarUrl || ''),
+    backgroundImageUrl: resolveUrl(item.backgroundImageUrl || '')
+  }));
 };
 
 export const followUser = async (userId) => {

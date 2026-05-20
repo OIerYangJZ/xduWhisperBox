@@ -1,0 +1,17 @@
+<view class="container">
+  <view class="title">重置密码</view>
+  <view class="subtitle">使用注册邮箱接收验证码后设置新密码</view>
+
+  <view class="form-group">
+    <input class="input" placeholder="邮箱" value="{{email}}" data-key="email" bindinput="onInput" />
+  </view>
+  <view class="code-row">
+    <input class="input code-input" placeholder="验证码" value="{{code}}" data-key="code" bindinput="onInput" />
+    <button class="code-button" loading="{{sendingCode}}" bindtap="sendCode">发送</button>
+  </view>
+  <view class="form-group">
+    <input class="input" type="password" placeholder="新密码" value="{{newPassword}}" data-key="newPassword" bindinput="onInput" />
+  </view>
+
+  <button class="btn-primary" loading="{{submitting}}" bindtap="submit">确认重置</button>
+</view>

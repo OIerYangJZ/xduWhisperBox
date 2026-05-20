@@ -91,6 +91,10 @@ Page({
     wx.navigateTo({ url: '/pages/profile/settings/index' });
   },
 
+  goToAdmin() {
+    wx.navigateTo({ url: '/pages/admin/login/index' });
+  },
+
   goToLegal(event) {
     const type = event.currentTarget.dataset.type || 'about';
     wx.navigateTo({ url: `/pages/profile/legal/index?type=${type}` });

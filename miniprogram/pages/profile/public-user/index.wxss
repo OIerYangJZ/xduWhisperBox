@@ -3,10 +3,26 @@
 }
 
 .profile-head {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18rpx;
+  padding: 34rpx 24rpx;
+  background: #fff;
   text-align: center;
 }
 
+.cover {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: 180rpx;
+  opacity: .32;
+}
+
 .avatar {
+  position: relative;
   width: 150rpx;
   height: 150rpx;
   border-radius: 50%;
@@ -59,4 +75,51 @@
 .secondary {
   background: rgba(21, 94, 117, .1);
   color: #155e75;
+}
+
+.post-section {
+  margin-top: 34rpx;
+}
+
+.section-title {
+  margin-bottom: 18rpx;
+  color: #1d1d1f;
+  font-size: 31rpx;
+  font-weight: 750;
+}
+
+.post-card {
+  padding: 24rpx;
+  margin-bottom: 18rpx;
+  border-radius: 16rpx;
+  background: #fff;
+}
+
+.post-title {
+  color: #1d1d1f;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.post-summary {
+  margin-top: 10rpx;
+  color: #636366;
+  font-size: 26rpx;
+  line-height: 1.5;
+}
+
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18rpx;
+  margin-top: 16rpx;
+  color: #8e8e93;
+  font-size: 23rpx;
+}
+
+.empty-small {
+  padding: 34rpx 0;
+  color: #8e8e93;
+  font-size: 27rpx;
+  text-align: center;
 }

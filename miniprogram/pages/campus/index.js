@@ -1,22 +1,36 @@
 import { getPosts } from '../../api/post';
+import { getChannels } from '../../api/posts';
 import { getAnnouncements, getColleges } from '../../api/campus';
+import { getNotifications } from '../../api/notifications';
 import { requireLoginPage } from '../../utils/auth_guard';
+
+const SORT_OPTIONS = [
+  { label: '最新', value: 'latest' },
+  { label: '热度', value: 'hot' }
+];
 
 Page({
   data: {
-    currentTab: 'community', // 'community' | 'news' | 'college'
+    currentTab: 'community',
     posts: [],
     news: [],
     colleges: [],
     loading: false,
     hasMore: true,
     page: 1,
-    limit: 10
+    limit: 10,
+    channels: ['全部'],
+    activeChannel: '全部',
+    sortOptions: SORT_OPTIONS,
+    activeSort: 'latest',
+    unreadCount: 0
   },
 
   onLoad() {
     if (!requireLoginPage()) return;
     this._didLoadData = true;
+    this.loadChannels();
+    this.loadUnreadCount();
     this.fetchData();
   },
 
@@ -24,8 +38,10 @@ Page({
     if (!requireLoginPage()) return;
     if (!this._didLoadData) {
       this._didLoadData = true;
+      this.loadChannels();
       this.fetchData();
     }
+    this.loadUnreadCount();
   },
 
   onPullDownRefresh() {
@@ -34,9 +50,7 @@ Page({
       posts: [],
       hasMore: true
     }, () => {
-      this.fetchData().then(() => {
-        wx.stopPullDownRefresh();
-      });
+      this.fetchData().then(() => wx.stopPullDownRefresh());
     });
   },
 
@@ -45,6 +59,19 @@ Page({
     if (currentTab === 'community') return this.fetchPosts();
     if (currentTab === 'news') return this.fetchNews();
     if (currentTab === 'college') return this.fetchColleges();
+    return Promise.resolve();
+  },
+
+  async loadChannels() {
+    const channels = await getChannels();
+    this.setData({ channels: ['全部', ...channels.filter((item) => item !== '全部')] });
+  },
+
+  async loadUnreadCount() {
+    try {
+      const result = await getNotifications();
+      this.setData({ unreadCount: result.unreadCount || 0 });
+    } catch (error) {}
   },
 
   switchTab(e) {
@@ -60,16 +87,30 @@ Page({
     });
   },
 
+  onChannelTap(event) {
+    const channel = event.currentTarget.dataset.channel;
+    if (!channel || channel === this.data.activeChannel) return;
+    this.setData({ activeChannel: channel, posts: [], page: 1, hasMore: true }, () => this.fetchPosts());
+  },
+
+  onSortTap(event) {
+    const sort = event.currentTarget.dataset.sort;
+    if (!sort || sort === this.data.activeSort) return;
+    this.setData({ activeSort: sort, posts: [], page: 1, hasMore: true }, () => this.fetchPosts());
+  },
+
   async fetchPosts() {
     if (this.data.loading || !this.data.hasMore) return;
-    
+
     this.setData({ loading: true });
     try {
       const res = await getPosts({
         page: this.data.page,
-        limit: this.data.limit
+        limit: this.data.limit,
+        sort: this.data.activeSort,
+        ...(this.data.activeChannel !== '全部' ? { channel: this.data.activeChannel } : {})
       });
-      
+
       if (res && res.data) {
         const newPosts = res.data.items || [];
         this.setData({
@@ -115,9 +156,19 @@ Page({
 
   goToDetail(e) {
     const postId = e.currentTarget.dataset.id;
-    wx.navigateTo({
-      url: `/pages/campus/post-detail/index?id=${postId}`
-    });
+    wx.navigateTo({ url: `/pages/campus/post-detail/index?id=${postId}` });
+  },
+
+  goSearch() {
+    wx.navigateTo({ url: '/pages/campus/search/index' });
+  },
+
+  goCreatePost() {
+    wx.navigateTo({ url: '/pages/campus/create-post/index' });
+  },
+
+  goNotifications() {
+    wx.navigateTo({ url: '/pages/profile/notifications/index' });
   },
 
   goToNewsDetail(e) {

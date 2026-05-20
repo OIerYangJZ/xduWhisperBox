@@ -1,5 +1,5 @@
 import { getUserInfo, logout } from '../../../api/auth';
-import { uploadAvatarImage } from '../../../api/uploads';
+import { uploadAvatarImage, uploadBackgroundImage } from '../../../api/uploads';
 import {
   submitCancellationRequest,
   submitLevelUpgradeRequest,
@@ -42,7 +42,8 @@ Page({
     submittingCancellation: false,
     submittingLevelUpgrade: false,
     loggingOut: false,
-    uploadingAvatar: false
+    uploadingAvatar: false,
+    uploadingBackground: false
   },
 
   onShow() {
@@ -229,6 +230,64 @@ Page({
       sourceType: ['album', 'camera'],
       success: (res) => onPicked((res.tempFilePaths || [])[0])
     });
+  },
+
+  chooseBackground() {
+    if (this.data.uploadingBackground) return;
+    const onPicked = async (filePath) => {
+      if (!filePath) return;
+      this.setData({ uploadingBackground: true });
+      wx.showLoading({ title: '上传中' });
+      try {
+        const result = await uploadBackgroundImage(filePath);
+        await updateProfile({ backgroundImageUrl: result.url });
+        this.setData({
+          profile: {
+            ...this.data.profile,
+            backgroundImageUrl: result.url
+          },
+          uploadingBackground: false
+        });
+        wx.hideLoading();
+        wx.showToast({ title: '背景图已更新', icon: 'success' });
+      } catch (error) {
+        wx.hideLoading();
+        this.setData({ uploadingBackground: false });
+      }
+    };
+
+    if (wx.chooseMedia) {
+      wx.chooseMedia({
+        count: 1,
+        mediaType: ['image'],
+        sizeType: ['compressed'],
+        sourceType: ['album', 'camera'],
+        success: (res) => {
+          const file = (res.tempFiles || [])[0];
+          onPicked(file && file.tempFilePath);
+        }
+      });
+      return;
+    }
+
+    wx.chooseImage({
+      count: 1,
+      sizeType: ['compressed'],
+      sourceType: ['album', 'camera'],
+      success: (res) => onPicked((res.tempFilePaths || [])[0])
+    });
+  },
+
+  goResetPassword() {
+    wx.navigateTo({ url: '/pages/profile/reset-password/index' });
+  },
+
+  goDisplaySettings() {
+    wx.navigateTo({ url: '/pages/profile/display-settings/index' });
+  },
+
+  goAbout() {
+    wx.navigateTo({ url: '/pages/profile/about/index' });
   },
 
   async handleLogout() {

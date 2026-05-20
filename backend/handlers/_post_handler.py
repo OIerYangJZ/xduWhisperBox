@@ -607,6 +607,8 @@ def handle_create_post(
     status = str(body.get("status", "ongoing")).strip().lower()
     visibility = normalize_post_visibility(body.get("visibility"))
     pin_duration_minutes = parse_pin_duration_minutes(body.get("pinDurationMinutes"))
+    allow_comment = parse_bool(body.get("allowComment"))
+    allow_dm = parse_bool(body.get("allowDm"))
 
     if not raw_content:
         json_error(handler, HTTPStatus.BAD_REQUEST, "帖子内容不能为空")
@@ -686,8 +688,8 @@ def handle_create_post(
         "hasImage": has_image or bool(picked_uploads),
         "imageIds": image_ids,
         "status": status if status in {"ongoing", "resolved", "closed"} else "ongoing",
-        "allowComment": True,
-        "allowDm": not use_anonymous_alias,
+        "allowComment": True if allow_comment is None else allow_comment,
+        "allowDm": (not use_anonymous_alias) if allow_dm is None else allow_dm,
         "visibility": visibility,
         "authorAlias": _globals.sanitize_alias(author_alias, fallback="匿名同学"),
         "authorId": user["id"],
@@ -814,7 +816,7 @@ def handle_create_comment(
         "reviewStatus": "approved",
         "riskMarked": risk_marked,
         "isAnonymous": True,
-        "parentId": str(body.get("parentId", "")).strip(),
+        "parentId": str(body.get("parentId", body.get("replyToId", ""))).strip(),
     }
     db["comments"].append(comment)
 

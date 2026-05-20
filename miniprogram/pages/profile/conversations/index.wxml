@@ -1,4 +1,7 @@
 <view class="page">
+  <view class="toolbar">
+    <view class="toolbar-button" bindtap="goRequests">私信请求</view>
+  </view>
   <view wx:if="{{loading}}" class="empty">加载中...</view>
   <view wx:elif="{{!conversations.length}}" class="empty">暂无私信</view>
   <view wx:else>

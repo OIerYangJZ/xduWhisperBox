@@ -1,0 +1,33 @@
+.admin-login {
+  padding: 72rpx 42rpx;
+}
+
+.title {
+  color: #1d1d1f;
+  font-size: 46rpx;
+  font-weight: 800;
+}
+
+.subtitle {
+  margin: 14rpx 0 56rpx;
+  color: #8e8e93;
+  font-size: 27rpx;
+}
+
+.input {
+  height: 90rpx;
+  margin-bottom: 28rpx;
+  padding: 0 28rpx;
+  border-radius: 16rpx;
+  background: #f5f5f7;
+  font-size: 29rpx;
+}
+
+.primary-button {
+  height: 86rpx;
+  margin-top: 36rpx;
+  border-radius: 16rpx;
+  background: #155e75;
+  color: #fff;
+  line-height: 86rpx;
+}

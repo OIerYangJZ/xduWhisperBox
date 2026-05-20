@@ -30,8 +30,12 @@ Page({
     const item = this.data.conversations[Number(event.currentTarget.dataset.index)];
     if (!item) return;
     wx.navigateTo({
-      url: `/pages/profile/chat/index?id=${item.id}&name=${encodeURIComponent(item.name || '私信')}&blockedByMe=${item.blockedByMe ? '1' : '0'}`
+      url: `/pages/profile/chat/index?id=${item.id}&name=${encodeURIComponent(item.name || '私信')}&peerUserId=${encodeURIComponent(item.peerUserId || '')}&blockedByMe=${item.blockedByMe ? '1' : '0'}`
     });
+  },
+
+  goRequests() {
+    wx.navigateTo({ url: '/pages/profile/message-requests/index' });
   },
 
   removeConversation(event) {

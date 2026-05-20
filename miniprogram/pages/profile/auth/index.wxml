@@ -12,5 +12,6 @@
   <button class="btn-primary" bindtap="handleLogin">登录</button>
   <view class="actions">
     <text class="link" bindtap="handleRegister">还没账号？去注册</text>
+    <text class="link" bindtap="handleResetPassword">忘记密码</text>
   </view>
 </view>

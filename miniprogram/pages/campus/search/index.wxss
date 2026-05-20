@@ -30,6 +30,31 @@
   text-align: center;
 }
 
+.type-row {
+  display: flex;
+  gap: 16rpx;
+  padding: 16rpx 24rpx;
+  background: #fff;
+  border-bottom: 1rpx solid #e8e8e8;
+}
+
+.type-chip {
+  flex: 1;
+  height: 64rpx;
+  border-radius: 18rpx;
+  background: #f5f5f7;
+  color: #636366;
+  font-size: 28rpx;
+  line-height: 64rpx;
+  text-align: center;
+}
+
+.type-chip.active {
+  background: #155e75;
+  color: #fff;
+  font-weight: 600;
+}
+
 .filter-scroll {
   padding: 18rpx 0;
   border-bottom: 1rpx solid #e8e8e8;
@@ -119,5 +144,46 @@
   border-radius: 20rpx;
   background: #f5f5f7;
   color: #1d1d1f;
+  font-size: 26rpx;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 24rpx;
+  border-bottom: 1rpx solid #e8e8e8;
+  background: #fff;
+}
+
+.user-avatar {
+  width: 84rpx;
+  height: 84rpx;
+  border-radius: 42rpx;
+  background: #f5f5f7;
+}
+
+.user-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  color: #1d1d1f;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.user-bio {
+  margin-top: 8rpx;
+  color: #8e8e93;
+  font-size: 25rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-action {
+  color: #155e75;
   font-size: 26rpx;
 }

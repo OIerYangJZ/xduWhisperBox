@@ -4,7 +4,6 @@
   "home": "首頁",
   "messages": "消息",
   "profile": "我的",
-  "xdyou": "校園助手",
   "login": "登錄",
   "loginTitle": "登錄西電樹洞",
   "username": "用戶名",
@@ -43,6 +42,5 @@
   "imageGallery": "圖片瀏覽",
   "selectImages": "選擇圖片",
   "postContent": "帖子內容",
-  "commentPlaceholder": "說點什麼...",
-  "xdyouInitError": "校園助手初始化失敗"
+  "commentPlaceholder": "說點什麼..."
 }

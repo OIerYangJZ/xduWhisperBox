@@ -250,7 +250,7 @@ def handle_upload_avatar(
     if content_type and content_type in _globals.ALLOWED_IMAGE_TYPES:
         ct = content_type
 
-    max_bytes = int(_globals.DEFAULT_SETTINGS.get("imageMaxMB", 5)) * 1024 * 1024
+    max_bytes = _globals.get_image_max_bytes(db)
     if len(avatar_bytes) > max_bytes:
         json_error(
             handler,

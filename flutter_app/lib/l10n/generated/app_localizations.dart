@@ -123,12 +123,6 @@ abstract class AppLocalizations {
   /// **'我的'**
   String get profile;
 
-  /// No description provided for @xdyou.
-  ///
-  /// In zh, this message translates to:
-  /// **'校园助手'**
-  String get xdyou;
-
   /// No description provided for @login.
   ///
   /// In zh, this message translates to:
@@ -362,12 +356,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'说点什么...'**
   String get commentPlaceholder;
-
-  /// No description provided for @xdyouInitError.
-  ///
-  /// In zh, this message translates to:
-  /// **'校园助手初始化失败'**
-  String get xdyouInitError;
 }
 
 class _AppLocalizationsDelegate

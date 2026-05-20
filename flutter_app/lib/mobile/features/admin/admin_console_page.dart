@@ -2,13 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/theme/mobile_theme.dart';
-import '../../core/theme/mobile_colors.dart';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-
 import '../../../models/admin_models.dart';
 import '../../../repositories/admin_repository.dart';
 import '../../core/state/mobile_providers.dart';
@@ -98,10 +91,13 @@ class _AdminConsolePageState extends ConsumerState<AdminConsolePage> {
                         ),
                         child: Text(
                           '加载失败: $_error',
-                          style: const TextStyle(color: MobileTheme.error, fontSize: 13),
+                          style: const TextStyle(
+                            color: MobileTheme.error,
+                            fontSize: 13,
+                          ),
                         ),
                       ),
-                    
+
                     // 概览卡片
                     _buildOverviewCards(overview),
 
@@ -120,7 +116,8 @@ class _AdminConsolePageState extends ConsumerState<AdminConsolePage> {
                             icon: Icons.article_outlined,
                             title: '内容审核',
                             subtitle: '审核帖子和评论',
-                            badge: overview != null && overview.pendingReviews > 0
+                            badge:
+                                overview != null && overview.pendingReviews > 0
                                 ? overview.pendingReviews.toString()
                                 : null,
                             onTap: () => context.push('/admin/reviews'),
@@ -148,8 +145,11 @@ class _AdminConsolePageState extends ConsumerState<AdminConsolePage> {
                             icon: Icons.person_off_outlined,
                             title: '注销申请',
                             subtitle: '审核账号注销请求',
-                            badge: overview != null && overview.pendingCancellationRequests > 0
-                                ? overview.pendingCancellationRequests.toString()
+                            badge:
+                                overview != null &&
+                                    overview.pendingCancellationRequests > 0
+                                ? overview.pendingCancellationRequests
+                                      .toString()
                                 : null,
                             onTap: () {
                               _showComingSoon('注销审核功能即将上线');
@@ -243,10 +243,7 @@ class _AdminConsolePageState extends ConsumerState<AdminConsolePage> {
 
   void _showComingSoon(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior: SnackBarBehavior.floating,
-      ),
+      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
     );
   }
 

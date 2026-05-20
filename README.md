@@ -1,16 +1,16 @@
 # See电 — 西电树洞
 
-面向西安电子科技大学校内用户的匿名社区应用，采用 Flutter 跨端技术栈构建，同时支持 **Web 端**和**移动端（Android / iOS）**。应用内嵌 [XDYou（原 Traintime PDA）](https://github.com/BenderBlog/traintime_pda) 子模块，提供课表、成绩、电费、图书馆等校园服务。
+面向西安电子科技大学校内用户的匿名社区应用，采用 Flutter 跨端技术栈与原生微信小程序构建，同时支持 **Web 端**、**移动端（Android / iOS）**以及**微信小程序**。后端集成了基于 RAG 架构的 AI 助手服务，为校园生活提供智能问答支持。
 
 ## 技术栈
 
 | 层级 | 技术 |
 |------|------|
-| 前端 | Flutter Web + Dart SDK `>=3.8.0 <4.0.0` |
-| 状态管理 | `flutter_riverpod: ^2.6.1` + GetX（仅移动端 XDYou 子模块） |
+| 前端 | Flutter Web + Dart SDK `>=3.8.0 <4.0.0` / 微信原生小程序 |
+| 状态管理 | `flutter_riverpod: ^2.6.1` |
 | HTTP 客户端 | `http: ^1.2.2` |
 | 本地存储 | `shared_preferences: ^2.3.2` |
-| 后端 | Python 3（标准库 HTTP 服务：`http.server + ThreadingHTTPServer`） |
+| 后端 | Python 3（标准库 HTTP 服务：`http.server + ThreadingHTTPServer`）+ RAG AI 模块 |
 | 数据库 | SQLite（WAL 模式） |
 | 对象存储 | 本地文件系统 / 可选 S3 兼容存储（`boto3 >=1.34,<2.0`） |
 | 部署 | Docker / 腾讯云 Ubuntu 22.04 + Nginx + systemd |
@@ -66,12 +66,24 @@
 
 - 用户协议、隐私政策、社区规范、举报说明
 
+### AI 助手功能
+
+- **RAG 智能问答**：后端集成 RAG（检索增强生成）架构，通过私有知识库提供智能问答
+- **校园指南**：针对校园生活、规章制度、选课指南等常见问题提供即时解答
+- **上下文感知**：支持多轮对话上下文关联，提升对话连贯性
+
+### 微信小程序专属功能
+
+- **原生微信体验**：针对微信生态深度优化，即开即用
+- **资讯与校园模块**：完整的校园资讯流和大学服务集成（新闻动态、校园卡、电费等）
+- **AI 助手对话 UI**：内置类微信聊天的 AI 智能助手界面，支持快速提问与流式响应
+- **快捷社区互动**：重新设计的社区信息流与帖子详情页，适配小程序操作习惯
+
 ### 移动端专属功能
 
 - **登录/注册页**：`XduLoginPage`，统一身份认证入口，管理登录和 Admin 登录两个入口
 - **设置主页**：`SettingsMainPage`，账号安全 / 隐私开关（陌生私信、联系方式可见）/ 通知 / 外观（主题、语言）/ 账号注销
 - **版本更新与安装包下载**：Web 端提供 Android Release 下载页，移动端设置页支持检查新版本并跳转下载
-- **XDYou 校园服务**（嵌入底部「校园」Tab）：课表、成绩、电费、空教室、图书馆、运动打卡、宿舍水费通知等
 - **帖子详情页**：`PostDetailPage`，操作栏（点赞/收藏/评论/分享）内置于正文与评论区之间，支持嵌套评论树、举报流程、关注/私信作者、表情输入
 - **表情输入组件**：`EmojiPickerBar`，96 个常用 emoji 网格，与键盘互斥（展开时收起键盘防止布局空白）
 - **消息页**：`MessagesPage`，会话列表直接展示，无 Tab 切换；头像使用 `CachedNetworkImage` 正确加载
@@ -111,68 +123,21 @@ xduWhisperBox/
 │   └── sql/                        # SQL schema 文件
 │       ├── schema_mysql.sql
 │       └── schema_postgresql.sql
-├── lib/                            # Flutter Web 前端
-│   ├── core/                       # 核心基础设施
-│   │   ├── auth/                   # 鉴权（AuthStore、AdminAuthStore）
-│   │   ├── config/                 # AppConfig、API_BASE_URL 解析
-│   │   ├── emoji/                  # 表情目录 + 用户偏好
-│   │   ├── media/                  # 媒体处理（图片选择器 Web/Mobile 条件编译）
-│   │   ├── navigation/             # 导航（GoRouter）
-│   │   ├── network/                # 网络请求（ApiClient、ApiEndpoints、JsonUtils）
-│   │   ├── state/                  # AppProviders（Riverpod 全局 Provider）
-│   │   ├── theme/                  # 主题（AppTheme + SharedColors 统一跨端颜色）
-│   │   └── utils/                  # 工具函数（Web 文件下载）
-│   ├── data/                       # Mock 数据
-│   ├── features/                   # 功能模块（Web 端）
-│   │   ├── admin/                  # 管理员后台
-│   │   ├── auth/                   # 登录/注册/验证码/密码重置
-│   │   ├── favorites/              # 收藏
-│   │   ├── feed/                   # 信息流
-│   │   ├── legal/                  # 合规说明页（用户协议/隐私政策等）
-│   │   ├── me/                     # 个人中心
-│   │   ├── messages/               # 私信（会话列表 + 聊天）
-│   │   ├── notifications/           # 通知中心
-│   │   ├── post/                   # 发帖/帖子详情
-│   │   └── search/                # 搜索
-│   ├── models/                     # 数据模型
-│   │   └── admin/                  # 管理员模型子目录（9 个独立文件）
-│   ├── repositories/               # Repository 层
-│   └── widgets/                    # 公共组件
-├── lib/mobile/                     # Flutter 移动端（Android / iOS）
-│   ├── core/                       # 核心基础设施
-│   │   ├── config/                 # MobileConfig（移动端 API 地址）
-│   │   ├── navigation/             # 移动端路由（app_router）
-│   │   ├── state/                  # AppSettingsStore + MobileProviders
-│   │   └── theme/                  # MobileTheme + SharedColors
-│   ├── features/                   # 功能模块（移动端独立实现）
-│   │   ├── admin/                  # 管理员后台（移动端）
-│   │   ├── auth/                   # 登录 / 注册 / 验证码认证
-│   │   ├── feed/                   # 首页信息流
-│   │   ├── messages/               # 消息页（会话列表 + 聊天）
-│   │   ├── notifications/           # 通知中心
-│   │   ├── post/                   # 发帖/帖子详情/评论输入栏
-│   │   ├── profile/                # 个人中心/设置主页
-│   │   ├── search/                # 搜索
-│   │   └── widgets/                # 移动端公共组件
-│   ├── integrations/               # XDYou 集成层（移动端）
-│   │   ├── xdyou_bootstrap.dart    # 真机实现：初始化 + 状态同步
-│   │   ├── xdyou_bootstrap_stub.dart # Web stub：所有函数为空操作
-│   │   └── xdyou_sync_bridge.dart   # 函数指针桥接层（打破循环依赖）
-│   ├── main.dart                  # 移动端入口
-│   └── lib_mobile.dart            # 移动端 barrel file
-├── packages/                       # 可选本地依赖（gitignore，见 scripts/setup_xdyou.sh）
-│   └── traintime_pda/              # XDYou 子 App（移动端嵌入，MPL-2.0）
-│       └── lib/
-│           ├── controller/
-│           │   └── theme_controller.dart  # XDYou 主题/语言控制器（读取 treehole_* 覆写）
-│           ├── page/
-│           │   ├── homepage/
-│           │   │   ├── home_card_padding.dart  # 通用卡片样式扩展
-│           │   │   └── homepage.dart            # XDYou 主仪表盘
-│           │   └── setting/
-│           │       └── setting.dart             # XDYou 设置页
-│           └── themes/
-│               └── color_seed.dart              # XDYou 品牌色定义（与树洞对齐）
+├── flutter_app/                    # Flutter 前端（Web / 移动端）
+│   ├── lib/                        # Flutter 代码
+│   │   ├── core/                   # 核心基础设施
+│   │   ├── features/               # Web 端功能模块
+│   │   ├── mobile/                 # 移动端（Android / iOS）功能模块
+│   │   ├── models/                 # 数据模型
+│   │   ├── repositories/           # Repository 层
+│   │   └── widgets/                # 公共组件
+│   ├── pubspec.yaml                # Flutter 依赖配置
+│   └── test/                       # 前端测试
+├── miniprogram/                    # 微信小程序端
+│   ├── api/                        # 小程序 API 封装
+│   ├── pages/                      # 小程序页面
+│   ├── config/                     # 小程序配置
+│   └── app.js                      # 小程序入口
 ├── scripts/                        # 部署与构建脚本
 │   ├── build_web_beta.sh           # 内测 Web 构建
 │   ├── build_web_production.sh     # 生产 Web 构建
@@ -182,7 +147,6 @@ xduWhisperBox/
 │   ├── package_release.sh          # 发布包打包
 │   ├── rollback.sh                 # 版本回滚
 │   ├── run_backend_beta.sh         # 内测后端启动
-│   ├── setup_xdyou.sh              # 拉取 traintime_pda 至 packages/（移动端嵌入 XDYou）
 │   └── version.sh                  # 版本信息生成
 ├── .github/
 │   └── workflows/
@@ -195,11 +159,6 @@ xduWhisperBox/
 │   ├── production/                 # 生产环境配置
 │   └── tencent/                    # 腾讯云配置
 ├── docs/                           # 文档
-├── test/                           # 前端测试
-├── web/                            # Web 静态资源
-├── pubspec.yaml                    # Flutter 依赖配置
-├── analysis_options.yaml           # Dart Lint 配置（排除 traintime_pda 目录）
-├── .gitignore                      # Git 忽略配置
 ├── PROJECT.md                      # 项目进程文档
 └── README.md                       # 项目主说明
 ```
@@ -249,7 +208,7 @@ python3 server.py
 ```bash
 cd flutter_app
 
-# 安装依赖（CI 会自动拉取 traintime_pda 子模块）
+# 安装依赖
 flutter pub get
 
 # Web 开发服务器（默认连接本机 127.0.0.1:8080 后端）
@@ -439,8 +398,6 @@ docker compose up -d
 ## 当前开发进度
 
 - 正在接入 **应用内更新提示**：已新增移动端更新控制器与更新弹窗，准备把“检查更新 / 启动时提示新版本”接到设置页与启动流程。
-- 正在拆分 **移动端设置页**：计划把 XDYou 原设置能力迁移到树洞主 App，细分为「一站式设置」「课表设置」等子页。
-- 正在收口 **XDYou 旧设置入口**：继续清理子应用内部已废弃的颜色种子与旧主题入口，统一跟随树洞主题和语言同步策略。
 - 正在优化 **Android 分发兼容性说明**：已确认当前 Release APK 最低支持 Android 7.0（API 24），后续会继续收敛分发流程并优先引导用户下载通用 `app-release.apk`。
 
 ---
@@ -459,32 +416,6 @@ docker compose up -d
 - 独立入口 `lib/mobile/main.dart`，由 `lib/main.dart` 通过 `kIsWeb` 分流调用
 - 移动端路由使用 `GoRouter`（`app_router.dart`），与 Web 端路由平行
 - 移动端 Provider 层（`mobile_providers.dart`）复用 Web 端 Repository 的同时提供平台特定状态
-- **条件编译**：使用 `if (dart.library.io)` 条件导入，Web 端使用 `xdyou_bootstrap_stub.dart`（空操作），移动端使用 `xdyou_bootstrap.dart`（真机实现）
-
-### XDYou 子模块集成（仅移动端）
-
-```
-树洞主 App（lib/mobile/）
-  │
-  ├─ AppSettingsStore.instance          # 管理主题/语言/登录凭证
-  │     ├─ setBrightness() → callSyncThemeToXdyou()
-  │     ├─ setLocale()     → callSyncLocaleToXdyou()
-  │     └─ syncAllToXdyou() (登录时一键同步)
-  │            │
-  │            ▼
-  │     xdyou_sync_bridge.dart         # 函数指针桥接层（打破循环 import）
-  │            │
-  │            ▼
-  ├─ xdyou_bootstrap.dart              # 真机：注册 sync 函数 + 初始化 XDYou
-  │     └─ buildXdyouApp() → MyApp(isFirst: ...)
-  │
-  └─ packages/traintime_pda/            # XDYou 子 App（嵌入式页面）
-        └─ ThemeController.updateTheme()
-              ├─ 优先读取 treehole_brightness / treehole_color_seed / treehole_localization
-              └─ fallback 到 XDYou 原生偏好
-```
-
-XDYou 子模块共享树洞的 SharedPreferences 命名空间，共享 `pubspec.yaml` 的 `flutter_i18n` 配置，主题颜色（`pdaTealLight` / `pdaTealDark`）与树洞 `SharedColors` 品牌色对齐。
 
 ---
 
@@ -511,8 +442,7 @@ XDYou 子模块共享树洞的 SharedPreferences 命名空间，共享 `pubspec.
 
 - 移动端新增页面应放在 `lib/mobile/features/` 对应子目录
 - 使用 `mobile_providers.dart` 统一访问 Provider，避免直接从 `lib/` 深层 import
-- XDYou 集成代码必须使用条件导入（`if (dart.library.io)`），禁止在 Web 端引入 `packages/traintime_pda`
-- 主题变更通过 `AppSettingsStore` 触发自动同步，无需手动调用
+- 主题与语言偏好通过 `AppSettingsStore` 统一持久化
 
 ---
 

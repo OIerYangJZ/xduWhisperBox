@@ -4,7 +4,6 @@
   "home": "Home",
   "messages": "Messages",
   "profile": "Profile",
-  "xdyou": "Campus Assistant",
   "login": "Login",
   "loginTitle": "Login to XDU Treehole",
   "username": "Username",
@@ -43,6 +42,5 @@
   "imageGallery": "Image Gallery",
   "selectImages": "Select Images",
   "postContent": "Post Content",
-  "commentPlaceholder": "Say something...",
-  "xdyouInitError": "Campus Assistant initialization failed"
+  "commentPlaceholder": "Say something..."
 }

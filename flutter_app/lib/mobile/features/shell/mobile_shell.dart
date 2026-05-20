@@ -14,8 +14,8 @@ import '../home/home_page.dart';
 import '../messages/messages_page.dart';
 import '../profile/profile_page.dart';
 
-/// 搴曢儴瀵艰埅鏍忔樉绀?闅愯棌鐘舵€佸叏灞€ ChangeNotifier
-/// 棣栭〉鍚戜笂婊氬姩鏃堕殣钘忥紝鍚戜笅婊氬姩鏃舵樉绀?
+/// 底部导航栏显示/隐藏状态。
+/// 首页向上滚动时隐藏，向下滚动时显示。
 class BottomNavVisibilityNotifier extends ChangeNotifier {
   bool _visible = true;
   bool get visible => _visible;
@@ -39,21 +39,21 @@ class BottomNavVisibilityNotifier extends ChangeNotifier {
   BottomNavVisibilityNotifier._();
 }
 
-/// 绉诲姩绔富 Shell
-/// 鍖呭惈搴曢儴 Tab 瀵艰埅鏍忥紙Twitter 椋庢牸锛氱函鐧借儗鏅?+ 椤堕儴 0.5px 缁嗙嚎锛屾棤闃村奖锛?
-/// 鏀寔锛氬乏鍙虫粦鍔ㄥ垏鎹?Tab銆侀椤垫粦鍔ㄦ椂鑷姩鏀惰捣搴曢儴鏍忋€侀€氱煡绾㈢偣 Badge
+/// 移动端主 Shell。
+/// 包含首页/消息/我的三个底部 Tab，支持左右滑动切换和未读红点。
 class MobileShell extends ConsumerStatefulWidget {
   const MobileShell({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
-  /// 鏈櫥褰曟椂搴曢儴鏍忓彧鏈?3 椤癸紙棣栭〉/娑堟伅/鎴戠殑锛夛紝瀵瑰簲 branch 0銆?銆?锛涖€屾牎鍥€嶄粎瀵瑰凡鐧诲綍鐢ㄦ埛灞曠ず銆?
-  static int _displayIndexForBranch(bool loggedIn, int branchIndex) {
-    return branchIndex.clamp(0, 2);
+  static const int tabCount = 3;
+
+  static int _displayIndexForBranch(int branchIndex) {
+    return branchIndex.clamp(0, tabCount - 1);
   }
 
-  static int _branchIndexForDisplay(bool loggedIn, int displayIndex) {
-    return displayIndex.clamp(0, 2);
+  static int _branchIndexForDisplay(int displayIndex) {
+    return displayIndex.clamp(0, tabCount - 1);
   }
 
   @override
@@ -62,20 +62,20 @@ class MobileShell extends ConsumerStatefulWidget {
 
 class _MobileShellState extends ConsumerState<MobileShell>
     with TickerProviderStateMixin, WidgetsBindingObserver {
-  /// 璁板綍鏄惁宸叉彁绀?鍐嶆寜涓€娆￠€€鍑?
+  /// 是否已经提示“再按一次退出”。
   bool _backHintShown = false;
 
-  /// PageView 鎺у埗鍣紙鐢ㄤ簬宸﹀彸婊戝姩鍒囨崲 Tab锛?
+  /// 用于左右滑动切换 Tab。
   late final PageController _pageController;
 
-  /// 搴曢儴鏍忓姩鐢?
+  /// 底部导航栏隐藏动画。
   late final AnimationController _navAnimController;
   late final Animation<double> _navSlideAnim;
 
-  /// 褰撳墠娲昏穬 display index锛堢敤浜庡悓姝?PageView锛?
+  /// 当前激活的 Tab index。
   int _currentDisplayIndex = 0;
 
-  /// 缂撳瓨褰撳墠鐧诲綍鎬佸拰 branch锛堢敤浜庡湪鍥炶皟涓闂渶鏂板€硷級
+  /// 缓存当前登录态和 branch，确保返回键回调读到最新状态。
   bool _loggedIn = false;
   int _currentBranch = 0;
   bool _didPrefetchUnread = false;
@@ -85,7 +85,9 @@ class _MobileShellState extends ConsumerState<MobileShell>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    _currentDisplayIndex = widget.navigationShell.currentIndex;
+    _currentDisplayIndex = MobileShell._displayIndexForBranch(
+      widget.navigationShell.currentIndex,
+    );
     _pageController = PageController(initialPage: _currentDisplayIndex);
 
     _navAnimController = AnimationController(
@@ -102,7 +104,7 @@ class _MobileShellState extends ConsumerState<MobileShell>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // App 鍒囧洖鍓嶅彴鏃堕噸缃€€鍑烘彁绀虹姸鎬?
+    // App 切回前台时重置退出提示状态。
     if (state == AppLifecycleState.resumed) {
       _backHintShown = false;
       Future<void>.microtask(
@@ -145,13 +147,13 @@ class _MobileShellState extends ConsumerState<MobileShell>
     super.dispose();
   }
 
-  /// 鍒囨崲鍒版寚瀹?Tab
+  /// 切换到指定 Tab。
   void _switchToTab(int displayIndex) {
     if (displayIndex == _currentDisplayIndex) return;
 
     _currentDisplayIndex = displayIndex;
 
-    final target = MobileShell._branchIndexForDisplay(_loggedIn, displayIndex);
+    final target = MobileShell._branchIndexForDisplay(displayIndex);
 
     widget.navigationShell.goBranch(
       target,
@@ -159,23 +161,20 @@ class _MobileShellState extends ConsumerState<MobileShell>
     );
   }
 
-  /// PageView 婊戝姩缁撴潫鍚庯紝鍚屾 GoRouter 璺敱鐘舵€?
+  /// PageView 滑动结束后同步 GoRouter 路由状态。
   void _onPageViewIdle(int index) {
     _currentDisplayIndex = index;
     BottomNavVisibilityNotifier.instance.show();
 
-    final target = MobileShell._branchIndexForDisplay(_loggedIn, index);
+    final target = MobileShell._branchIndexForDisplay(index);
     if (target == widget.navigationShell.currentIndex) return;
 
     widget.navigationShell.goBranch(target, initialLocation: false);
 
-    // GoRouter 鏇存柊 navigationShell.currentIndex 鍚庯紝鍚屾 PageView
+    // GoRouter 更新 navigationShell.currentIndex 后，同步 PageView。
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final expectedDisplay = MobileShell._displayIndexForBranch(
-        _loggedIn,
-        target,
-      );
+      final expectedDisplay = MobileShell._displayIndexForBranch(target);
       if (_pageController.hasClients &&
           _pageController.page?.round() != expectedDisplay) {
         _pageController.jumpToPage(expectedDisplay);
@@ -183,7 +182,7 @@ class _MobileShellState extends ConsumerState<MobileShell>
     });
   }
 
-  /// 閫€鍑哄簲鐢?
+  /// 退出应用。
   void _exitApp() {
     if (Platform.isAndroid) {
       SystemNavigator.pop();
@@ -192,18 +191,18 @@ class _MobileShellState extends ConsumerState<MobileShell>
     }
   }
 
-  /// 婊氬姩棣栭〉鍒伴《閮?
+  /// 滚动首页到顶部。
   void _scrollHomeToTop() {
     ref.read(scrollToTopTriggerProvider.notifier).state =
         DateTime.now().millisecondsSinceEpoch;
   }
 
-  /// 澶勭悊杩斿洖閿紙浣跨敤浼犲叆鐨?branch 鍊硷紝鑰岄潪闂寘鎹曡幏锛?
+  /// 处理系统返回键。
   void _handleBackPress(int branch) {
     if (!mounted) return;
 
     if (branch == 0) {
-      // 棣栭〉锛氭鏌?Navigator 鏄惁鍙?pop锛堟槸鍚︽湁瀛愰〉闈級
+      // 首页：先检查 Navigator 是否可以 pop。
       final navigator = Navigator.of(context);
       if (navigator.canPop()) {
         navigator.pop();
@@ -221,7 +220,7 @@ class _MobileShellState extends ConsumerState<MobileShell>
         });
       }
     } else {
-      // 娑堟伅/鏍″洯/鎴戠殑锛氱涓€娆″垏鍥為椤碉紝绗簩娆￠€€鍑?
+      // 消息/我的：第一次回首页，第二次退出。
       if (_backHintShown) {
         _exitApp();
       } else {
@@ -256,7 +255,7 @@ class _MobileShellState extends ConsumerState<MobileShell>
     final notificationsState = ref.watch(notificationsControllerProvider);
     final notificationUnreadCount = notificationsState.unreadCount;
 
-    // 鍦?build 鏈€寮€濮嬪悓姝ユ渶鏂板€硷紝纭繚 BackButtonListener 鍥炶皟鎷垮埌姝ｇ‘鐨?branch
+    // 在 build 开始同步最新值，确保 BackButtonListener 回调拿到正确 branch。
     _loggedIn = AuthStore.instance.isAuthenticated;
     _currentBranch = widget.navigationShell.currentIndex;
     if (_loggedIn && !_didPrefetchUnread) {
@@ -265,12 +264,9 @@ class _MobileShellState extends ConsumerState<MobileShell>
       _didPrefetchUnread = false;
     }
 
-    final displayIndex = MobileShell._displayIndexForBranch(
-      _loggedIn,
-      _currentBranch,
-    );
+    final displayIndex = MobileShell._displayIndexForBranch(_currentBranch);
 
-    // 淇濇寔 PageView 鍚屾
+    // 保持 PageView 同步。
     final currentPage = _pageController.hasClients
         ? (_pageController.page?.round() ?? 0)
         : 0;
@@ -282,9 +278,9 @@ class _MobileShellState extends ConsumerState<MobileShell>
       });
     }
 
-    // BackButtonListener 浼樺厛浜?go_router 璺敱鍣ㄦ帴鏀?Android 杩斿洖閿€?
-    // go_router 14 鐨?RouterDelegate.popRoute() 涓嶇粡杩?Navigator.maybePop()锛?
-    // 鍥犳 PopScope 鏃犳硶鎷︽埅 Shell 灞傜骇鐨勮繑鍥為敭锛屽繀椤讳娇鐢?BackButtonListener銆?
+    // BackButtonListener 优先于 go_router 路由器接收 Android 返回键。
+    // go_router 14 的 RouterDelegate.popRoute() 不经过 Navigator.maybePop()，
+    // 因此 PopScope 无法拦截 Shell 层级的返回键，必须使用 BackButtonListener。
     final branchForCallback = _currentBranch;
 
     return BackButtonListener(
@@ -307,7 +303,7 @@ class _MobileShellState extends ConsumerState<MobileShell>
         // go_router 仍有可弹出的页面时，交给路由器处理。
         if (context.canPop()) return false;
 
-        // 鍚﹀垯鐢?Shell 鎺ョ锛屾墽琛岃嚜瀹氫箟杩斿洖閫昏緫
+        // 否则由 Shell 接管，执行自定义返回逻辑。
         _handleBackPress(branchForCallback);
         return true;
       },
@@ -330,7 +326,7 @@ class _MobileShellState extends ConsumerState<MobileShell>
               },
               child: _TabBody(
                 pageController: _pageController,
-                tabCount: 3,
+                tabCount: MobileShell.tabCount,
                 onPageIdle: _onPageViewIdle,
               ),
             ),

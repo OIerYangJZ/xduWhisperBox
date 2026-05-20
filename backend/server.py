@@ -54,7 +54,19 @@ ALLOWED_IMAGE_TYPES = _globals.ALLOWED_IMAGE_TYPES
 BACKEND_VERSION = _globals.BACKEND_VERSION
 DEFAULT_ADMIN_USERNAME = _globals.DEFAULT_ADMIN_USERNAME
 DEFAULT_ADMIN_PASSWORD = _globals.DEFAULT_ADMIN_PASSWORD
+ADMIN_USERNAME_SETTING_KEY = _globals.ADMIN_USERNAME_SETTING_KEY
+ADMIN_PASSWORD_HASH_SETTING_KEY = _globals.ADMIN_PASSWORD_HASH_SETTING_KEY
+DEFAULT_CHANNELS = _globals.DEFAULT_CHANNELS
+DEFAULT_TAGS = _globals.DEFAULT_TAGS
+DEFAULT_SETTINGS = _globals.DEFAULT_SETTINGS
+DEFAULT_SENSITIVE_WORDS = _globals.DEFAULT_SENSITIVE_WORDS
+SEED_POSTS = _globals.SEED_POSTS
+DEMO_USER_ID = _globals.DEMO_USER_ID
 DEMO_USER_EMAIL = _globals.DEMO_USER_EMAIL
+ALLOW_DEBUG_VERIFY_CODE = _globals.ALLOW_DEBUG_VERIFY_CODE
+RATE_LIMIT_WINDOWS_SECONDS = _globals.RATE_LIMIT_WINDOWS_SECONDS
+IP_RATE_LIMITS = _globals.IP_RATE_LIMITS
+SPAM_REPEAT_REGEX = _globals.SPAM_REPEAT_REGEX
 SMTP_HOST = _globals.SMTP_HOST
 SMTP_PORT = _globals.SMTP_PORT
 SMTP_FROM_EMAIL = _globals.SMTP_FROM_EMAIL
@@ -79,7 +91,7 @@ from helpers import (
 )
 from helpers._auth_helpers import hash_password, verify_password, is_password_hashed, is_campus_email, is_valid_student_id, sanitize_alias, normalize_avatar_url, extract_local_object_key_from_url, decode_base64_payload, detect_image_type, random_code, student_id_from_email, calc_sha256_hex, parse_bool, parse_list
 from helpers._rate_limit import consume_rate_limit, get_client_ip, check_ip_rate_limit, check_duplicate_image_hash, assess_text_risk, send_rate_limit_error, get_setting_int
-from helpers._mailer import send_verification_email, send_password_reset_email, verification_send_error_message
+from helpers._mailer import send_verification_email, send_password_reset_email, verification_send_error_message, _is_email_not_found_error as is_email_not_found_error
 from services import (
     load_db, save_db, default_db, ensure_db, migrate_db, add_audit_log, next_id,
     find_user_by_email, find_user_by_id, find_user_by_student_id,
@@ -104,6 +116,7 @@ from services import (
 )
 from services._db_service import (
     build_admin_account, normalize_admin_username, is_valid_admin_username,
+    ensure_admin_auth_settings, get_admin_auth_credentials,
     find_admin_account_by_username, find_admin_account_by_id,
     build_authenticated_admin, serialize_admin_auth_payload,
     build_admin_account_rows, build_admin_review_rows, build_admin_report_rows,
@@ -112,6 +125,10 @@ from services._db_service import (
     auth_user as auth_user_helper, build_pagination_meta, IS_SQL_DB,
 )
 from _globals import smtp_configured, verify_code_debug_enabled, DEFAULT_CHANNELS
+
+
+def password_reset_code_key(email: str) -> str:
+    return _auth_handler._password_reset_code_key(email)
 
 
 def _configure_logging() -> None:

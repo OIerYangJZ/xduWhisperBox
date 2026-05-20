@@ -57,7 +57,12 @@ class TestAdminSettings:
 
     def test_admin_auth_settings_persistence(self):
         """测试管理员设置持久化。"""
-        from server import ensure_admin_auth_settings, hash_password
+        from server import (
+            ensure_admin_auth_settings,
+            hash_password,
+            ADMIN_USERNAME_SETTING_KEY,
+            ADMIN_PASSWORD_HASH_SETTING_KEY,
+        )
 
         db: dict = {}
         ensure_admin_auth_settings(db)

@@ -4,7 +4,6 @@
   "home": "首页",
   "messages": "消息",
   "profile": "我的",
-  "xdyou": "校园助手",
   "login": "登录",
   "loginTitle": "登录西电树洞",
   "username": "用户名",
@@ -43,6 +42,5 @@
   "imageGallery": "图片浏览",
   "selectImages": "选择图片",
   "postContent": "帖子内容",
-  "commentPlaceholder": "说点什么...",
-  "xdyouInitError": "校园助手初始化失败"
+  "commentPlaceholder": "说点什么..."
 }

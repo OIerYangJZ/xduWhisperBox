@@ -21,9 +21,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get profile => '我的';
 
   @override
-  String get xdyou => '校园助手';
-
-  @override
   String get login => '登录';
 
   @override
@@ -141,9 +138,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get commentPlaceholder => '说点什么...';
-
-  @override
-  String get xdyouInitError => '校园助手初始化失败';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -161,9 +155,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get profile => '我的';
-
-  @override
-  String get xdyou => '校園助手';
 
   @override
   String get login => '登錄';
@@ -283,7 +274,4 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get commentPlaceholder => '說點什麼...';
-
-  @override
-  String get xdyouInitError => '校園助手初始化失敗';
 }

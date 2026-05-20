@@ -18,11 +18,10 @@ jobs:
           channel: stable
           cache: true
 
-      - name: XDYou (traintime_pda) for path dependency
-        run: bash scripts/setup_xdyou.sh
-
       - run: flutter pub get
+        working-directory: flutter_app
       - run: flutter analyze
+        working-directory: flutter_app
 
   test:
     name: Test
@@ -35,8 +34,7 @@ jobs:
           channel: stable
           cache: true
 
-      - name: XDYou (traintime_pda) for path dependency
-        run: bash scripts/setup_xdyou.sh
-
       - run: flutter pub get
+        working-directory: flutter_app
       - run: flutter test
+        working-directory: flutter_app

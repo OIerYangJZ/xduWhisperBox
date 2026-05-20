@@ -43,13 +43,6 @@ class _SettingsMainPageState extends ConsumerState<SettingsMainPage> {
     context.go('/auth/login');
   }
 
-  void _showToast(String message) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
-  }
-
   @override
   Widget build(BuildContext context) {
     final colors = MobileColors.of(context);
@@ -143,18 +136,6 @@ class _SettingsMainPageState extends ConsumerState<SettingsMainPage> {
               title: '通知设置',
               subtitle: '推送消息、提醒项管理',
               onTap: () => context.push('/profile/settings/notifications'),
-            ),
-          ]),
-
-          _buildSectionTitle('校园工具 (XDYou)'),
-          _buildTileCard([
-            _buildMenuTile(
-              icon: Icons.school_outlined,
-              title: '课表与教务',
-              subtitle: '课表显示设置、学号绑定',
-              onTap: () {
-                _showToast('校园工具设置正在迁移中，敬请期待');
-              },
             ),
           ]),
 

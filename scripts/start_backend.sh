@@ -37,6 +37,32 @@ load_env_file "$ROOT_DIR/.env.local"
 load_env_file "$ROOT_DIR/backend/.env"
 load_env_file "$ROOT_DIR/backend/.env.local"
 
+detect_lan_ip() {
+  local ip="" iface=""
+
+  if command -v route >/dev/null 2>&1; then
+    iface="$(route -n get default 2>/dev/null | awk '/interface:/{print $2; exit}' || true)"
+  fi
+
+  if [[ -n "$iface" ]] && command -v ipconfig >/dev/null 2>&1; then
+    ip="$(ipconfig getifaddr "$iface" 2>/dev/null || true)"
+  fi
+
+  if [[ -z "$ip" ]] && command -v ipconfig >/dev/null 2>&1; then
+    ip="$(ipconfig getifaddr en0 2>/dev/null || true)"
+  fi
+
+  if [[ -z "$ip" ]] && command -v hostname >/dev/null 2>&1; then
+    ip="$(hostname -I 2>/dev/null | awk '{print $1}' || true)"
+  fi
+
+  echo "$ip"
+}
+
+is_loopback_host() {
+  [[ "$1" == "127.0.0.1" || "$1" == "localhost" || "$1" == "::1" ]]
+}
+
 export BACKEND_HOST="${BACKEND_HOST:-0.0.0.0}"
 export BACKEND_PORT="${BACKEND_PORT:-8080}"
 export BACKEND_DB_FILE="${BACKEND_DB_FILE:-$ROOT_DIR/backend/data/treehole.db}"
@@ -64,11 +90,45 @@ fi
 
 mkdir -p "$(dirname "$BACKEND_DB_FILE")" "$BACKEND_STORAGE_DIR"
 
+LAN_HOST="${BACKEND_LAN_HOST:-$(detect_lan_ip)}"
+LOCAL_HOST="127.0.0.1"
+if [[ "$BACKEND_HOST" != "0.0.0.0" && "$BACKEND_HOST" != "::" ]]; then
+  LOCAL_HOST="$BACKEND_HOST"
+fi
+
+LOCAL_ORIGIN="http://$LOCAL_HOST:$BACKEND_PORT"
+ANDROID_EMULATOR_API="http://10.0.2.2:$BACKEND_PORT/api"
+LAN_ORIGIN=""
+if [[ -n "$LAN_HOST" ]]; then
+  LAN_ORIGIN="http://$LAN_HOST:$BACKEND_PORT"
+fi
+
 echo "[backend] project: $ROOT_DIR"
 echo "[backend] listen : http://$BACKEND_HOST:$BACKEND_PORT/api"
 echo "[backend] python : $PYTHON_BIN"
 echo "[backend] db     : $BACKEND_DB_FILE"
 echo "[backend] storage: $BACKEND_STORAGE_DIR"
+echo "[backend]"
+echo "[backend] all clients use this backend:"
+echo "[backend]   Web local        : $LOCAL_ORIGIN/"
+echo "[backend]   Web API          : $LOCAL_ORIGIN/api"
+echo "[backend]   App iOS simulator: $LOCAL_ORIGIN/api"
+echo "[backend]   App Android emu  : $ANDROID_EMULATOR_API"
+if [[ -n "$LAN_ORIGIN" ]]; then
+  echo "[backend]   App real device  : $LAN_ORIGIN/api"
+  echo "[backend]   Mini devtools    : http://localhost:$BACKEND_PORT"
+  echo "[backend]   Mini real device : $LAN_ORIGIN"
+  echo "[backend]   Flutter real-device flag:"
+  echo "[backend]     --dart-define=MOBILE_API_BASE_URL=$LAN_ORIGIN/api"
+  if [[ -f "$ROOT_DIR/miniprogram/config/env.js" ]] && ! grep -q "baseUrl: '$LAN_ORIGIN'" "$ROOT_DIR/miniprogram/config/env.js"; then
+    echo "[backend]   Mini config note : set miniprogram/config/env.js lan baseUrl to $LAN_ORIGIN for real-device debugging"
+  fi
+else
+  echo "[backend]   App/Mini real device: LAN IP not detected; set BACKEND_LAN_HOST=<your-computer-lan-ip>"
+fi
+if is_loopback_host "$BACKEND_HOST"; then
+  echo "[backend] warning: BACKEND_HOST=$BACKEND_HOST only accepts local connections; real App/Mini devices need BACKEND_HOST=0.0.0.0"
+fi
 echo "[backend] press Ctrl-C to stop"
 
 exec "$PYTHON_BIN" "$ROOT_DIR/backend/server.py"

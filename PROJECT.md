@@ -2,15 +2,16 @@
 
 ## 1. 项目概述
 
-**See电**（西电树洞）是一个面向西安电子科技大学校内用户的匿名社区应用，采用 Flutter 跨端技术栈构建，同时支持 Web 端和移动端（Android / iOS）。
+**See电**（西电树洞）是一个面向西安电子科技大学校内用户的匿名社区应用，采用 Flutter 跨端技术栈与原生微信小程序构建，同时支持 Web 端、移动端（Android / iOS）以及微信小程序。
 
 ### 应用定位
 
 - 为校内同学提供一个自由、平等的交流空间
 - 支持多种话题频道，满足学习、生活、情感、吐槽等场景需求
 - 强调社区治理能力，配备完善的内容审核、举报处理和用户管理体系
+- 融合 AI 智能助手，通过 RAG 架构解答校园疑问
 
-### 核心功能（Web 端 + 移动端）
+### 核心功能（Web 端 + 移动端 + 小程序）
 
 **社区交流**
 
@@ -62,10 +63,8 @@
 
 **移动端专属功能**
 
-- **登录/注册页**（`XduLoginPage`）：统一身份认证入口，管理登录和 Admin 登录两个入口；登录成功后一键同步登录凭证、主题、语言到 XDYou 子 App
+- **登录/注册页**（`XduLoginPage`）：统一身份认证入口，管理登录和 Admin 登录两个入口
 - **设置主页**（`SettingsMainPage`）：账号安全 / 隐私开关（陌生私信、联系方式可见）/ 通知 / 外观（主题、语言）/ 账号注销双重确认流程
-- **XDYou 校园服务**（嵌入底部「校园」Tab，仅登录可见）：课表、成绩、电费、空教室、图书馆、运动打卡、宿舍水费等
-- **树洞→XDYou 状态同步**：主 App 的主题（跟随系统/浅色/深色）、语言（简体中文/繁體中文/English）、登录凭证通过 SharedPreferences 单向同步到 XDYou 子 App；XDYou `ThemeController` 优先读取 `treehole_*` 覆写 key，fallback 到原生偏好
 - **帖子详情页**（`PostDetailPage`）：操作栏（点赞/收藏/评论/分享）内置于正文与评论区之间，支持嵌套评论树、举报流程、关注/私信作者、表情输入；评论区跳转使用 `Scrollable.ensureVisible` 精确滚动
 - **表情输入组件**（`EmojiPickerBar`）：96 个常用 emoji 网格，与键盘互斥（展开时收起键盘防止布局空白）；`insertEmoji()` 方法通过 `GlobalKey` 暴露给父组件调用
 - **消息页**（`MessagesPage`）：会话列表直接展示，无 Tab 切换；头像使用 `CachedNetworkImage` 正确加载；会话列表左滑删除；聊天页菜单提供屏蔽/解除屏蔽入口
@@ -152,7 +151,7 @@ xduWhisperBox/
 │   │   ├── config/                 # MobileConfig（移动端 API 地址默认值）
 │   │   ├── navigation/             # 移动端路由（app_router）
 │   │   ├── state/                  # AppSettingsStore + MobileProviders
-│   │   │   ├── app_settings_store.dart  # 主题/语言持久化 + XDYou 同步触发
+│   │   │   ├── app_settings_store.dart  # 主题/语言持久化
 │   │   │   └── mobile_providers.dart    # Riverpod Provider 统一入口
 │   │   ├── theme/                  # MobileTheme + SharedColors
 │   │   └── utils/                  # 工具函数（时间格式化 time_utils）
@@ -169,27 +168,8 @@ xduWhisperBox/
 │   │   ├── profile/
 │   │   │   └── settings_main_page.dart # 设置主页（主题/语言/隐私/账号注销）
 │   │   └── widgets/                # 移动端公共组件（AvatarWidget 等）
-│   ├── integrations/               # XDYou 集成层（移动端，仅移动端打包）
-│   │   ├── xdyou_bootstrap.dart     # 真机：初始化 XDYou + 注册同步函数
-│   │   ├── xdyou_bootstrap_stub.dart # Web stub：所有函数为空操作
-│   │   └── xdyou_sync_bridge.dart    # 函数指针桥接层（打破循环 import）
 │   ├── main.dart                  # 移动端入口（初始化所有 Store + runApp）
 │   └── lib_mobile.dart            # 移动端 barrel file
-├── packages/                       # 可选本地依赖（gitignore，见 scripts/setup_xdyou.sh）
-│   └── traintime_pda/              # XDYou 子 App（移动端嵌入，MPL-2.0）
-│       └── lib/
-│           ├── controller/
-│           │   └── theme_controller.dart  # XDYou 主题/语言控制器
-│           │                                # （读取 treehole_* 覆写 key，fallback 原生偏好）
-│           ├── page/
-│           │   ├── homepage/
-│           │   │   ├── home_card_padding.dart  # 通用卡片样式扩展（OutlinedButton 包装）
-│           │   │   └── homepage.dart            # XDYou 主仪表盘（课表/电费/图书馆等）
-│           │   └── setting/
-│           │       └── setting.dart             # XDYou 设置页（主题/语言/账号/缓存等）
-│           └── themes/
-│               └── color_seed.dart              # XDYou 品牌色定义（pdaTealLight/Dark
-│                                                 # 与树洞 SharedColors.primary 对齐）
 ├── scripts/                        # 部署与构建脚本
 │   ├── build_web_beta.sh           # 内测 Web 构建
 │   ├── build_web_production.sh     # 生产 Web 构建
@@ -199,7 +179,6 @@ xduWhisperBox/
 │   ├── package_release.sh          # 发布包打包
 │   ├── rollback.sh                 # 版本回滚
 │   ├── run_backend_beta.sh         # 内测后端启动
-│   ├── setup_xdyou.sh              # 拉取 traintime_pda 至 packages/（移动端嵌入 XDYou）
 │   └── version.sh                  # 版本信息生成
 ├── .github/
 │   └── workflows/
@@ -215,7 +194,7 @@ xduWhisperBox/
 ├── test/                           # 前端测试
 ├── web/                            # Web 静态资源（index.html、manifest.json）
 ├── pubspec.yaml                    # Flutter 依赖配置（Dart SDK >=3.8.0）
-├── analysis_options.yaml           # Dart Lint 配置（排除 traintime_pda 目录）
+├── analysis_options.yaml           # Dart Lint 配置
 ├── .gitignore                      # Git 忽略配置
 └── README.md                       # 项目主说明
 ```
@@ -275,43 +254,8 @@ lib/mobile/main.dart
         │
         ├── app_router（GoRouter）
         │     ├─ /auth/login   → XduLoginPage
-        │     ├─ /             → MobileShell (4-Tab: 首页/消息/校园/我的)
-        │     ├─ /xdyou       → buildXdyouApp()（嵌入 XDYou MyApp）
+        │     ├─ /             → MobileShell (3-Tab: 首页/消息/我的)
         │     └─ ...其他路由...
-        │
-        └── xdyou_bootstrap.dart（条件导入，仅移动端生效）
-              │
-              ├─ ensureXdyouEmbedInitialized()
-              │     ├─ 初始化 SharedPreferencesWithCache
-              │     ├─ Get.put(ThemeController())
-              │     └─ registerXdyouSyncFunctions(syncTheme, syncLocale)
-              │
-              ├─ initXdyouNotificationServices()
-              │     └─ 初始化所有 NotificationServiceRegistrar
-              │
-              └─ buildXdyouApp()
-                    └─ MyApp(isFirst: !loggedIn && xdyouIsFirstLogin())
-
-状态同步流向（AppSettingsStore → XDYou）：
-
-  用户变更主题/语言
-       │
-       ▼
-  AppSettingsStore.setBrightness() / setLocale()
-       │
-       ├─→ SharedPreferences['treehole_brightness'] = index
-       ├─→ SharedPreferences['treehole_localization'] = locale
-       │
-       ▼
-  callSyncThemeToXdyou() / callSyncLocaleToXdyou()
-       │  (xdyou_sync_bridge.dart 函数指针)
-       ▼
-  xdyou_bootstrap.dart 注册的 sync lambda
-       │
-       ├─→ SharedPreferences['color'] = seed
-       └─→ ThemeController.updateTheme()
-             ├─ 优先读取 treehole_brightness / treehole_color_seed / treehole_localization
-             └─ fallback 到 XDYou 原生 Preference 值
 ```
 
 ---
@@ -344,8 +288,6 @@ lib/mobile/main.dart
 ## 3.1 当前开发进度（未推送）
 
 - **应用内更新提示**：已新增移动端 `app_update_controller.dart` 与更新弹窗，准备把“检查更新 / 启动时提示新版本”接到设置页与启动流程
-- **设置页拆分迁移**：正在将移动端设置页细分为「一站式设置」「课表设置」等子页，把 XDYou 原设置能力逐步迁移到树洞主 App
-- **XDYou 设置收口**：正在清理子应用内已废弃的颜色种子与旧主题入口，统一跟随树洞主题与语言同步策略
 - **Android 分发兼容性排查**：已确认当前 Release APK 最低支持 Android 7.0（API 24），后续会继续收敛分发流程并优先引导用户下载通用 `app-release.apk`
 
 ## 4. 未跨端兼容的功能
@@ -360,9 +302,8 @@ lib/mobile/main.dart
 | 帖子详情页（PostDetailPage） | 操作栏置于正文与评论区之间 + 嵌套评论树（最多3层缩进）+ EmojiPickerBar + 举报流程 + 关注/私信作者 | 仅移动端 | 操作栏位置/嵌套评论/表情输入 v0.1.0+23/24 重构 |
 | 消息页（MessagesPage） | 会话列表直接展示，无 Tab 切换；头像使用 `CachedNetworkImage` + `AppConfig.resolveUrl()` 正确加载 | 仅移动端（`lib/mobile/features/messages/`） | |
 | AvatarWidget | 使用 `AppConfig.resolveUrl()` + `CachedNetworkImage` 正确加载头像 | 仅移动端（`lib/mobile/features/widgets/`） | |
-| 统一身份认证登录（XduLoginPage） | 学号 + 统一认证密码，`@stu.xidian.edu.cn` 自动拼接；登录后一键同步登录凭证/主题/语言到 XDYou | 仅移动端（`lib/mobile/features/auth/login_page.dart`） | v0.1.0+24 新增文件 |
-| AppSettingsStore | 主题（ThemeMode）+ 语言（Locale）的持久化与 XDYou 同步触发；单例 ChangeNotifier | 仅移动端（`lib/mobile/core/state/app_settings_store.dart`） | v0.1.0+24 新增文件 |
-| XDYou 集成层 | `xdyou_bootstrap.dart`（真机）/ `xdyou_bootstrap_stub.dart`（Web 空操作）/ `xdyou_sync_bridge.dart`（函数指针桥接） | 仅移动端（`lib/mobile/integrations/`） | v0.1.0+24 新增文件 |
+| 统一身份认证登录（XduLoginPage） | 学号 + 统一认证密码，`@stu.xidian.edu.cn` 自动拼接 | 仅移动端（`lib/mobile/features/auth/login_page.dart`） | v0.1.0+24 新增文件 |
+| AppSettingsStore | 主题（ThemeMode）+ 语言（Locale）的持久化；单例 ChangeNotifier | 仅移动端（`lib/mobile/core/state/app_settings_store.dart`） | v0.1.0+24 新增文件 |
 | EmojiPickerBar | 96 个常用 emoji 网格，与键盘互斥（展开时收起键盘防止布局空白）；`insertEmoji()` API 通过 GlobalKey 暴露 | 仅移动端（`lib/mobile/features/post/comment_input_bar.dart`） | v0.1.0+24 新增组件 |
 | CommentInputBar（含 insertEmoji API） | 评论输入栏公开 `insertEmoji()` 方法供父组件调用；聚焦时自动滚动到输入框 | 仅移动端（`lib/mobile/features/post/comment_input_bar.dart`） | v0.1.0+23 新增 API |
 | 学号登录（自动拼接邮箱后缀） | 登录/注册只需填学号，系统自动拼接 `@stu.xidian.edu.cn` | 仅移动端 | |

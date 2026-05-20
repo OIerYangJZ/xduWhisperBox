@@ -525,7 +525,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         (String reason) => RadioListTile<String>(
                           title: Text(reason),
                           value: reason,
+                          // ignore: deprecated_member_use
                           groupValue: selectedReason,
+                          // ignore: deprecated_member_use
                           onChanged: (String? value) {
                             setState(() {
                               selectedReason = value;

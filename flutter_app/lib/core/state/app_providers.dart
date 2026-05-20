@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../repositories/app_repositories.dart';
+import '../../repositories/admin_repository.dart';
 import '../../repositories/auth_repository.dart';
 import '../../repositories/message_repository.dart';
 import '../../repositories/notification_repository.dart';
@@ -27,4 +28,8 @@ final notificationRepositoryProvider = Provider<NotificationRepository>((
   Ref ref,
 ) {
   return AppRepositories.notifications;
+});
+
+final adminRepositoryProvider = Provider<AdminRepository>((Ref ref) {
+  return AppRepositories.adminPortal;
 });

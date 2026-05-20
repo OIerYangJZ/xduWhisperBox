@@ -133,23 +133,25 @@ Do not place Flutter-specific files such as `pubspec.yaml` at the repository roo
    - ICP filing
    - Backup / rollback
    - Logging and alerting
-5. **Mini Program Migration (Ongoing):**
-   - Successfully initialized Native WeChat Mini Program structure (`miniprogram/`).
-   - Implemented Profile Page & Email/StudentID Login (`pages/profile/index`, `pages/profile/auth/index`).
-   - Added a local real-device login setup: `miniprogram/config/env.js` supports `auto` / `devtools` / `lan` / `prod`.
-   - Enforced the Mini Program login gate: Mini Program API requests other than public auth endpoints require a token.
-   - Implemented Campus Feed with 3 Tabs: Community (Treehole), News (Announcements), and College Zone.
-   - Implemented Post Detail + Comments page UI and wired it to backend post/comment APIs.
-   - Implemented Create Post flow with image selection and upload.
-   - Implemented Search page refinement with keyword history and channel filtering.
-   - Implemented Profile extras: favorites, notifications, settings, feedback, notification preferences, and avatar upload.
-   - Implemented AI Assistant Chat UI and connected it to the real backend `/api/ai/chat` RAG endpoint.
-   - **Audit Results (Missing/To-do):**
-     - **Missing Pages:** "My Posts" (我的发布), "My Comments" (我的评论), "My Reports" (我的举报).
-     - **Missing Legal:** "Terms of Service" (用户协议), "Privacy Policy" (隐私政策), "Acknowledgements" (致谢页).
-     - **Missing Features:** Privacy Settings (Allow stranger DM, show contactable), Account Deletion request.
-     - **Polish:** Infinite scroll/pagination for feeds, Pull-to-refresh on all list pages, Empty states for all list pages.
-   - **Next:** Implement missing activity pages (My Posts/Comments); fix production HTTPS/domain setup before preview/release.
+5. **Mini Program Migration (Ongoing, audited 2026-05-20):**
+   - 已完成并确认：
+     - 原生微信小程序结构已初始化：`miniprogram/`。
+     - 登录/注册/邮箱验证已接后端：`pages/profile/auth/index`、`pages/profile/register/index`。
+     - 本地真机调试配置已存在：`miniprogram/config/env.js` 支持 `auto` / `devtools` / `lan` / `prod`。
+     - 小程序请求已统一走 `miniprogram/utils/request.js`，除公开认证接口外默认要求 token。
+     - 树洞列表、搜索、发布、详情、评论、点赞、收藏、头像上传、通知中心、通知偏好、AI 问答已接入现有后端 API。
+   - **仍未完成 / 需优先补齐：**
+     - **个人活动页缺失：** `我的发布`、`我的评论`、`我的举报` 还没有页面、入口和 API 封装。后端已有 `/api/posts/mine`、`/api/comments/mine`、`/api/reports/mine`，可直接补小程序端。
+     - **合规说明页缺失：** `用户协议`、`隐私政策`、`社区规范/举报说明`、`致谢页` 尚无小程序页面，也未注册到 `miniprogram/app.json`。
+     - **设置页仍不完整：** 当前只支持头像、账号信息展示、通知偏好和退出登录；尚未接个人资料编辑、隐私开关（`allowStrangerDm` / `showContactable`）、账号注销申请、一级用户升级申请。后端已有 `PATCH /api/users/me`、`PATCH /api/users/privacy`、`POST /api/users/me/cancellation-request`、`POST /api/users/me/level-upgrade-request`。
+     - **私信与社交链路缺失：** 小程序没有会话列表、聊天页、直接私信、屏蔽/解除屏蔽、关注/粉丝/好友、他人公开主页。后端已有 `/api/messages/conversations*`、`/api/users/{id}/follow`、`/api/users/me/following|followers|friends` 等接口。
+     - **帖子详情交互不完整：** 当前详情页只提供点赞和一级评论发布；缺收藏/取消收藏、举报、分享、删除/编辑自己帖子、阅读量上报、评论点赞/回复/删除/举报、嵌套回复展示、点击非匿名作者进入公开主页、私信作者。
+     - **列表分页还未真正实现：** `pages/campus/index.wxml` 绑定了 `onReachBottom`，但 `pages/campus/index.js` 未实现该 handler，也未递增 `page`；后端 `/api/posts` 当前忽略 `page/limit`，所以小程序 feed/search/favorites/notifications 还没有可靠的无限滚动分页。
+     - **校园/资讯模块仍偏占位：** `miniprogram/api/campus.js#getColleges()` 仍是本地 Mock；`pages/campus/index.js#goToNewsDetail()` 仅弹窗展示公告，尚无新闻/公告详情页。
+     - **意见反馈未入库：** `pages/profile/feedback/index.js` 只写入本地 `feedbackDrafts`，没有提交后端或管理员后台可处理的反馈记录。
+     - **AI 助手仍是轻量版：** 小程序聊天已接 `/api/ai/chat`，但历史只存在本地 `aiHistory`；后端 `_ai_handler.py` 仍是关键词知识库/随机兜底，不是持久化会话、流式回复或真正私有知识库 RAG。
+     - **发布前置条件：** `prod` 已指向 `https://www.seediantreehole.cn`，但小程序预览/提审前仍需确认 HTTPS、备案、微信后台 request 合法域名和线上后端部署状态。
+   - **Next:** 先补 `我的发布/我的评论/我的举报` 与设置页隐私/注销/升级入口；随后补私信社交链路和帖子详情完整操作。
 
 ## Operational Safety
 

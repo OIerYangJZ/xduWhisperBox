@@ -21,9 +21,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profile => 'Profile';
 
   @override
-  String get xdyou => 'Campus Assistant';
-
-  @override
   String get login => 'Login';
 
   @override
@@ -141,7 +138,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commentPlaceholder => 'Say something...';
-
-  @override
-  String get xdyouInitError => 'Campus Assistant initialization failed';
 }

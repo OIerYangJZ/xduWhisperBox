@@ -87,9 +87,9 @@ def check_duplicate_image_hash(db: dict[str, Any], image_hash: str) -> bool:
     if not image_hash:
         return False
     return any(
-        upload.get("hash") == image_hash
+        (upload.get("sha256") == image_hash or upload.get("hash") == image_hash)
         for upload in db.get("mediaUploads", [])
-        if upload.get("hash")
+        if upload.get("sha256") or upload.get("hash")
     )
 
 

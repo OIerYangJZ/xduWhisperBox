@@ -351,6 +351,21 @@ class SqliteTreeholeRepository:
               FOREIGN KEY(created_by) REFERENCES users(id) ON DELETE SET NULL
             );
 
+            CREATE TABLE IF NOT EXISTS feedbacks (
+              id TEXT PRIMARY KEY,
+              user_id TEXT NOT NULL,
+              user_email TEXT NOT NULL DEFAULT '',
+              user_nickname TEXT NOT NULL DEFAULT '',
+              content TEXT NOT NULL,
+              contact TEXT NOT NULL DEFAULT '',
+              status TEXT NOT NULL DEFAULT 'pending',
+              created_at TEXT NOT NULL,
+              handled_at TEXT NULL,
+              handled_by TEXT NULL,
+              FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+              FOREIGN KEY(handled_by) REFERENCES users(id) ON DELETE SET NULL
+            );
+
             CREATE TABLE IF NOT EXISTS notifications (
               id TEXT PRIMARY KEY,
               user_id TEXT NOT NULL,
@@ -594,6 +609,7 @@ class SqliteTreeholeRepository:
             "conversations": [],
             "directMessages": [],
             "systemAnnouncements": [],
+            "feedbacks": [],
             "notifications": [],
             "appeals": [],
             "postPinRequests": [],
@@ -913,6 +929,29 @@ class SqliteTreeholeRepository:
                     "content": _to_str(row["content"]),
                     "createdAt": _to_str(row["created_at"]),
                     "createdBy": _to_str(row["created_by"]),
+                }
+            )
+
+        for row in conn.execute(
+            """
+            SELECT id, user_id, user_email, user_nickname, content, contact, status,
+                   created_at, handled_at, handled_by
+            FROM feedbacks
+            ORDER BY created_at DESC, id DESC
+            """
+        ):
+            db["feedbacks"].append(
+                {
+                    "id": _to_str(row["id"]),
+                    "userId": _to_str(row["user_id"]),
+                    "userEmail": _to_str(row["user_email"]),
+                    "userNickname": _to_str(row["user_nickname"]),
+                    "content": _to_str(row["content"]),
+                    "contact": _to_str(row["contact"]),
+                    "status": _to_str(row["status"], "pending"),
+                    "createdAt": _to_str(row["created_at"]),
+                    "handledAt": _to_str(row["handled_at"]),
+                    "handledBy": _to_str(row["handled_by"]),
                 }
             )
 
@@ -1571,6 +1610,35 @@ class SqliteTreeholeRepository:
                         _to_str(row.get("content")),
                         _to_str(row.get("createdAt")) or created_now,
                         _to_str(row.get("createdBy")) or None,
+                    ),
+                )
+
+            for row in db.get("feedbacks", []):
+                if not isinstance(row, dict):
+                    continue
+                feedback_id = _to_str(row.get("id")).strip()
+                user_id = _to_str(row.get("userId")).strip()
+                content = _to_str(row.get("content")).strip()
+                if not feedback_id or not user_id or not content:
+                    continue
+                conn.execute(
+                    """
+                    INSERT INTO feedbacks (
+                      id, user_id, user_email, user_nickname, content, contact,
+                      status, created_at, handled_at, handled_by
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        feedback_id,
+                        user_id,
+                        _to_str(row.get("userEmail")),
+                        _to_str(row.get("userNickname"), "匿名同学"),
+                        content,
+                        _to_str(row.get("contact")),
+                        _to_str(row.get("status"), "pending"),
+                        _to_str(row.get("createdAt")) or created_now,
+                        _to_str(row.get("handledAt")) or None,
+                        _to_str(row.get("handledBy")) or None,
                     ),
                 )
 

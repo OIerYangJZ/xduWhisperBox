@@ -61,6 +61,69 @@
   word-break: break-all;
 }
 
+.row-input {
+  width: 430rpx;
+  min-height: 64rpx;
+  color: #1d1d1f;
+  font-size: 28rpx;
+  text-align: right;
+}
+
+.picker-value {
+  min-width: 160rpx;
+  color: #8e8e93;
+  font-size: 28rpx;
+  text-align: right;
+}
+
+.bio-field {
+  padding: 22rpx 0;
+}
+
+.bio-label {
+  color: #1d1d1f;
+  font-size: 28rpx;
+}
+
+.bio-input {
+  width: 100%;
+  height: 140rpx;
+  margin-top: 14rpx;
+  padding: 18rpx;
+  border: 1rpx solid #e8e8e8;
+  border-radius: 12rpx;
+  color: #1d1d1f;
+  font-size: 27rpx;
+  line-height: 1.5;
+}
+
+.save-button,
+.safe-button,
+.danger-outline-button {
+  height: 76rpx;
+  margin-top: 18rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  line-height: 76rpx;
+}
+
+.save-button,
+.safe-button {
+  background: #155e75;
+  color: #fff;
+}
+
+.danger-outline-button {
+  border: 1rpx solid #ff3b30;
+  background: #fff;
+  color: #ff3b30;
+}
+
+.safe-button[disabled],
+.danger-outline-button[disabled] {
+  opacity: .45;
+}
+
 .logout-button {
   height: 86rpx;
   border-radius: 12rpx;

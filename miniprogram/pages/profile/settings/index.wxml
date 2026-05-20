@@ -9,15 +9,38 @@
       </view>
       <view class="info-row">
         <text>昵称</text>
-        <text>{{profile.nickname || profile.alias || '西电同学'}}</text>
+        <input class="row-input" value="{{form.nickname}}" data-key="nickname" bindinput="onProfileInput" placeholder="昵称" />
       </view>
       <view class="info-row">
         <text>学号</text>
-        <text>{{profile.studentId || '未绑定'}}</text>
+        <input class="row-input" value="{{form.studentId}}" data-key="studentId" bindinput="onProfileInput" placeholder="未绑定" />
       </view>
       <view class="info-row">
         <text>邮箱</text>
         <text>{{profile.email || '-'}}</text>
+      </view>
+      <view class="info-row">
+        <text>性别</text>
+        <picker mode="selector" range="{{['未设置', '男', '女']}}" bindchange="onGenderChange">
+          <view class="picker-value">{{form.gender || '未设置'}}</view>
+        </picker>
+      </view>
+      <view class="bio-field">
+        <view class="bio-label">个性签名</view>
+        <textarea class="bio-input" value="{{form.bio}}" data-key="bio" bindinput="onProfileInput" maxlength="100" placeholder="写一句介绍自己" />
+      </view>
+      <button class="save-button" loading="{{savingProfile}}" bindtap="saveProfile">保存资料</button>
+    </view>
+
+    <view class="section">
+      <view class="section-title">隐私</view>
+      <view class="switch-row">
+        <text>允许陌生人私信</text>
+        <switch checked="{{form.allowStrangerDm}}" data-key="allowStrangerDm" bindchange="onPrivacySwitchChange" color="#155E75" />
+      </view>
+      <view class="switch-row">
+        <text>公开联系入口</text>
+        <switch checked="{{form.showContactable}}" data-key="showContactable" bindchange="onPrivacySwitchChange" color="#155E75" />
       </view>
     </view>
 
@@ -47,6 +70,24 @@
         <text>系统公告</text>
         <switch checked="{{prefs.notifySystem}}" data-key="notifySystem" bindchange="onSwitchChange" color="#155E75" />
       </view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">账号安全</view>
+      <view class="info-row">
+        <text>用户等级</text>
+        <text>{{profile.userLevelLabel || '-'}}</text>
+      </view>
+      <view class="info-row" wx:if="{{profile.levelUpgradeRequest}}">
+        <text>升级申请</text>
+        <text>{{profile.levelUpgradeRequest.statusLabel || profile.levelUpgradeRequest.status}}</text>
+      </view>
+      <button class="safe-button" loading="{{submittingLevelUpgrade}}" bindtap="requestLevelUpgrade" disabled="{{profile.isLevelOneUser || profile.levelUpgradeRequest}}">申请一级用户</button>
+      <view class="info-row" wx:if="{{profile.accountCancellationRequest}}">
+        <text>注销申请</text>
+        <text>{{profile.accountCancellationRequest.statusLabel || profile.accountCancellationRequest.status}}</text>
+      </view>
+      <button class="danger-outline-button" loading="{{submittingCancellation}}" bindtap="requestCancellation" disabled="{{profile.accountCancellationRequest}}">申请账号注销</button>
     </view>
 
     <button class="logout-button" loading="{{loggingOut}}" bindtap="handleLogout">退出登录</button>

@@ -330,6 +330,21 @@ class TreeholeHandler(BaseHTTPRequestHandler):
                 send_json(self, HTTPStatus.OK, {"data": channel_rows})
                 return
 
+            if path == "/api/colleges":
+                send_json(self, HTTPStatus.OK, {
+                    "data": [
+                        {"id": "cs", "name": "计算机科学与技术学院", "icon": "计"},
+                        {"id": "ee", "name": "电子工程学院", "icon": "电"},
+                        {"id": "is", "name": "网络与信息安全学院", "icon": "安"},
+                        {"id": "me", "name": "机电工程学院", "icon": "机"},
+                        {"id": "math", "name": "数学与统计学院", "icon": "数"},
+                        {"id": "phys", "name": "物理学院", "icon": "物"},
+                        {"id": "human", "name": "人文学院", "icon": "文"},
+                        {"id": "econ", "name": "经济与管理学院", "icon": "经"},
+                    ]
+                })
+                return
+
             # Notifications
             if path == "/api/notifications":
                 _notification_handler.handle_get_notifications(self, db)
@@ -640,6 +655,38 @@ class TreeholeHandler(BaseHTTPRequestHandler):
 
             if path == "/api/reports":
                 _post_handler.handle_submit_report(self, db)
+                return
+
+            if path == "/api/feedback":
+                user, _ = auth_user_helper(self, db)
+                if user is None:
+                    json_error(self, HTTPStatus.UNAUTHORIZED, "Unauthorized")
+                    return
+                body = read_json_body(self)
+                content = str(body.get("content", "")).strip()
+                contact = str(body.get("contact", "")).strip()
+                if not content:
+                    json_error(self, HTTPStatus.BAD_REQUEST, "反馈内容不能为空")
+                    return
+                if len(content) > 1000:
+                    json_error(self, HTTPStatus.BAD_REQUEST, "反馈内容不能超过 1000 字")
+                    return
+                feedback = {
+                    "id": next_id(db, "feedback", "fb"),
+                    "userId": str(user.get("id", "")),
+                    "userEmail": str(user.get("email", "")),
+                    "userNickname": user_nickname(user),
+                    "content": content,
+                    "contact": contact,
+                    "status": "pending",
+                    "createdAt": now_iso(),
+                    "handledAt": "",
+                    "handledBy": "",
+                }
+                db.setdefault("feedbacks", []).append(feedback)
+                add_audit_log(db, user["id"], "submit_feedback", feedback["id"])
+                save_db(db)
+                send_json(self, HTTPStatus.OK, {"data": {"ok": True, "id": feedback["id"]}})
                 return
 
             match_action = re.fullmatch(r"/api/messages/requests/([^/]+)/(accept|reject)", path)

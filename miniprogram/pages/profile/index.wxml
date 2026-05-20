@@ -18,8 +18,36 @@
   </view>
 
   <view class="menu-list">
+    <view class="menu-item" bindtap="goToMyPosts">
+      <text class="menu-text">我的发布</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="goToMyComments">
+      <text class="menu-text">我的评论</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="goToMyReports">
+      <text class="menu-text">我的举报</text>
+      <text class="menu-arrow">></text>
+    </view>
     <view class="menu-item" bindtap="goToFavorites">
       <text class="menu-text">我的收藏</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="goToConversations">
+      <text class="menu-text">私信</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" data-type="friends" bindtap="goToSocialList">
+      <text class="menu-text">好友</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" data-type="following" bindtap="goToSocialList">
+      <text class="menu-text">关注</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" data-type="followers" bindtap="goToSocialList">
+      <text class="menu-text">粉丝</text>
       <text class="menu-arrow">></text>
     </view>
     <view class="menu-item" bindtap="goToNotifications">
@@ -35,6 +63,22 @@
     </view>
     <view class="menu-item" bindtap="goToSettings">
       <text class="menu-text">设置</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" data-type="user-agreement" bindtap="goToLegal">
+      <text class="menu-text">用户协议</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" data-type="privacy-policy" bindtap="goToLegal">
+      <text class="menu-text">隐私政策</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" data-type="community-guidelines" bindtap="goToLegal">
+      <text class="menu-text">社区规范/举报说明</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" data-type="acknowledgements" bindtap="goToLegal">
+      <text class="menu-text">致谢</text>
       <text class="menu-arrow">></text>
     </view>
   </view>

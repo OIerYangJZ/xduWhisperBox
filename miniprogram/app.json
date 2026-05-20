@@ -4,6 +4,7 @@
     "pages/ai/index",
     "pages/profile/index",
     "pages/campus/news/index",
+    "pages/campus/announcement-detail/index",
     "pages/campus/college/index",
     "pages/campus/community/index",
     "pages/campus/post-detail/index",
@@ -14,9 +15,17 @@
     "pages/profile/auth/index",
     "pages/profile/register/index",
     "pages/profile/favorites/index",
+    "pages/profile/my-posts/index",
+    "pages/profile/my-comments/index",
+    "pages/profile/my-reports/index",
+    "pages/profile/conversations/index",
+    "pages/profile/chat/index",
+    "pages/profile/social-list/index",
+    "pages/profile/public-user/index",
     "pages/profile/notifications/index",
     "pages/profile/settings/index",
-    "pages/profile/feedback/index"
+    "pages/profile/feedback/index",
+    "pages/profile/legal/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

@@ -1,0 +1,30 @@
+.comment-card {
+  padding: 28rpx;
+  border-bottom: 1rpx solid #e8e8e8;
+  background: #fff;
+}
+
+.comment-post {
+  color: #155e75;
+  font-size: 27rpx;
+  font-weight: 650;
+}
+
+.comment-content {
+  margin-top: 12rpx;
+  color: #1d1d1f;
+  font-size: 30rpx;
+  line-height: 1.55;
+}
+
+.comment-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 18rpx;
+  color: #8e8e93;
+  font-size: 25rpx;
+}
+
+.danger {
+  color: #ff3b30;
+}

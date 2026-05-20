@@ -74,7 +74,8 @@ Page({
         const newPosts = res.data.items || [];
         this.setData({
           posts: [...this.data.posts, ...newPosts],
-          hasMore: newPosts.length >= this.data.limit,
+          page: this.data.page + 1,
+          hasMore: res.data.hasMore !== undefined ? res.data.hasMore : newPosts.length >= this.data.limit,
           loading: false
         });
       }
@@ -82,6 +83,10 @@ Page({
       console.error(err);
       this.setData({ loading: false });
     }
+  },
+
+  onReachBottom() {
+    if (this.data.currentTab === 'community') this.fetchPosts();
   },
 
   async fetchNews() {
@@ -116,12 +121,9 @@ Page({
   },
 
   goToNewsDetail(e) {
-    // 暂时弹窗展示，后续可增加详情页
-    const item = e.currentTarget.dataset.item;
-    wx.showModal({
-      title: item.title,
-      content: item.content,
-      showCancel: false
+    const { title, content, createdAt } = e.currentTarget.dataset;
+    wx.navigateTo({
+      url: `/pages/campus/announcement-detail/index?title=${encodeURIComponent(title || '')}&content=${encodeURIComponent(content || '')}&createdAt=${encodeURIComponent(createdAt || '')}`
     });
   }
 });

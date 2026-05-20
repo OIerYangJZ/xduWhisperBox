@@ -1572,6 +1572,7 @@ def default_db() -> dict[str, Any]:
         "conversations": [],
         "directMessages": [],
         "systemAnnouncements": [],
+        "feedbacks": [],
         "notifications": [],
         "appeals": [],
         "postPinRequests": [],
@@ -1746,6 +1747,8 @@ def migrate_db(db: dict[str, Any]) -> bool:
 
     if "auditLogs" not in db:
         db["auditLogs"] = []
+    if "feedbacks" not in db or not isinstance(db.get("feedbacks"), list):
+        db["feedbacks"] = []
         changed = True
     if "userFollows" not in db or not isinstance(db.get("userFollows"), list):
         db["userFollows"] = []

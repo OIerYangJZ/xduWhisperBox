@@ -1,0 +1,5 @@
+<view class="page detail-page">
+  <view class="title">{{title}}</view>
+  <view class="time">{{createdAt}}</view>
+  <view class="content">{{content}}</view>
+</view>

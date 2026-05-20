@@ -1,0 +1,18 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:elif="{{!conversations.length}}" class="empty">暂无私信</view>
+  <view wx:else>
+    <view class="conversation-row" wx:for="{{conversations}}" wx:key="id" data-index="{{index}}" bindtap="openChat">
+      <image class="avatar" src="{{item.avatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="conversation-body">
+        <view class="conversation-head">
+          <text class="name">{{item.name}}</text>
+          <text class="time">{{item.timeText}}</text>
+        </view>
+        <view class="message">{{item.lastMessage}}</view>
+      </view>
+      <view class="badge" wx:if="{{item.hasUnread}}">{{item.unreadCount}}</view>
+      <text class="delete" data-index="{{index}}" catchtap="removeConversation">删除</text>
+    </view>
+  </view>
+</view>

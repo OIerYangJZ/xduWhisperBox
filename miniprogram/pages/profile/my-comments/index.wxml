@@ -1,0 +1,14 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:elif="{{!comments.length}}" class="empty">暂无评论</view>
+  <view wx:else>
+    <view class="comment-card" wx:for="{{comments}}" wx:key="id">
+      <view class="comment-post" data-post-id="{{item.postId}}" bindtap="openPost">{{item.postTitle || '原帖'}}</view>
+      <view class="comment-content">{{item.content}}</view>
+      <view class="comment-meta">
+        <text>{{item.timeText}}</text>
+        <text class="danger" data-index="{{index}}" bindtap="deleteOwnComment">删除</text>
+      </view>
+    </view>
+  </view>
+</view>

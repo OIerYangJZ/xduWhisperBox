@@ -1,0 +1,16 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:elif="{{!reports.length}}" class="empty">暂无举报记录</view>
+  <view wx:else>
+    <view class="report-card" wx:for="{{reports}}" wx:key="id" data-index="{{index}}" bindtap="openTarget">
+      <view class="report-head">
+        <text>{{item.reason}}</text>
+        <text class="status">{{item.statusText}}</text>
+      </view>
+      <view class="report-target">{{item.targetTitle || item.target}}</view>
+      <view class="report-desc" wx:if="{{item.description}}">{{item.description}}</view>
+      <view class="report-result" wx:if="{{item.result}}">处理结果：{{item.result}}</view>
+      <view class="report-time">{{item.createdAt}}</view>
+    </view>
+  </view>
+</view>

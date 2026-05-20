@@ -154,6 +154,7 @@ def _serialize_comment(db: dict[str, Any], comment: dict[str, Any], viewer_user_
         "authorAvatarUrl": author_avatar_url,
         "authorAvatar": author_avatar_url,
         "authorUserId": "" if is_anonymous else author_id,
+        "isOwnComment": bool(viewer_user_id and viewer_user_id == author_id),
         "likeCount": like_count,
         "liked": liked,
         "createdAt": comment.get("createdAt", ""),
@@ -184,6 +185,17 @@ def _normalize_comment_sort(value: Any) -> str:
     if text in {"hot", "top"}:
         return "hot"
     return "latest"
+
+
+def _positive_int(value: Any, default: int, maximum: int | None = None) -> int:
+    try:
+        number = int(value)
+    except (TypeError, ValueError):
+        number = default
+    number = max(1, number)
+    if maximum is not None:
+        number = min(number, maximum)
+    return number
 
 
 # ===========================================================================
@@ -239,6 +251,27 @@ def handle_get_posts(
 
     filtered_posts = _globals.sort_posts_for_view(db, filtered_posts, sort_by=sort_by)
     rows = [serialize_post(db, post, viewer_user_id=viewer_user_id) for post in filtered_posts]
+    has_pagination = "page" in query or "limit" in query
+    if has_pagination:
+        page = _positive_int((query.get("page") or [1])[0], 1)
+        limit = _positive_int((query.get("limit") or [20])[0], 20, 100)
+        start = (page - 1) * limit
+        page_rows = rows[start:start + limit]
+        send_json(
+            handler,
+            HTTPStatus.OK,
+            {
+                "data": {
+                    "items": page_rows,
+                    "page": page,
+                    "limit": limit,
+                    "total": len(rows),
+                    "hasMore": start + limit < len(rows),
+                }
+            },
+        )
+        return
+
     send_json(handler, HTTPStatus.OK, {"data": rows})
 
 

@@ -1,0 +1,19 @@
+<view class="page public-page">
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:elif="{{!profile}}" class="empty">用户不存在</view>
+  <view wx:else>
+    <view class="profile-head">
+      <image class="avatar" src="{{profile.avatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="name">{{profile.nickname || profile.alias || '西电同学'}}</view>
+      <view class="bio">{{profile.bio || '这个同学还没有填写简介'}}</view>
+      <view class="stats">
+        <text>关注 {{profile.followingCount || 0}}</text>
+        <text>粉丝 {{profile.followerCount || 0}}</text>
+      </view>
+    </view>
+    <view class="actions">
+      <button class="primary" bindtap="toggleFollow">{{profile.isFollowing ? '已关注' : '关注'}}</button>
+      <button class="secondary" bindtap="messageUser">私信</button>
+    </view>
+  </view>
+</view>

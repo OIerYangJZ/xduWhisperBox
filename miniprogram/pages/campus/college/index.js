@@ -1,21 +1,11 @@
+import { getColleges } from '../../../api/campus';
 import { getPosts } from '../../../api/posts';
 import { requireLoginPage } from '../../../utils/auth_guard';
 
-const COLLEGES = [
-  '通信工程学院',
-  '电子工程学院',
-  '计算机科学与技术学院',
-  '人工智能学院',
-  '网络与信息安全学院',
-  '微电子学院',
-  '机电工程学院',
-  '经济与管理学院'
-];
-
 Page({
   data: {
-    colleges: COLLEGES,
-    activeCollege: COLLEGES[0],
+    colleges: [],
+    activeCollege: '',
     posts: [],
     loading: true
   },
@@ -37,10 +27,18 @@ Page({
   async loadCollege() {
     this.setData({ loading: true });
     try {
-      const posts = await getPosts({ keyword: this.data.activeCollege, sort: 'latest' });
-      this.setData({ posts, loading: false });
+      const collegesRes = await getColleges();
+      const colleges = ((collegesRes && collegesRes.data) || []).map((item) => item.name || item);
+      const activeCollege = this.data.activeCollege || colleges[0] || '';
+      const posts = activeCollege ? await getPosts({ keyword: activeCollege, sort: 'latest' }) : [];
+      this.setData({
+        colleges,
+        activeCollege,
+        posts,
+        loading: false
+      });
     } catch (error) {
-      this.setData({ posts: [], loading: false });
+      this.setData({ colleges: [], posts: [], loading: false });
     }
   },
 

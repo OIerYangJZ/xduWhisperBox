@@ -1,0 +1,7 @@
+<view class="page legal-page">
+  <view class="legal-title">{{title}}</view>
+  <view class="section" wx:for="{{sections}}" wx:key="heading">
+    <view class="section-heading">{{item.heading}}</view>
+    <view class="section-body">{{item.body}}</view>
+  </view>
+</view>

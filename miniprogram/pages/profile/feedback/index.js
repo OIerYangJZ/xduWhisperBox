@@ -1,4 +1,5 @@
 import { requireLoginPage } from '../../../utils/auth_guard';
+import { submitFeedback } from '../../../api/user';
 
 Page({
   data: {
@@ -19,7 +20,7 @@ Page({
     this.setData({ contact: event.detail.value });
   },
 
-  submitFeedback() {
+  async submitFeedback() {
     if (this.data.submitting) return;
     const content = this.data.content.trim();
     if (!content) {
@@ -27,17 +28,18 @@ Page({
       return;
     }
     this.setData({ submitting: true });
-    const rows = wx.getStorageSync('feedbackDrafts') || [];
-    rows.unshift({
-      content,
-      contact: this.data.contact.trim(),
-      createdAt: new Date().toISOString()
-    });
-    wx.setStorageSync('feedbackDrafts', rows.slice(0, 20));
-    wx.showToast({ title: '已保存反馈', icon: 'success' });
-    setTimeout(() => {
+    try {
+      await submitFeedback({
+        content,
+        contact: this.data.contact.trim()
+      });
+      wx.showToast({ title: '已提交反馈', icon: 'success' });
       this.setData({ content: '', contact: '', submitting: false });
-      wx.navigateBack({ fail: () => wx.switchTab({ url: '/pages/profile/index' }) });
-    }, 700);
+      setTimeout(() => {
+        wx.navigateBack({ fail: () => wx.switchTab({ url: '/pages/profile/index' }) });
+      }, 700);
+    } catch (error) {
+      this.setData({ submitting: false });
+    }
   }
 });

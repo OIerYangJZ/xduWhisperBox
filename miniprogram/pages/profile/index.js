@@ -50,6 +50,32 @@ Page({
     wx.navigateTo({ url: '/pages/profile/favorites/index' });
   },
 
+  goToMyPosts() {
+    if (!this.data.isLoggedIn) return this.goToLogin();
+    wx.navigateTo({ url: '/pages/profile/my-posts/index' });
+  },
+
+  goToMyComments() {
+    if (!this.data.isLoggedIn) return this.goToLogin();
+    wx.navigateTo({ url: '/pages/profile/my-comments/index' });
+  },
+
+  goToMyReports() {
+    if (!this.data.isLoggedIn) return this.goToLogin();
+    wx.navigateTo({ url: '/pages/profile/my-reports/index' });
+  },
+
+  goToConversations() {
+    if (!this.data.isLoggedIn) return this.goToLogin();
+    wx.navigateTo({ url: '/pages/profile/conversations/index' });
+  },
+
+  goToSocialList(event) {
+    if (!this.data.isLoggedIn) return this.goToLogin();
+    const type = event.currentTarget.dataset.type || 'friends';
+    wx.navigateTo({ url: `/pages/profile/social-list/index?type=${type}` });
+  },
+
   goToNotifications() {
     if (!this.data.isLoggedIn) return this.goToLogin();
     wx.navigateTo({ url: '/pages/profile/notifications/index' });
@@ -63,5 +89,10 @@ Page({
   goToSettings() {
     if (!this.data.isLoggedIn) return this.goToLogin();
     wx.navigateTo({ url: '/pages/profile/settings/index' });
+  },
+
+  goToLegal(event) {
+    const type = event.currentTarget.dataset.type || 'about';
+    wx.navigateTo({ url: `/pages/profile/legal/index?type=${type}` });
   }
 });

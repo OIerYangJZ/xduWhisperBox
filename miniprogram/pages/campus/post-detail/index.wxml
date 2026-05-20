@@ -1,48 +1,62 @@
 <view class="container" wx:if="{{!loading && post}}">
   <scroll-view scroll-y class="main-scroll">
-    <!-- 帖子主体 -->
     <view class="post-card">
       <view class="post-header">
-        <image class="post-avatar" src="{{post.authorAvatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
-        <view class="post-meta">
-          <view class="post-author">{{post.authorName || '匿名用户'}}</view>
+        <image class="post-avatar" src="{{post.authorAvatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill" bindtap="openAuthorProfile"></image>
+        <view class="post-meta" bindtap="openAuthorProfile">
+          <view class="post-author">{{post.authorAlias || post.authorName || '匿名用户'}}</view>
           <view class="post-time">{{post.createdAt}}</view>
         </view>
+        <button wx:if="{{post.canMessageAuthor}}" class="small-button" bindtap="messageAuthor">私信</button>
       </view>
+      <view class="post-title" wx:if="{{post.title}}">{{post.title}}</view>
       <view class="post-content">
         <text>{{post.content}}</text>
       </view>
-      <view class="post-images" wx:if="{{post.images && post.images.length > 0}}">
-        <image wx:for="{{post.images}}" wx:for-item="img" wx:key="*this" src="{{img}}" mode="widthFix" class="post-image"></image>
+      <view class="post-images" wx:if="{{post.imageUrls && post.imageUrls.length > 0}}">
+        <image wx:for="{{post.imageUrls}}" wx:for-item="img" wx:key="*this" src="{{img}}" mode="widthFix" class="post-image"></image>
       </view>
       <view class="post-footer">
         <view class="action-item" bindtap="handleLike">
-          <text class="icon" style="color: {{post.isLiked ? '#0052D9' : '#999'}}">👍</text>
-          <text style="color: {{post.isLiked ? '#0052D9' : '#999'}}">{{post.likeCount || 0}}</text>
+          <text class="icon" style="color: {{post.liked ? '#155E75' : '#999'}}">赞</text>
+          <text style="color: {{post.liked ? '#155E75' : '#999'}}">{{post.likeCount || 0}}</text>
         </view>
+        <view class="action-item" bindtap="handleFavorite">
+          <text class="icon" style="color: {{post.favorited ? '#155E75' : '#999'}}">藏</text>
+          <text style="color: {{post.favorited ? '#155E75' : '#999'}}">{{post.favoriteCount || 0}}</text>
+        </view>
+        <button class="share-button" open-type="share">分享</button>
+        <view class="action-item" bindtap="reportPost">举报</view>
+        <view class="action-item danger" wx:if="{{post.isOwnPost}}" bindtap="deleteOwnPost">删除</view>
       </view>
     </view>
 
-    <!-- 评论区 -->
     <view class="comments-section">
       <view class="section-title">全部评论 ({{post.commentCount || 0}})</view>
       <view class="empty-state" wx:if="{{comments.length === 0}}">暂无评论，快来抢沙发吧~</view>
       
-      <view class="comment-item" wx:for="{{comments}}" wx:key="id">
+      <view class="comment-item" wx:for="{{comments}}" wx:key="id" style="{{item.indentStyle}}">
         <image class="comment-avatar" src="{{item.authorAvatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
         <view class="comment-content-box">
           <view class="comment-header">
-            <text class="comment-author">{{item.authorName || '匿名用户'}}</text>
+            <text class="comment-author">{{item.authorAlias || item.authorName || '匿名用户'}}</text>
             <text class="comment-time">{{item.createdAt}}</text>
           </view>
           <view class="comment-text"><text>{{item.content}}</text></view>
+          <view class="comment-actions">
+            <text data-index="{{index}}" bindtap="likeComment">{{item.liked ? '已赞' : '点赞'}} {{item.likeCount || 0}}</text>
+            <text data-index="{{index}}" bindtap="setReplyTarget">回复</text>
+            <text data-index="{{index}}" bindtap="reportComment">举报</text>
+            <text wx:if="{{item.authorUserId}}" data-id="{{item.authorUserId}}" bindtap="openCommentAuthor">主页</text>
+            <text wx:if="{{item.isOwnComment}}" class="danger" data-index="{{index}}" bindtap="deleteOwnComment">删除</text>
+          </view>
         </view>
       </view>
     </view>
   </scroll-view>
 
-  <!-- 底部输入框 -->
   <view class="bottom-bar">
+    <view wx:if="{{replyToId}}" class="reply-pill" bindtap="clearReplyTarget">回复 {{replyToName}}  ×</view>
     <input class="comment-input" placeholder="写下你的评论..." value="{{commentContent}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="submitComment" cursor-spacing="20" />
     <button class="send-btn" bindtap="submitComment" disabled="{{isSending || !commentContent}}">发送</button>
   </view>

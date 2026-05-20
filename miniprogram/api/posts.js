@@ -15,7 +15,9 @@ export const getChannels = async () => {
 
 export const getPosts = async (params = {}) => {
   const response = await request.get('/api/posts', params);
-  return toArray(getData(response, [])).map(normalizePost);
+  const payload = getData(response, []);
+  const rows = Array.isArray(payload) ? payload : toArray(payload.items);
+  return rows.map(normalizePost);
 };
 
 export const getPost = async (postId) => {
@@ -71,4 +73,19 @@ export const reportTarget = async (payload) => {
 export const getFavoritePosts = async () => {
   const response = await request.get('/api/posts/favorites');
   return toArray(getData(response, [])).map(normalizePost);
+};
+
+export const updatePost = async (postId, payload) => {
+  const response = await request.patch(`/api/posts/${postId}`, payload);
+  return normalizePost(getData(response, {}));
+};
+
+export const deletePost = async (postId) => {
+  const response = await request.delete(`/api/posts/${postId}`, {});
+  return getData(response, {});
+};
+
+export const deleteComment = async (commentId) => {
+  const response = await request.delete(`/api/comments/${commentId}`, {});
+  return getData(response, {});
 };

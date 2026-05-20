@@ -1,0 +1,26 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:elif="{{!posts.length}}" class="empty">暂无发布</view>
+  <view wx:else>
+    <view class="feed-card" wx:for="{{posts}}" wx:key="id" data-id="{{item.id}}" bindtap="goPostDetail">
+      <view class="feed-avatar">{{item.authorInitial}}</view>
+      <view class="feed-body">
+        <view class="feed-head">
+          <text class="feed-author">{{item.authorAlias}}</text>
+          <text class="feed-dot" style="background: {{item.channelColor}}"></text>
+          <text class="feed-channel" style="color: {{item.channelColor}}">{{item.channel}}</text>
+          <text class="feed-time">{{item.timeText}}</text>
+        </view>
+        <view class="feed-title">{{item.displayTitle}}</view>
+        <view class="feed-summary">{{item.summary}}</view>
+        <view class="feed-actions">
+          <text>赞 {{item.likeCount}}</text>
+          <text>评 {{item.commentCount}}</text>
+          <text catchtap="changeStatus" data-index="{{index}}" data-status="resolved">标记解决</text>
+          <text catchtap="changeStatus" data-index="{{index}}" data-status="closed">关闭</text>
+          <text class="danger" catchtap="deleteOwnPost" data-index="{{index}}">删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,24 @@
+.detail-page {
+  padding: 34rpx 30rpx 80rpx;
+}
+
+.title {
+  color: #1d1d1f;
+  font-size: 42rpx;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.time {
+  margin-top: 14rpx;
+  color: #8e8e93;
+  font-size: 25rpx;
+}
+
+.content {
+  margin-top: 34rpx;
+  color: #1d1d1f;
+  font-size: 30rpx;
+  line-height: 1.75;
+  white-space: pre-wrap;
+}

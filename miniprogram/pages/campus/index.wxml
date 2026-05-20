@@ -40,7 +40,7 @@
 
   <!-- 校园新闻/公告 -->
   <scroll-view class="news-list" scroll-y wx:if="{{currentTab === 'news'}}">
-    <view class="news-card" wx:for="{{news}}" wx:key="id" bindtap="goToNewsDetail" data-item="{{item}}">
+    <view class="news-card" wx:for="{{news}}" wx:key="id" bindtap="goToNewsDetail" data-title="{{item.title}}" data-content="{{item.content}}" data-created-at="{{item.createdAt}}">
       <view class="news-tag">校园公告</view>
       <view class="news-title">{{item.title}}</view>
       <view class="news-excerpt">{{item.content}}</view>

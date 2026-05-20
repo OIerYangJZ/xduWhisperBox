@@ -1,0 +1,60 @@
+.conversation-row {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  padding: 24rpx;
+  border-bottom: 1rpx solid #e8e8e8;
+}
+
+.avatar {
+  width: 86rpx;
+  height: 86rpx;
+  border-radius: 50%;
+  background: #f5f5f7;
+}
+
+.conversation-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.conversation-head {
+  display: flex;
+  justify-content: space-between;
+}
+
+.name {
+  color: #1d1d1f;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.time,
+.message,
+.delete {
+  color: #8e8e93;
+  font-size: 25rpx;
+}
+
+.message {
+  margin-top: 8rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  min-width: 34rpx;
+  height: 34rpx;
+  padding: 0 10rpx;
+  border-radius: 17rpx;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 22rpx;
+  line-height: 34rpx;
+  text-align: center;
+}
+
+.delete {
+  color: #ff3b30;
+}

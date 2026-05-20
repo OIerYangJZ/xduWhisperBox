@@ -9,12 +9,12 @@ const CONFIG = {
   devtools: {
     name: 'devtools',
     // 仅电脑开发者工具可用；真机中的 localhost 指向手机自身。
-    baseUrl: 'http://localhost:8080',
+    baseUrl: 'http://localhost:18080',
   },
   lan: {
     name: 'lan',
     // 当前电脑 en0 局域网 IP。若 Wi-Fi 变化，请用 ifconfig 查看后替换。
-    baseUrl: 'http://192.168.0.101:8080',
+    baseUrl: 'http://192.168.0.101:18080',
   },
   prod: {
     name: 'prod',

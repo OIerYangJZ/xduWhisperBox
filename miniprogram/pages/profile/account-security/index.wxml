@@ -1,0 +1,34 @@
+<view class="page security-page">
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:else>
+    <view class="section">
+      <view class="section-title">权限与等级</view>
+      <view class="info-row">
+        <text>当前等级</text>
+        <text>{{profile.userLevelLabel || '-'}}</text>
+      </view>
+      <view class="info-row" wx:if="{{profile.levelUpgradeRequest}}">
+        <text>升级申请</text>
+        <text>{{profile.levelUpgradeRequest.statusLabel || profile.levelUpgradeRequest.status}}</text>
+      </view>
+      <button class="safe-button" loading="{{submittingLevelUpgrade}}" bindtap="requestLevelUpgrade" disabled="{{profile.isLevelOneUser || profile.levelUpgradeRequest}}">申请一级用户</button>
+    </view>
+
+    <view class="section">
+      <view class="section-title">安全</view>
+      <view class="info-row nav-row" bindtap="goResetPassword">
+        <text>修改/重置密码</text>
+        <text>进入</text>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">账号注销</view>
+      <view class="info-row" wx:if="{{profile.accountCancellationRequest}}">
+        <text>注销申请</text>
+        <text>{{profile.accountCancellationRequest.statusLabel || profile.accountCancellationRequest.status}}</text>
+      </view>
+      <button class="danger-outline-button" loading="{{submittingCancellation}}" bindtap="requestCancellation" disabled="{{profile.accountCancellationRequest}}">申请账号注销</button>
+    </view>
+  </view>
+</view>

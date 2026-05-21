@@ -322,4 +322,12 @@ page {
   line-height: 92rpx;
   text-align: center;
   box-shadow: 0 12rpx 28rpx rgba(21, 94, 117, .25);
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease;
+  z-index: 100;
+}
+
+.floating-publish.hidden {
+  transform: translateY(150rpx);
+  opacity: 0;
+  pointer-events: none;
 }

@@ -10,10 +10,6 @@ Page({
   },
 
   onShow() {
-    if (!requireLoginPage()) {
-      this.setData({ isLoggedIn: false, userInfo: null, unreadCount: 0 });
-      return;
-    }
     this.checkLoginStatus();
   },
 
@@ -23,8 +19,8 @@ Page({
       this.setData({ isLoggedIn: true });
       this.fetchUserInfo();
     } else {
-      this.setData({ isLoggedIn: false, userInfo: null });
-      requireLoginPage();
+      this.setData({ isLoggedIn: false, userInfo: null, unreadCount: 0 });
+      wx.navigateTo({ url: '/pages/profile/auth/index' });
     }
   },
 

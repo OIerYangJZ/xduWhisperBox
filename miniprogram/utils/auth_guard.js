@@ -1,5 +1,16 @@
 const LOGIN_PAGE = '/pages/profile/auth/index';
 
+let isNavigating = false;
+
+const withNavLock = (fn) => {
+  if (isNavigating) return;
+  isNavigating = true;
+  fn();
+  setTimeout(() => {
+    isNavigating = false;
+  }, 1000);
+};
+
 const isLoginRoute = () => {
   const pages = getCurrentPages();
   const current = pages[pages.length - 1];
@@ -15,7 +26,9 @@ export const hasLogin = () => {
 export const requireLoginPage = () => {
   if (hasLogin()) return true;
   if (!isLoginRoute()) {
-    wx.navigateTo({ url: LOGIN_PAGE });
+    withNavLock(() => {
+      wx.navigateTo({ url: LOGIN_PAGE });
+    });
   }
   return false;
 };
@@ -23,6 +36,8 @@ export const requireLoginPage = () => {
 export const clearLoginAndRedirect = () => {
   wx.removeStorageSync('token');
   if (!isLoginRoute()) {
-    wx.navigateTo({ url: LOGIN_PAGE });
+    withNavLock(() => {
+      wx.navigateTo({ url: LOGIN_PAGE });
+    });
   }
 };

@@ -23,19 +23,31 @@ Page({
     activeChannel: '全部',
     sortOptions: SORT_OPTIONS,
     activeSort: 'latest',
-    unreadCount: 0
+    unreadCount: 0,
+    showPublishButton: true
   },
 
   onLoad() {
-    if (!requireLoginPage()) return;
     this._didLoadData = true;
+    this._lastScrollTop = 0;
+    this._scrollTimeout = null;
+    this._lastScrollTime = 0;
+    
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.navigateTo({ url: '/pages/profile/auth/index' });
+      return;
+    }
+    
     this.loadChannels();
     this.loadUnreadCount();
     this.fetchData();
   },
 
   onShow() {
-    if (!requireLoginPage()) return;
+    const token = wx.getStorageSync('token');
+    if (!token) return;
+
     if (!this._didLoadData) {
       this._didLoadData = true;
       this.loadChannels();
@@ -63,11 +75,18 @@ Page({
   },
 
   async loadChannels() {
-    const channels = await getChannels();
-    this.setData({ channels: ['全部', ...channels.filter((item) => item !== '全部')] });
+    try {
+      const channels = await getChannels();
+      this.setData({ channels: ['全部', ...channels.filter((item) => item !== '全部')] });
+    } catch (e) {}
   },
 
   async loadUnreadCount() {
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      this.setData({ unreadCount: 0 });
+      return;
+    }
     try {
       const result = await getNotifications();
       this.setData({ unreadCount: result.unreadCount || 0 });
@@ -154,6 +173,42 @@ Page({
     }
   },
 
+  onScroll(event) {
+    const scrollTop = event.detail.scrollTop;
+    
+    // 节流处理，防止频繁触发导致内核卡死超时
+    const now = Date.now();
+    if (this._lastScrollTime && now - this._lastScrollTime < 100) {
+      return;
+    }
+    this._lastScrollTime = now;
+
+    if (this._scrollTimeout) {
+      clearTimeout(this._scrollTimeout);
+    }
+
+    if (scrollTop > this._lastScrollTop + 20) {
+      // 向下滚动（页面向上）
+      if (this.data.showPublishButton) {
+        this.setData({ showPublishButton: false });
+      }
+      this._lastScrollTop = scrollTop;
+    } else if (scrollTop < this._lastScrollTop - 20) {
+      // 向上滚动（页面向下）
+      if (!this.data.showPublishButton) {
+        this.setData({ showPublishButton: true });
+      }
+      this._lastScrollTop = scrollTop;
+    }
+
+    // 停止滚动后恢复显示
+    this._scrollTimeout = setTimeout(() => {
+      if (!this.data.showPublishButton) {
+        this.setData({ showPublishButton: true });
+      }
+    }, 1500);
+  },
+
   goToDetail(e) {
     const postId = e.currentTarget.dataset.id;
     wx.navigateTo({ url: `/pages/campus/post-detail/index?id=${postId}` });
@@ -164,10 +219,20 @@ Page({
   },
 
   goCreatePost() {
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.navigateTo({ url: '/pages/profile/auth/index' });
+      return;
+    }
     wx.navigateTo({ url: '/pages/campus/create-post/index' });
   },
 
   goNotifications() {
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.navigateTo({ url: '/pages/profile/auth/index' });
+      return;
+    }
     wx.navigateTo({ url: '/pages/profile/notifications/index' });
   },
 

@@ -1,113 +1,37 @@
-<view class="page settings-page">
+<view class="page settings-list-page">
   <view wx:if="{{loading}}" class="empty">加载中...</view>
   <view wx:else>
     <view class="section">
-      <view class="section-title">账号</view>
-      <view class="avatar-row">
-        <image class="avatar-preview" src="{{profile.avatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
-        <button class="avatar-button" loading="{{uploadingAvatar}}" bindtap="chooseAvatar">更换头像</button>
+      <view class="menu-item" bindtap="navigateTo" data-url="/pages/profile/edit-profile/index">
+        <text class="menu-title">个人资料</text>
+        <text class="menu-arrow">></text>
       </view>
-      <view class="background-row">
-        <image class="background-preview" wx:if="{{profile.backgroundImageUrl}}" src="{{profile.backgroundImageUrl}}" mode="aspectFill"></image>
-        <view class="background-empty" wx:else>个人主页背景图</view>
-        <button class="avatar-button" loading="{{uploadingBackground}}" bindtap="chooseBackground">更换背景</button>
+      <view class="menu-item" bindtap="navigateTo" data-url="/pages/profile/privacy/index">
+        <text class="menu-title">隐私与通知</text>
+        <text class="menu-arrow">></text>
       </view>
-      <view class="info-row">
-        <text>昵称</text>
-        <input class="row-input" value="{{form.nickname}}" data-key="nickname" bindinput="onProfileInput" placeholder="昵称" />
-      </view>
-      <view class="info-row">
-        <text>学号</text>
-        <input class="row-input" value="{{form.studentId}}" data-key="studentId" bindinput="onProfileInput" placeholder="未绑定" />
-      </view>
-      <view class="info-row">
-        <text>邮箱</text>
-        <text>{{profile.email || '-'}}</text>
-      </view>
-      <view class="info-row">
-        <text>性别</text>
-        <picker mode="selector" range="{{['未设置', '男', '女']}}" bindchange="onGenderChange">
-          <view class="picker-value">{{form.gender || '未设置'}}</view>
-        </picker>
-      </view>
-      <view class="bio-field">
-        <view class="bio-label">个性签名</view>
-        <textarea class="bio-input" value="{{form.bio}}" data-key="bio" bindinput="onProfileInput" maxlength="100" placeholder="写一句介绍自己" />
-      </view>
-      <button class="save-button" loading="{{savingProfile}}" bindtap="saveProfile">保存资料</button>
-    </view>
-
-    <view class="section">
-      <view class="section-title">隐私</view>
-      <view class="switch-row">
-        <text>允许陌生人私信</text>
-        <switch checked="{{form.allowStrangerDm}}" data-key="allowStrangerDm" bindchange="onPrivacySwitchChange" color="#155E75" />
-      </view>
-      <view class="switch-row">
-        <text>公开联系入口</text>
-        <switch checked="{{form.showContactable}}" data-key="showContactable" bindchange="onPrivacySwitchChange" color="#155E75" />
+      <view class="menu-item" bindtap="navigateTo" data-url="/pages/profile/account-security/index">
+        <text class="menu-title">账号与安全</text>
+        <text class="menu-arrow">></text>
       </view>
     </view>
 
     <view class="section">
-      <view class="section-title">通知</view>
-      <view class="switch-row">
-        <text>评论通知</text>
-        <switch checked="{{prefs.notifyComment}}" data-key="notifyComment" bindchange="onSwitchChange" color="#155E75" />
+      <view class="menu-item" bindtap="navigateTo" data-url="/pages/profile/display-settings/index">
+        <text class="menu-title">显示设置</text>
+        <text class="menu-arrow">></text>
       </view>
-      <view class="switch-row">
-        <text>回复通知</text>
-        <switch checked="{{prefs.notifyReply}}" data-key="notifyReply" bindchange="onSwitchChange" color="#155E75" />
+      <view class="menu-item" bindtap="navigateTo" data-url="/pages/profile/about/index">
+        <text class="menu-title">关于与更新</text>
+        <text class="menu-arrow">></text>
       </view>
-      <view class="switch-row">
-        <text>点赞通知</text>
-        <switch checked="{{prefs.notifyLike}}" data-key="notifyLike" bindchange="onSwitchChange" color="#155E75" />
+      <view class="menu-item" bindtap="navigateTo" data-url="/pages/profile/feedback/index">
+        <text class="menu-title">帮助与反馈</text>
+        <text class="menu-arrow">></text>
       </view>
-      <view class="switch-row">
-        <text>收藏通知</text>
-        <switch checked="{{prefs.notifyFavorite}}" data-key="notifyFavorite" bindchange="onSwitchChange" color="#155E75" />
-      </view>
-      <view class="switch-row">
-        <text>举报结果</text>
-        <switch checked="{{prefs.notifyReportResult}}" data-key="notifyReportResult" bindchange="onSwitchChange" color="#155E75" />
-      </view>
-      <view class="switch-row">
-        <text>系统公告</text>
-        <switch checked="{{prefs.notifySystem}}" data-key="notifySystem" bindchange="onSwitchChange" color="#155E75" />
-      </view>
-    </view>
-
-    <view class="section">
-      <view class="section-title">账号安全</view>
-      <view class="info-row">
-        <text>用户等级</text>
-        <text>{{profile.userLevelLabel || '-'}}</text>
-      </view>
-      <view class="info-row" wx:if="{{profile.levelUpgradeRequest}}">
-        <text>升级申请</text>
-        <text>{{profile.levelUpgradeRequest.statusLabel || profile.levelUpgradeRequest.status}}</text>
-      </view>
-      <button class="safe-button" loading="{{submittingLevelUpgrade}}" bindtap="requestLevelUpgrade" disabled="{{profile.isLevelOneUser || profile.levelUpgradeRequest}}">申请一级用户</button>
-      <view class="info-row nav-row" bindtap="goResetPassword">
-        <text>修改/重置密码</text>
-        <text>进入</text>
-      </view>
-      <view class="info-row" wx:if="{{profile.accountCancellationRequest}}">
-        <text>注销申请</text>
-        <text>{{profile.accountCancellationRequest.statusLabel || profile.accountCancellationRequest.status}}</text>
-      </view>
-      <button class="danger-outline-button" loading="{{submittingCancellation}}" bindtap="requestCancellation" disabled="{{profile.accountCancellationRequest}}">申请账号注销</button>
-    </view>
-
-    <view class="section">
-      <view class="section-title">显示与关于</view>
-      <view class="info-row nav-row" bindtap="goDisplaySettings">
-        <text>显示设置</text>
-        <text>系统 / 浅色 / 深色</text>
-      </view>
-      <view class="info-row nav-row" bindtap="goAbout">
-        <text>关于与版本</text>
-        <text>查看</text>
+      <view class="menu-item" bindtap="navigateTo" data-url="/pages/profile/legal/index?type=user-agreement">
+        <text class="menu-title">用户协议</text>
+        <text class="menu-arrow">></text>
       </view>
     </view>
 

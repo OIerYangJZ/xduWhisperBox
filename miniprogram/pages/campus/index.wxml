@@ -23,7 +23,7 @@
   </view>
 
   <!-- 树洞列表 -->
-  <scroll-view class="feed-list" scroll-y wx:if="{{currentTab === 'community'}}" bindscrolltolower="onReachBottom">
+  <scroll-view class="feed-list" scroll-y wx:if="{{currentTab === 'community'}}" bindscrolltolower="onReachBottom" bindscroll="onScroll">
     <view class="post-card" wx:for="{{posts}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
       <view class="post-header">
         <image class="post-avatar" src="{{item.authorAvatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
@@ -84,5 +84,5 @@
     </view>
     <view class="empty-state" wx:if="{{!loading && colleges.length === 0}}">加载中...</view>
   </view>
-  <view class="floating-publish" wx:if="{{currentTab === 'community'}}" bindtap="goCreatePost">＋</view>
+  <view class="floating-publish {{showPublishButton ? '' : 'hidden'}}" wx:if="{{currentTab === 'community'}}" bindtap="goCreatePost">＋</view>
 </view>

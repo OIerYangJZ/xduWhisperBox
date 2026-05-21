@@ -190,13 +190,9 @@ def handle_update_me(
     new_nickname = sanitize_alias(str(body.get("nickname", "")), fallback="")
     new_avatar = normalize_avatar_url(str(body.get("avatarUrl", "")))
     new_background_image = normalize_media_url(str(body.get("backgroundImageUrl", "")))
-    new_student_id = str(body.get("studentId", "")).strip()
     new_bio = str(body.get("bio", "")).strip()
     new_gender = str(body.get("gender", "")).strip()
 
-    if new_student_id and not is_valid_student_id(new_student_id):
-        json_error(handler, HTTPStatus.BAD_REQUEST, "学号格式不正确（需为 6-20 位字母或数字）")
-        return
     if len(new_bio) > 100:
         json_error(handler, HTTPStatus.BAD_REQUEST, "个性签名不能超过 100 个字符")
         return
@@ -211,9 +207,6 @@ def handle_update_me(
 
     if new_avatar:
         user["avatarUrl"] = new_avatar
-
-    if new_student_id:
-        user["studentId"] = new_student_id
 
     user["bio"] = new_bio
     user["gender"] = new_gender

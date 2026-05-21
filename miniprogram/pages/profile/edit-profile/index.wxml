@@ -1,0 +1,45 @@
+<view class="page edit-profile-page">
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:else>
+    <view class="section">
+      <view class="section-title">形象</view>
+      <view class="avatar-row">
+        <image class="avatar-preview" src="{{profile.avatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill" bindtap="chooseAvatar"></image>
+        <button class="avatar-button" loading="{{uploadingAvatar}}" bindtap="chooseAvatar">更换头像</button>
+      </view>
+      <view class="background-row">
+        <image class="background-preview" wx:if="{{profile.backgroundImageUrl}}" src="{{profile.backgroundImageUrl}}" mode="aspectFill" bindtap="chooseBackground"></image>
+        <view class="background-empty" wx:else bindtap="chooseBackground">个人主页背景图</view>
+        <button class="avatar-button" loading="{{uploadingBackground}}" bindtap="chooseBackground">更换背景</button>
+      </view>
+    </view>
+    
+    <view class="section">
+      <view class="section-title">基础信息</view>
+      <view class="info-row">
+        <text>昵称</text>
+        <input class="row-input" value="{{form.nickname}}" data-key="nickname" bindinput="onProfileInput" placeholder="昵称" />
+      </view>
+      <view class="info-row">
+        <text>学号</text>
+        <text>{{profile.studentId || '-'}}</text>
+      </view>
+      <view class="info-row">
+        <text>邮箱</text>
+        <text>{{profile.email || '-'}}</text>
+      </view>
+      <view class="info-row">
+        <text>性别</text>
+        <picker mode="selector" range="{{['未设置', '男', '女']}}" bindchange="onGenderChange">
+          <view class="picker-value">{{form.gender || '未设置'}}</view>
+        </picker>
+      </view>
+      <view class="bio-field">
+        <view class="bio-label">个性签名</view>
+        <textarea class="bio-input" value="{{form.bio}}" data-key="bio" bindinput="onProfileInput" maxlength="100" placeholder="写一句介绍自己" />
+      </view>
+    </view>
+
+    <button class="save-button" loading="{{savingProfile}}" bindtap="saveProfile">保存资料</button>
+  </view>
+</view>

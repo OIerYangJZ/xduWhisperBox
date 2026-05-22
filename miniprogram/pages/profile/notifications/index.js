@@ -1,5 +1,6 @@
 import { getNotifications, markAllNotificationsRead, markNotificationRead } from '../../../api/notifications';
 import { requireLoginPage } from '../../../utils/auth_guard';
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 Page({
   data: {
@@ -9,6 +10,7 @@ Page({
   },
 
   onShow() {
+    applyThemeAndLanguage(this);
     if (!requireLoginPage()) return;
     this.loadData();
   },

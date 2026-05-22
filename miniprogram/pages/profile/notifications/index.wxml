@@ -1,4 +1,4 @@
-<view class="page notification-page">
+<view class="page notification-page {{themeClass}}">
   <view class="head" wx:if="{{items.length}}">
     <view class="count">{{unreadCount}} 条未读</view>
     <view class="read-all" bindtap="markAllRead">全部已读</view>

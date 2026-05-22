@@ -5,7 +5,7 @@
 .section {
   margin-bottom: 22rpx;
   border-radius: 16rpx;
-  background: #fff;
+  background: var(--app-surface);
   overflow: hidden;
 }
 
@@ -15,8 +15,8 @@
   gap: 24rpx;
   min-height: 88rpx;
   padding: 0 24rpx;
-  border-bottom: 1rpx solid #e8e8e8;
-  color: #1d1d1f;
+  border-bottom: 1rpx solid var(--app-divider);
+  color: var(--app-text-primary);
   font-size: 28rpx;
   align-items: center;
 }
@@ -26,20 +26,20 @@
 }
 
 .row text:last-child {
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   text-align: right;
 }
 
 .block-title {
   padding: 24rpx 24rpx 8rpx;
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 30rpx;
   font-weight: 700;
 }
 
 .block-text {
   padding: 0 24rpx 24rpx;
-  color: #636366;
+  color: var(--app-text-secondary);
   font-size: 27rpx;
   line-height: 1.6;
 }
@@ -47,8 +47,8 @@
 .primary-button {
   height: 82rpx;
   border-radius: 14rpx;
-  background: #155e75;
-  color: #fff;
+  background: var(--app-primary);
+  color: #ffffff;
   font-size: 29rpx;
   line-height: 82rpx;
 }

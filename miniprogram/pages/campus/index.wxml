@@ -1,10 +1,4 @@
-<view class="container">
-  <!-- 顶部 Tab -->
-  <view class="tabs">
-    <view class="tab-item {{currentTab === 'community' ? 'active' : ''}}" data-tab="community" bindtap="switchTab">树洞</view>
-    <view class="tab-item {{currentTab === 'news' ? 'active' : ''}}" data-tab="news" bindtap="switchTab">新闻</view>
-    <view class="tab-item {{currentTab === 'college' ? 'active' : ''}}" data-tab="college" bindtap="switchTab">学院</view>
-  </view>
+<view class="page campus-page {{themeClass}}">
   <view class="community-tools" wx:if="{{currentTab === 'community'}}">
     <view class="tool-button" bindtap="goSearch">搜索</view>
     <scroll-view class="channel-scroll" scroll-x enhanced show-scrollbar="{{false}}">
@@ -14,45 +8,40 @@
     </scroll-view>
     <view class="notify-button" bindtap="goNotifications">
       通知
-      <text wx:if="{{unreadCount}}" class="badge">{{unreadCount}}</text>
+      <text wx:if="{{unreadCount}}" class="badge">{{unreadCount > 99 ? '99+' : unreadCount}}</text>
     </view>
   </view>
+
   <view class="sort-row" wx:if="{{currentTab === 'community'}}">
     <view wx:for="{{sortOptions}}" wx:key="value" data-sort="{{item.value}}" class="sort-chip {{activeSort === item.value ? 'active' : ''}}" bindtap="onSortTap">{{item.label}}</view>
-    <view class="publish-button" bindtap="goCreatePost">发布</view>
+    <view class="sort-spacer"></view>
+    <view class="secondary-entry" data-tab="news" bindtap="switchTab">公告</view>
+    <view class="secondary-entry" data-tab="college" bindtap="switchTab">学院</view>
   </view>
 
-  <!-- 树洞列表 -->
   <scroll-view class="feed-list" scroll-y wx:if="{{currentTab === 'community'}}" bindscrolltolower="onReachBottom" bindscroll="onScroll">
-    <view class="post-card" wx:for="{{posts}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
-      <view class="post-header">
-        <image class="post-avatar" src="{{item.authorAvatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
-        <view class="post-meta">
-          <view class="post-author">{{item.authorName || '匿名用户'}}</view>
-          <view class="post-time">{{item.createdAt}}</view>
+    <view class="feed-card" wx:for="{{posts}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+      <image class="post-avatar" src="{{item.authorAvatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="feed-body">
+        <view class="feed-head">
+          <view class="feed-author">{{item.authorAlias || item.authorName || '匿名用户'}}</view>
+          <view class="feed-channel">{{item.channel || '综合'}}</view>
+          <view class="feed-time">{{item.createdAt}}</view>
         </view>
-      </view>
-      <view class="post-title" wx:if="{{item.title}}">{{item.title}}</view>
-      <view class="post-content">
-        <text>{{item.content}}</text>
-      </view>
-      <view class="tag-row" wx:if="{{item.tags && item.tags.length}}">
-        <text wx:for="{{item.tags}}" wx:key="*this">#{{item}}</text>
-      </view>
-      <view class="post-images" wx:if="{{item.images && item.images.length > 0}}">
-        <image wx:for="{{item.images}}" wx:for-item="img" wx:key="*this" src="{{img}}" mode="aspectFill" class="post-image"></image>
-      </view>
-      <view class="post-footer">
-        <view class="action-item">
-          <text class="icon">💬</text>
-          <text>{{item.commentCount || 0}}</text>
+        <view class="feed-title" wx:if="{{item.title}}">{{item.title}}</view>
+        <view class="feed-summary">
+          <text>{{item.content}}</text>
         </view>
-        <view class="action-item">
-          <text class="icon">👍</text>
-          <text>{{item.likeCount || 0}}</text>
+        <view class="feed-tags" wx:if="{{item.tags && item.tags.length}}">
+          <text class="feed-tag" wx:for="{{item.tags}}" wx:key="*this">#{{item}}</text>
         </view>
-        <view class="action-item">
-          <text>{{item.statusLabel}}</text>
+        <view class="post-images" wx:if="{{item.images && item.images.length > 0}}">
+          <image wx:for="{{item.images}}" wx:for-item="img" wx:key="*this" src="{{img}}" mode="aspectFill" class="post-image"></image>
+        </view>
+        <view class="feed-actions">
+          <text>评论 {{item.commentCount || 0}}</text>
+          <text class="{{item.liked || item.isLiked ? 'active' : ''}}">赞 {{item.likeCount || 0}}</text>
+          <text wx:if="{{item.statusLabel}}">{{item.statusLabel}}</text>
         </view>
       </view>
     </view>
@@ -61,28 +50,44 @@
     <view class="no-more" wx:if="{{!loading && !hasMore && posts.length > 0}}">没有更多了</view>
   </scroll-view>
 
-  <!-- 校园新闻/公告 -->
-  <scroll-view class="news-list" scroll-y wx:if="{{currentTab === 'news'}}">
-    <view class="news-card" wx:for="{{news}}" wx:key="id" bindtap="goToNewsDetail" data-title="{{item.title}}" data-content="{{item.content}}" data-created-at="{{item.createdAt}}">
-      <view class="news-tag">校园公告</view>
-      <view class="news-title">{{item.title}}</view>
-      <view class="news-excerpt">{{item.content}}</view>
-      <view class="news-footer">
-        <text class="news-time">{{item.createdAt}}</text>
-        <text class="news-more-link">查看详情 ></text>
+  <view class="secondary-page" wx:if="{{currentTab === 'news'}}">
+    <view class="sub-header">
+      <view>
+        <view class="sub-title">校园公告</view>
+        <view class="sub-desc">来自校园侧的信息</view>
       </view>
+      <view class="tool-button" data-tab="community" bindtap="switchTab">返回</view>
     </view>
-    <view class="loading-state" wx:if="{{loading}}">加载中...</view>
-    <view class="empty-state" wx:if="{{!loading && news.length === 0}}">暂无公告</view>
-  </scroll-view>
-
-  <!-- 学院专区 -->
-  <view class="college-grid" wx:if="{{currentTab === 'college'}}">
-    <view class="college-item" wx:for="{{colleges}}" wx:key="id" bindtap="onCollegeItemTap" data-name="{{item.name}}">
-      <view class="college-icon">{{item.icon}}</view>
-      <view class="college-name">{{item.name}}</view>
-    </view>
-    <view class="empty-state" wx:if="{{!loading && colleges.length === 0}}">加载中...</view>
+    <scroll-view class="news-list" scroll-y>
+      <view class="news-card" wx:for="{{news}}" wx:key="id" bindtap="goToNewsDetail" data-title="{{item.title}}" data-content="{{item.content}}" data-created-at="{{item.createdAt}}">
+        <view class="news-title">{{item.title}}</view>
+        <view class="news-excerpt">{{item.content}}</view>
+        <view class="news-footer">
+          <text class="news-time">{{item.createdAt}}</text>
+          <text class="news-more-link">查看详情</text>
+        </view>
+      </view>
+      <view class="loading-state" wx:if="{{loading}}">加载中...</view>
+      <view class="empty-state" wx:if="{{!loading && news.length === 0}}">暂无公告</view>
+    </scroll-view>
   </view>
+
+  <view class="secondary-page" wx:if="{{currentTab === 'college'}}">
+    <view class="sub-header">
+      <view>
+        <view class="sub-title">学院</view>
+        <view class="sub-desc">按学院查看内容</view>
+      </view>
+      <view class="tool-button" data-tab="community" bindtap="switchTab">返回</view>
+    </view>
+    <view class="college-list">
+      <view class="college-item" wx:for="{{colleges}}" wx:key="id" bindtap="onCollegeItemTap" data-name="{{item.name}}">
+        <view class="college-icon">{{item.icon}}</view>
+        <view class="college-name">{{item.name}}</view>
+      </view>
+      <view class="empty-state" wx:if="{{!loading && colleges.length === 0}}">暂无学院信息</view>
+    </view>
+  </view>
+
   <view class="floating-publish {{showPublishButton ? '' : 'hidden'}}" wx:if="{{currentTab === 'community'}}" bindtap="goCreatePost">＋</view>
 </view>

@@ -1,6 +1,7 @@
 import { getUserInfo } from '../../../api/auth';
 import { updateNotificationPreferences, updatePrivacy } from '../../../api/user';
 import { requireLoginPage } from '../../../utils/auth_guard';
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 const PREF_KEYS = [
   'notifyComment',
@@ -29,6 +30,7 @@ Page({
   },
 
   onShow() {
+    applyThemeAndLanguage(this);
     if (!requireLoginPage()) return;
     this.loadProfile();
   },

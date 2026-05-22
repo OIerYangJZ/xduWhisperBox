@@ -20,6 +20,7 @@ Page({
   },
 
   onShow() {
+    applyThemeAndLanguage(this);
     if (!requireLoginPage()) return;
     applyThemeAndLanguage(this);
     this.loadProfile();

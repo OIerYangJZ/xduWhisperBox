@@ -1,4 +1,4 @@
-<view class="page public-page">
+<view class="page public-page {{themeClass}}">
   <view wx:if="{{loading}}" class="empty">加载中...</view>
   <view wx:elif="{{!profile}}" class="empty">用户不存在</view>
   <view wx:else>

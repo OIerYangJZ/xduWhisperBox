@@ -14,6 +14,7 @@ Page({
   },
 
   onShow() {
+    applyThemeAndLanguage(this);
     setTimeout(() => {
       applyThemeAndLanguage(this);
       this.checkLoginStatus();

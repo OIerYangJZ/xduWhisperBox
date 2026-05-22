@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page {{themeClass}}">
   <view wx:if="{{loading}}" class="empty">加载中...</view>
   <view wx:elif="{{!reports.length}}" class="empty">暂无举报记录</view>
   <view wx:else>

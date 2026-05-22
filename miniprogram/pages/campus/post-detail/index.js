@@ -15,6 +15,7 @@ import { createDirectConversation } from '../../../api/messages';
 import { followUser, unfollowUser } from '../../../api/user';
 import { requireLoginPage } from '../../../utils/auth_guard';
 import { markdownToNodes } from '../../../utils/markdown';
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 const REPORT_REASONS = ['广告引流', '人身攻击', '违规内容', '垃圾信息', '其他'];
 const COMMENT_SORTS = [
@@ -67,6 +68,7 @@ Page({
   },
 
   onLoad(options) {
+    applyThemeAndLanguage(this);
     if (options.id) this.setData({ postId: options.id });
     if (options.commentId) {
       this.setData({
@@ -79,6 +81,10 @@ Page({
       this.loadDetail();
       incrementPostView(this.data.postId).catch(() => {});
     }
+  },
+
+  onShow() {
+    applyThemeAndLanguage(this);
   },
 
   onPullDownRefresh() {

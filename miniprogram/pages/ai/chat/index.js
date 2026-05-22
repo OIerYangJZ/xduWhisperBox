@@ -1,15 +1,27 @@
-import { sendAiMessage } from '../../../api/ai';
+import { getAiConfig, sendAiMessage } from '../../../api/ai';
 import { requireLoginPage } from '../../../utils/auth_guard';
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 const normalizeAiReply = (response) => {
   const data = response && response.data ? response.data : response || {};
   return String(data.reply || data.answer || data.content || '').trim();
 };
 
-const saveAiHistory = (question, answer) => {
+const normalizeReferences = (response) => {
+  const data = response && response.data ? response.data : response || {};
+  const rows = Array.isArray(data.references) ? data.references : [];
+  return rows.map((item, index) => ({
+    ...item,
+    key: `${item.type || 'ref'}-${item.id || index}`,
+    title: item.title || (item.type === 'post' ? '相关帖子' : '基础资料')
+  }));
+};
+
+const saveAiHistory = (question, answer, references = []) => {
   const row = {
     question,
     answer,
+    references,
     createdAt: new Date().toISOString()
   };
   const rows = [row, ...(wx.getStorageSync('aiHistory') || [])]
@@ -22,14 +34,17 @@ Page({
   data: {
     chatId: '',
     messages: [
-      { id: '1', role: 'assistant', content: '你好！我是西电 AI 助手，有什么可以帮到你的？你可以问我选课、班车、奖学金等校园政策问题。' }
+      { id: '1', role: 'assistant', content: '你好！我是西电 AI 助手。你可以问我校园信息，也可以让我检索树洞里的公开讨论。' }
     ],
     inputVal: '',
     isSending: false,
-    scrollTop: 0
+    scrollTop: 0,
+    configured: false,
+    currentModel: ''
   },
 
   onLoad(options) {
+    applyThemeAndLanguage(this);
     if (options.id) {
       this.setData({ chatId: options.id });
     }
@@ -37,6 +52,7 @@ Page({
       this.setData({ inputVal: decodeURIComponent(options.q) });
     }
     if (!requireLoginPage()) return;
+    this.refreshConfigState();
     if (this.data.inputVal) {
       this._autoSendQueued = true;
       setTimeout(() => this.sendMessage(), 0);
@@ -44,7 +60,9 @@ Page({
   },
 
   onShow() {
+    applyThemeAndLanguage(this);
     if (!requireLoginPage()) return;
+    this.refreshConfigState();
     if (this.data.inputVal && this.data.messages.length === 1 && !this.data.isSending && !this._autoSendQueued) {
       this._autoSendQueued = true;
       setTimeout(() => this.sendMessage(), 0);
@@ -55,9 +73,26 @@ Page({
     this.setData({ inputVal: e.detail.value });
   },
 
+  refreshConfigState() {
+    const config = getAiConfig();
+    this.setData({
+      configured: Boolean(config.apiKey && config.baseUrl && config.model),
+      currentModel: config.model || ''
+    });
+  },
+
+  goSettings() {
+    wx.navigateTo({ url: '/pages/profile/ai-settings/index' });
+  },
+
   async sendMessage() {
     const text = this.data.inputVal.trim();
     if (!text || this.data.isSending) return;
+    if (!this.data.configured) {
+      wx.showToast({ title: '请先配置 AI 接口', icon: 'none' });
+      this.goSettings();
+      return;
+    }
     this._autoSendQueued = false;
 
     const newMsg = {
@@ -73,21 +108,27 @@ Page({
     }, this.scrollToBottom);
 
     try {
-      const res = await sendAiMessage(text);
+      const historyMessages = this.data.messages
+        .filter((item) => item.role === 'user' || item.role === 'assistant')
+        .slice(-8)
+        .map((item) => ({ role: item.role, content: item.content }));
+      const res = await sendAiMessage(text, { messages: historyMessages });
       const reply = normalizeAiReply(res);
+      const references = normalizeReferences(res);
       if (reply) {
         const replyMsg = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: reply
+          content: reply,
+          references
         };
         this.setData({
           messages: [...this.data.messages, replyMsg]
         }, this.scrollToBottom);
-        saveAiHistory(text, reply);
+        saveAiHistory(text, reply, references);
       }
     } catch (err) {
-      wx.showToast({ title: '网络异常，请重试', icon: 'none' });
+      wx.showToast({ title: 'AI 请求失败，请检查设置', icon: 'none' });
     } finally {
       this.setData({ isSending: false });
     }

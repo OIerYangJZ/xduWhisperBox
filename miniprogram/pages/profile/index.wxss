@@ -1,14 +1,15 @@
 page {
-  background-color: #ffffff;
+  background: var(--app-background);
 }
 
 .container {
   padding: 0;
+  background: var(--app-background);
 }
 
 .profile-cover {
   height: 188rpx;
-  background: rgba(21, 94, 117, .08);
+  background: var(--app-primary-soft);
 }
 
 .profile-head {
@@ -16,25 +17,25 @@ page {
   align-items: center;
   justify-content: space-between;
   padding: 0 32rpx;
-  background-color: #fff;
+  background: var(--app-surface);
 }
 
 .avatar {
   width: 144rpx;
   height: 144rpx;
   margin-top: -56rpx;
-  border: 8rpx solid #fff;
+  border: 8rpx solid var(--app-surface);
   border-radius: 50%;
-  background-color: #e8e8e8;
+  background: var(--app-control);
 }
 
 .edit-pill {
   height: 56rpx;
   margin-top: -22rpx;
   padding: 0 28rpx;
-  border: 1rpx solid #e8e8e8;
+  border: 1rpx solid var(--app-divider);
   border-radius: 28rpx;
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 26rpx;
   font-weight: 600;
   line-height: 56rpx;
@@ -42,25 +43,27 @@ page {
 
 .profile-info {
   padding: 12rpx 32rpx 28rpx;
-  border-bottom: 1rpx solid #e8e8e8;
-  background: #fff;
+  border-bottom: 1rpx solid var(--app-divider);
+  background: var(--app-surface);
 }
 
-.nickname {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #1d1d1f;
+.nickname,
+.login-title {
   margin-bottom: 10rpx;
+  color: var(--app-text-primary);
+  font-size: 36rpx;
+  font-weight: 700;
 }
 
-.student-id {
+.student-id,
+.login-desc {
+  color: var(--app-text-secondary);
   font-size: 28rpx;
-  color: #8e8e93;
 }
 
 .bio {
   margin-top: 20rpx;
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 28rpx;
   line-height: 1.5;
 }
@@ -69,66 +72,12 @@ page {
   flex: 1;
 }
 
-.login-title {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #1d1d1f;
-  margin-bottom: 10rpx;
-}
-
-.login-desc {
-  font-size: 28rpx;
-  color: #8e8e93;
-}
-
 .menu-list {
-  background-color: #fff;
-}
-
-.menu-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 96rpx;
-  padding: 0 32rpx;
-  border-bottom: 1rpx solid #e8e8e8;
-}
-
-.menu-item:last-child {
-  border-bottom: none;
-}
-
-.menu-text {
-  font-size: 30rpx;
-  color: #1d1d1f;
-}
-
-.menu-arrow {
-  color: #c7c7cc;
-  font-size: 30rpx;
+  background: var(--app-surface);
 }
 
 .menu-right {
   display: flex;
   align-items: center;
   gap: 14rpx;
-}
-
-.badge {
-  min-width: 34rpx;
-  height: 34rpx;
-  padding: 0 10rpx;
-  border-radius: 17rpx;
-  background: #ff3b30;
-  color: #fff;
-  font-size: 22rpx;
-  line-height: 34rpx;
-  text-align: center;
-}
-
-.badge-dot {
-  width: 16rpx;
-  height: 16rpx;
-  border-radius: 50%;
-  background: #ff3b30;
 }

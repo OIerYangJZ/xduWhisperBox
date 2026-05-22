@@ -21,6 +21,10 @@
         <text class="menu-title">{{t.display_settings || '显示设置'}}</text>
         <text class="menu-arrow">></text>
       </view>
+      <view class="menu-item" bindtap="navigateTo" data-url="/pages/profile/ai-settings/index">
+        <text class="menu-title">AI 接口与知识库</text>
+        <text class="menu-arrow">></text>
+      </view>
       <view class="menu-item" bindtap="navigateTo" data-url="/pages/profile/about/index">
         <text class="menu-title">{{t.about || '关于与更新'}}</text>
         <text class="menu-arrow">></text>

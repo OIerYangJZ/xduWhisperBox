@@ -1,4 +1,4 @@
-<view class="container" wx:if="{{!loading && post}}">
+<view class="page post-detail-page {{themeClass}}" wx:if="{{!loading && post}}">
   <scroll-view scroll-y class="main-scroll" scroll-into-view="{{targetAnchor}}" scroll-with-animation>
     <view class="post-card">
       <view class="post-header">
@@ -19,12 +19,12 @@
       </view>
       <view class="post-footer">
         <view class="action-item" bindtap="handleLike">
-          <text class="icon" style="color: {{post.liked ? '#155E75' : '#999'}}">赞</text>
-          <text style="color: {{post.liked ? '#155E75' : '#999'}}">{{post.likeCount || 0}}</text>
+          <text class="action-label {{post.liked ? 'active' : ''}}">赞</text>
+          <text class="{{post.liked ? 'active' : ''}}">{{post.likeCount || 0}}</text>
         </view>
         <view class="action-item" bindtap="handleFavorite">
-          <text class="icon" style="color: {{post.favorited ? '#155E75' : '#999'}}">藏</text>
-          <text style="color: {{post.favorited ? '#155E75' : '#999'}}">{{post.favoriteCount || 0}}</text>
+          <text class="action-label {{post.favorited ? 'active' : ''}}">藏</text>
+          <text class="{{post.favorited ? 'active' : ''}}">{{post.favoriteCount || 0}}</text>
         </view>
         <button class="share-button" open-type="share">分享</button>
         <view class="action-item" bindtap="reportPost">举报</view>

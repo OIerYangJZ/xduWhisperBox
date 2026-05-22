@@ -1,17 +1,18 @@
 .create-page {
-  padding-top: 24rpx;
+  padding-top: 0;
+  background: var(--app-background);
 }
 
 .form-section {
-  margin-bottom: 22rpx;
-  padding: 26rpx;
-  border-bottom: 1rpx solid #e8e8e8;
-  background: #fff;
+  margin: 0;
+  padding: 26rpx 28rpx;
+  border-bottom: 1rpx solid var(--app-divider);
+  background: var(--app-surface);
 }
 
 .title-input {
   height: 74rpx;
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 34rpx;
   font-weight: 650;
 }
@@ -20,7 +21,7 @@
   width: 100%;
   min-height: 300rpx;
   margin-top: 20rpx;
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 30rpx;
   line-height: 1.6;
 }
@@ -29,8 +30,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 92rpx;
-  border-bottom: 1rpx solid #e8e8e8;
+  min-height: 96rpx;
+  border-bottom: 1rpx solid var(--app-divider);
 }
 
 .field-row:last-child {
@@ -38,27 +39,29 @@
 }
 
 .field-label {
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 29rpx;
   font-weight: 600;
 }
 
 .field-desc {
   margin-top: 8rpx;
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   font-size: 24rpx;
 }
 
-.picker-value {
-  color: #155e75;
+.picker-value,
+.inline-action {
+  color: var(--app-primary);
   font-size: 28rpx;
+  font-weight: 500;
 }
 
 .field-input {
   flex: 1;
   min-width: 0;
   margin-left: 24rpx;
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 28rpx;
   text-align: right;
 }
@@ -68,28 +71,6 @@
   flex-wrap: wrap;
   gap: 14rpx;
   padding: 18rpx 0 8rpx;
-}
-
-.tag-chip {
-  height: 52rpx;
-  padding: 0 22rpx;
-  border-radius: 26rpx;
-  background: #f5f5f7;
-  color: #636366;
-  font-size: 25rpx;
-  line-height: 52rpx;
-}
-
-.tag-chip.active {
-  background: rgba(21, 94, 117, .12);
-  color: #155e75;
-  font-weight: 600;
-}
-
-.inline-action {
-  margin-left: 16rpx;
-  color: #155e75;
-  font-size: 26rpx;
 }
 
 .image-head {
@@ -102,8 +83,8 @@
   height: 56rpx;
   padding: 0 24rpx;
   border-radius: 28rpx;
-  background: rgba(21, 94, 117, .1);
-  color: #155e75;
+  background: var(--app-primary-soft);
+  color: var(--app-primary);
   font-size: 26rpx;
   font-weight: 600;
   line-height: 56rpx;
@@ -121,7 +102,7 @@
   aspect-ratio: 1;
   overflow: hidden;
   border-radius: 18rpx;
-  background: #f5f5f7;
+  background: var(--app-control);
 }
 
 .image-cell image {
@@ -131,12 +112,12 @@
 
 .image-loading {
   position: absolute;
-  left: 0;
   right: 0;
   bottom: 0;
+  left: 0;
   height: 42rpx;
   background: rgba(0, 0, 0, .45);
-  color: #fff;
+  color: #ffffff;
   font-size: 22rpx;
   line-height: 42rpx;
   text-align: center;
@@ -150,12 +131,12 @@
   height: 40rpx;
   border-radius: 50%;
   background: rgba(29, 29, 31, .72);
-  color: #fff;
+  color: #ffffff;
   font-size: 30rpx;
   line-height: 36rpx;
   text-align: center;
 }
 
 .submit {
-  margin-top: 34rpx;
+  margin: 34rpx 28rpx 0;
 }

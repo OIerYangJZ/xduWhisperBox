@@ -1,4 +1,4 @@
-<view class="container">
+<view class="container {{themeClass}}">
   <view class="title">登录 XDU WhisperBox</view>
   <view class="subtitle">请使用西电学生邮箱或学号登录</view>
 

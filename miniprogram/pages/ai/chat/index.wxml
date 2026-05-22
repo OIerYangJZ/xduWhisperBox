@@ -1,10 +1,18 @@
-<view class="container">
+<view class="page ai-chat-page {{themeClass}}">
+  <view class="config-bar" wx:if="{{!configured}}" bindtap="goSettings">请先配置 AI 接口与模型 ></view>
+  <view class="model-bar" wx:else>当前模型：{{currentModel}}</view>
   <scroll-view class="chat-scroll" scroll-y scroll-top="{{scrollTop}}" scroll-with-animation>
     <view class="chat-list">
       <view wx:for="{{messages}}" wx:key="id" class="message-item {{item.role === 'user' ? 'message-user' : 'message-assistant'}}">
         <image class="avatar" src="{{item.role === 'user' ? '/assets/default-avatar.png' : '/assets/default-avatar.png'}}" mode="aspectFill"></image>
         <view class="message-bubble">
           <text class="message-text">{{item.content}}</text>
+          <view class="references" wx:if="{{item.references && item.references.length}}">
+            <view class="reference-title">参考资料</view>
+            <view class="reference-item" wx:for="{{item.references}}" wx:for-item="ref" wx:key="key">
+              {{ref.type === 'post' ? '帖子' : '资料'}} · {{ref.title}}
+            </view>
+          </view>
         </view>
       </view>
       
@@ -24,6 +32,6 @@
 
   <view class="input-bar">
     <input class="input" placeholder="输入问题..." value="{{inputVal}}" bindinput="onInput" confirm-type="send" bindconfirm="sendMessage" cursor-spacing="20" />
-    <button class="send-btn" bindtap="sendMessage" disabled="{{isSending || !inputVal}}">发送</button>
+    <button class="send-btn" bindtap="sendMessage" disabled="{{isSending || !inputVal || !configured}}">发送</button>
   </view>
 </view>

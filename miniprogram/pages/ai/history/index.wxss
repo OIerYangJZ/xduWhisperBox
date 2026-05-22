@@ -6,37 +6,37 @@
 }
 
 .count {
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   font-size: 26rpx;
 }
 
 .clear {
-  color: #155e75;
+  color: var(--app-primary);
   font-size: 26rpx;
   font-weight: 600;
 }
 
 .history-card {
   padding: 24rpx 4rpx;
-  border-bottom: 1rpx solid #e8e8e8;
-  background: #fff;
+  border-bottom: 1rpx solid var(--app-divider);
+  background: var(--app-surface);
 }
 
 .question {
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 30rpx;
   font-weight: 650;
 }
 
 .answer {
   margin-top: 12rpx;
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 27rpx;
   line-height: 1.5;
 }
 
 .time {
   margin-top: 14rpx;
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   font-size: 23rpx;
 }

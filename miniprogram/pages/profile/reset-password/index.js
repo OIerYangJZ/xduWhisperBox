@@ -1,6 +1,10 @@
 import { resetPassword, sendPasswordResetCode } from '../../../api/auth';
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 Page({
+  onShow() {
+    applyThemeAndLanguage(this);
+  },
   data: {
     email: '',
     code: '',

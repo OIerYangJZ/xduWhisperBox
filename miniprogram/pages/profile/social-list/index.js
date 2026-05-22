@@ -1,6 +1,7 @@
 import { getFollowers, getFollowing, getFriends } from '../../../api/user';
 import { createDirectConversation } from '../../../api/messages';
 import { requireLoginPage } from '../../../utils/auth_guard';
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 const TITLE_MAP = {
   following: '关注',
@@ -9,6 +10,9 @@ const TITLE_MAP = {
 };
 
 Page({
+  onShow() {
+    applyThemeAndLanguage(this);
+  },
   data: {
     type: 'friends',
     loading: true,

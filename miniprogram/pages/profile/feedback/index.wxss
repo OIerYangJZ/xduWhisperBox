@@ -1,13 +1,13 @@
 .form-panel {
   padding: 24rpx;
-  border-bottom: 1rpx solid #e8e8e8;
-  background: #fff;
+  border-bottom: 1rpx solid var(--app-divider);
+  background: var(--app-surface);
 }
 
 .content-input {
   width: 100%;
   min-height: 280rpx;
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 29rpx;
   line-height: 1.6;
 }
@@ -16,8 +16,8 @@
   height: 82rpx;
   margin-top: 22rpx;
   padding-top: 18rpx;
-  border-top: 1rpx solid #e8e8e8;
-  color: #1d1d1f;
+  border-top: 1rpx solid var(--app-divider);
+  color: var(--app-text-primary);
   font-size: 28rpx;
 }
 

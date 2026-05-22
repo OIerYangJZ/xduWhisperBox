@@ -67,7 +67,7 @@ const request = (options) => {
       method: options.method || 'GET',
       data: options.data || {},
       header: header,
-      timeout: 5000,
+      timeout: options.timeout || 5000,
       success: (res) => {
         const { statusCode, data } = res;
         

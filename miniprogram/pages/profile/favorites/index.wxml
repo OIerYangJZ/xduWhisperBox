@@ -1,4 +1,4 @@
-<view class="page favorite-page">
+<view class="page favorite-page {{themeClass}}">
   <view wx:if="{{loading}}" class="empty">加载中...</view>
   <view wx:elif="{{!posts.length}}" class="empty">暂无收藏</view>
   <view wx:else>
@@ -14,8 +14,8 @@
         <view class="feed-title">{{item.displayTitle}}</view>
         <view class="feed-summary">{{item.summary}}</view>
         <view class="feed-actions">
-          <text>♡ {{item.likeCount}}</text>
-          <text>☰ {{item.commentCount}}</text>
+          <text>赞 {{item.likeCount}}</text>
+          <text>评论 {{item.commentCount}}</text>
           <text class="remove" data-index="{{index}}" catchtap="removeFavorite">取消收藏</text>
         </view>
       </view>

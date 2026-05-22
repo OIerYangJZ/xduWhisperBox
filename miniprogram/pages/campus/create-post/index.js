@@ -1,6 +1,7 @@
 import { createPost, getChannels } from '../../../api/posts';
 import { uploadPostImage } from '../../../api/uploads';
 import { requireLoginPage } from '../../../utils/auth_guard';
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 const MAX_IMAGE_COUNT = 9;
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
@@ -48,11 +49,13 @@ Page({
   },
 
   onLoad() {
+    applyThemeAndLanguage(this);
     if (!requireLoginPage()) return;
     this.loadChannels();
   },
 
   onShow() {
+    applyThemeAndLanguage(this);
     if (!requireLoginPage()) return;
     if (this.data.channels.length <= 1) {
       this.loadChannels();

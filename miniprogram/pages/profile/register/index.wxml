@@ -1,4 +1,4 @@
-<view class="page register-page safe-bottom">
+<view class="page register-page safe-bottom {{themeClass}}">
   <view class="form-panel">
     <input class="input" placeholder="昵称" maxlength="16" value="{{nickname}}" bindinput="onNicknameInput" />
     <input class="input" placeholder="西电学生邮箱" value="{{email}}" bindinput="onEmailInput" />

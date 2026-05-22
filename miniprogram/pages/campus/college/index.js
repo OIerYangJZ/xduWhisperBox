@@ -1,6 +1,7 @@
 import { getColleges } from '../../../api/campus';
 import { getPosts } from '../../../api/posts';
 import { requireLoginPage } from '../../../utils/auth_guard';
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 Page({
   data: {
@@ -20,6 +21,7 @@ Page({
   },
 
   onShow() {
+    applyThemeAndLanguage(this);
     if (!requireLoginPage()) return;
     if (!this._didLoadData) {
       this._didLoadData = true;

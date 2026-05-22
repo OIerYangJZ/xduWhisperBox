@@ -1,13 +1,13 @@
 .page {
   padding: 24rpx;
-  background: #f5f5f7;
+  background: var(--app-control);
   min-height: 100vh;
 }
 
 .empty {
   padding: 40rpx;
   text-align: center;
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   font-size: 28rpx;
 }
 
@@ -15,12 +15,12 @@
   margin-bottom: 22rpx;
   padding: 24rpx;
   border-radius: 12rpx;
-  background: #fff;
+  background: var(--app-surface);
 }
 
 .section-title {
   margin-bottom: 12rpx;
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 31rpx;
   font-weight: 700;
 }
@@ -30,7 +30,7 @@
   align-items: center;
   justify-content: space-between;
   min-height: 112rpx;
-  border-bottom: 1rpx solid #e8e8e8;
+  border-bottom: 1rpx solid var(--app-divider);
   padding: 16rpx 0;
 }
 
@@ -38,7 +38,7 @@
   width: 82rpx;
   height: 82rpx;
   border-radius: 50%;
-  background: #f5f5f7;
+  background: var(--app-control);
 }
 
 .avatar-button {
@@ -47,7 +47,7 @@
   padding: 0 24rpx;
   border-radius: 29rpx;
   background: rgba(21, 94, 117, .1);
-  color: #155e75;
+  color: var(--app-primary);
   font-size: 26rpx;
   font-weight: 600;
   line-height: 58rpx;
@@ -67,12 +67,12 @@
   flex: 1;
   height: 112rpx;
   border-radius: 14rpx;
-  background: #f5f5f7;
+  background: var(--app-control);
   overflow: hidden;
 }
 
 .background-empty {
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   font-size: 26rpx;
   line-height: 112rpx;
   text-align: center;
@@ -83,8 +83,8 @@
   align-items: center;
   justify-content: space-between;
   min-height: 86rpx;
-  border-bottom: 1rpx solid #e8e8e8;
-  color: #1d1d1f;
+  border-bottom: 1rpx solid var(--app-divider);
+  color: var(--app-text-primary);
   font-size: 28rpx;
 }
 
@@ -94,7 +94,7 @@
 
 .info-row text:last-child {
   max-width: 430rpx;
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   text-align: right;
   word-break: break-all;
 }
@@ -102,14 +102,14 @@
 .row-input {
   width: 430rpx;
   min-height: 64rpx;
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 28rpx;
   text-align: right;
 }
 
 .picker-value {
   min-width: 160rpx;
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   font-size: 28rpx;
   text-align: right;
 }
@@ -119,7 +119,7 @@
 }
 
 .bio-label {
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 28rpx;
 }
 
@@ -128,10 +128,10 @@
   height: 140rpx;
   margin-top: 14rpx;
   padding: 18rpx;
-  border: 1rpx solid #e8e8e8;
+  border: 1rpx solid var(--app-divider);
   border-radius: 12rpx;
-  background: #fcfcfd;
-  color: #1d1d1f;
+  background: var(--app-surface);
+  color: var(--app-text-primary);
   font-size: 27rpx;
   line-height: 1.5;
   box-sizing: border-box;
@@ -141,8 +141,8 @@
   height: 86rpx;
   margin-top: 40rpx;
   border-radius: 12rpx;
-  background: #155e75;
-  color: #fff;
+  background: var(--app-primary);
+  color: #ffffff;
   font-size: 30rpx;
   line-height: 86rpx;
 }

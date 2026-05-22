@@ -2,15 +2,15 @@
   margin: 24rpx;
   overflow: hidden;
   border-radius: 16rpx;
-  background: #fff;
+  background: var(--app-surface);
 }
 
 .section-title {
   padding: 24rpx;
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 31rpx;
   font-weight: 700;
-  border-bottom: 1rpx solid #e8e8e8;
+  border-bottom: 1rpx solid var(--app-divider);
 }
 
 .option-row {
@@ -19,8 +19,8 @@
   justify-content: space-between;
   min-height: 92rpx;
   padding: 0 24rpx;
-  border-bottom: 1rpx solid #e8e8e8;
-  color: #1d1d1f;
+  border-bottom: 1rpx solid var(--app-divider);
+  color: var(--app-text-primary);
   font-size: 29rpx;
 }
 
@@ -29,6 +29,6 @@
 }
 
 .option-row.active {
-  color: #155e75;
+  color: var(--app-primary);
   font-weight: 600;
 }

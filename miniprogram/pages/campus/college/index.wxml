@@ -1,4 +1,4 @@
-<view class="page college-page safe-bottom">
+<view class="page college-page safe-bottom {{themeClass}}">
   <scroll-view class="college-scroll" scroll-x enhanced show-scrollbar="{{false}}">
     <view class="college-row">
       <view
@@ -35,8 +35,8 @@
         <view class="feed-title">{{item.displayTitle}}</view>
         <view class="feed-summary">{{item.summary}}</view>
         <view class="feed-actions">
-          <text>♡ {{item.likeCount}}</text>
-          <text>☰ {{item.commentCount}}</text>
+          <text>赞 {{item.likeCount}}</text>
+          <text>评论 {{item.commentCount}}</text>
         </view>
       </view>
     </view>

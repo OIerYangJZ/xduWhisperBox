@@ -1,19 +1,31 @@
-page {
-  background-color: #f5f7fb;
+.ai-chat-page {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--app-background);
 }
 
-.container {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+.config-bar,
+.model-bar {
+  flex-shrink: 0;
+  padding: 16rpx 24rpx;
+  font-size: 24rpx;
+  text-align: center;
+}
+
+.config-bar {
+  background: rgba(255, 149, 0, .12);
+  color: var(--app-warning);
+}
+
+.model-bar {
+  background: var(--app-primary-soft);
+  color: var(--app-primary);
 }
 
 .chat-scroll {
   flex: 1;
-  overflow-y: hidden; /* Use scroll-view to handle scrolling */
+  overflow-y: hidden;
   padding-bottom: 120rpx;
 }
 
@@ -23,8 +35,8 @@ page {
 
 .message-item {
   display: flex;
-  margin-bottom: 30rpx;
   align-items: flex-start;
+  margin-bottom: 30rpx;
 }
 
 .message-user {
@@ -34,9 +46,9 @@ page {
 .avatar {
   width: 80rpx;
   height: 80rpx;
-  border-radius: 40rpx;
-  background-color: #eee;
   flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--app-control);
 }
 
 .message-user .avatar {
@@ -50,23 +62,55 @@ page {
 .message-bubble {
   max-width: 70%;
   padding: 20rpx 30rpx;
+  border: 1rpx solid var(--app-divider);
   border-radius: 20rpx;
   font-size: 32rpx;
   line-height: 1.5;
   word-wrap: break-word;
 }
 
+.message-text {
+  white-space: pre-wrap;
+}
+
+.references {
+  margin-top: 18rpx;
+  padding-top: 14rpx;
+  border-top: 1rpx solid rgba(142, 142, 147, .2);
+}
+
+.reference-title,
+.reference-item {
+  color: var(--app-text-secondary);
+  font-size: 23rpx;
+  line-height: 1.5;
+}
+
+.reference-title {
+  margin-bottom: 8rpx;
+  font-weight: 600;
+}
+
+.message-user .references {
+  border-top-color: rgba(255, 255, 255, .24);
+}
+
+.message-user .reference-title,
+.message-user .reference-item {
+  color: rgba(255, 255, 255, .78);
+}
+
 .message-user .message-bubble {
-  background-color: #0052D9;
-  color: #fff;
+  background: var(--app-primary);
+  color: #ffffff;
+  border-color: var(--app-primary);
   border-top-right-radius: 4rpx;
 }
 
 .message-assistant .message-bubble {
-  background-color: #fff;
-  color: #333;
+  background: var(--app-surface);
+  color: var(--app-text-primary);
   border-top-left-radius: 4rpx;
-  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.02);
 }
 
 .typing-indicator {
@@ -78,9 +122,9 @@ page {
 .dot {
   width: 12rpx;
   height: 12rpx;
-  background-color: #ccc;
-  border-radius: 50%;
   margin: 0 6rpx;
+  border-radius: 50%;
+  background: var(--app-text-tertiary);
   animation: typing 1.4s infinite ease-in-out both;
 }
 
@@ -93,53 +137,48 @@ page {
 }
 
 @keyframes typing {
-  0%, 80%, 100% { 
+  0%, 80%, 100% {
     transform: scale(0);
-  } 
-  40% { 
+  }
+  40% {
     transform: scale(1);
   }
 }
 
 .input-bar {
   position: fixed;
+  right: 0;
   bottom: 0;
   left: 0;
-  right: 0;
-  height: 120rpx;
-  background-color: #fff;
-  border-top: 1rpx solid #eee;
+  z-index: 100;
   display: flex;
   align-items: center;
+  height: 120rpx;
   padding: 0 30rpx;
-  box-sizing: border-box;
   padding-bottom: env(safe-area-inset-bottom);
-  z-index: 100;
+  background: var(--app-surface);
+  border-top: 1rpx solid var(--app-divider);
 }
 
 .input {
   flex: 1;
   height: 76rpx;
-  background-color: #f5f7fb;
-  border-radius: 38rpx;
-  padding: 0 30rpx;
-  font-size: 30rpx;
   margin-right: 20rpx;
+  padding: 0 30rpx;
+  border-radius: 38rpx;
+  background: var(--app-control);
+  color: var(--app-text-primary);
+  font-size: 30rpx;
 }
 
 .send-btn {
   width: 140rpx !important;
   height: 76rpx;
-  line-height: 76rpx;
-  background-color: #0052D9;
-  color: #fff;
-  font-size: 28rpx;
-  border-radius: 38rpx;
   padding: 0;
   margin: 0;
-}
-
-.send-btn[disabled] {
-  background-color: #a0c4ff !important;
-  color: #fff !important;
+  border-radius: 38rpx;
+  background: var(--app-primary);
+  color: #ffffff;
+  font-size: 28rpx;
+  line-height: 76rpx;
 }

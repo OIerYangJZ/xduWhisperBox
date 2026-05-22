@@ -1,6 +1,7 @@
 import { getUserInfo } from '../../../api/auth';
 import { submitCancellationRequest, submitLevelUpgradeRequest } from '../../../api/user';
 import { requireLoginPage } from '../../../utils/auth_guard';
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 Page({
   data: {
@@ -11,6 +12,7 @@ Page({
   },
 
   onShow() {
+    applyThemeAndLanguage(this);
     if (!requireLoginPage()) return;
     this.loadProfile();
   },

@@ -47,19 +47,27 @@
     "list": [
       {
         "pagePath": "pages/campus/index",
-        "text": "首页"
+        "text": "首页",
+        "iconPath": "assets/tabbar/home.png",
+        "selectedIconPath": "assets/tabbar/home_selected.png"
       },
       {
         "pagePath": "pages/ai/index",
-        "text": "AI"
+        "text": "AI",
+        "iconPath": "assets/tabbar/ai.png",
+        "selectedIconPath": "assets/tabbar/ai_selected.png"
       },
       {
         "pagePath": "pages/profile/conversations/index",
-        "text": "消息"
+        "text": "消息",
+        "iconPath": "assets/tabbar/messages.png",
+        "selectedIconPath": "assets/tabbar/messages_selected.png"
       },
       {
         "pagePath": "pages/profile/index",
-        "text": "我的"
+        "text": "我的",
+        "iconPath": "assets/tabbar/profile.png",
+        "selectedIconPath": "assets/tabbar/profile_selected.png"
       }
     ]
   },

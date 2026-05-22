@@ -2,8 +2,12 @@ import { followUser, getPublicUser, unfollowUser } from '../../../api/user';
 import { getPosts } from '../../../api/posts';
 import { createDirectConversation } from '../../../api/messages';
 import { requireLoginPage } from '../../../utils/auth_guard';
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 Page({
+  onShow() {
+    applyThemeAndLanguage(this);
+  },
   data: {
     userId: '',
     profile: null,

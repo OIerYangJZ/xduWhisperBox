@@ -1,4 +1,4 @@
-<view class="page history-page">
+<view class="page history-page {{themeClass}}">
   <view class="head" wx:if="{{rows.length}}">
     <view class="count">{{rows.length}} 条记录</view>
     <view class="clear" bindtap="clearHistory">清空</view>

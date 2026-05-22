@@ -1,0 +1,41 @@
+<view class="page ai-settings-page {{themeClass}}">
+  <view class="section">
+    <view class="section-title">OpenAI 兼容接口</view>
+    <view class="field">
+      <view class="label">API URL</view>
+      <input class="input" placeholder="https://api.openai.com/v1" value="{{form.baseUrl}}" data-key="baseUrl" bindinput="onInput" />
+    </view>
+    <view class="field">
+      <view class="label">API Key</view>
+      <input class="input" password placeholder="sk-..." value="{{form.apiKey}}" data-key="apiKey" bindinput="onInput" />
+    </view>
+    <button class="secondary-button" loading="{{loadingModels}}" bindtap="loadModels">拉取可用模型</button>
+    <view class="field">
+      <view class="label">模型</view>
+      <picker mode="selector" range="{{models}}" value="{{modelIndex}}" bindchange="onModelChange">
+        <view class="picker-value">{{form.model || '请先拉取模型列表'}}</view>
+      </picker>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">RAG 资料</view>
+    <view class="switch-row">
+      <text>检索公开帖子</text>
+      <switch checked="{{form.includePosts}}" bindchange="onIncludePostsChange" color="#155E75" />
+    </view>
+    <textarea
+      class="knowledge-input"
+      maxlength="-1"
+      placeholder="填写学校基础资料。建议按段落分隔，例如校区、班车、选课、奖助学金、常用联系方式等。"
+      value="{{form.knowledgeBase}}"
+      data-key="knowledgeBase"
+      bindinput="onInput"
+    ></textarea>
+    <view class="action-row">
+      <button class="minor-button" bindtap="useDefaultKnowledge">填入示例资料</button>
+    </view>
+  </view>
+
+  <button class="save-button" loading="{{saving}}" bindtap="saveConfig">保存设置</button>
+</view>

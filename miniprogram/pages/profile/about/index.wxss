@@ -5,7 +5,7 @@
 .brand-card,
 .section {
   border-radius: 16rpx;
-  background: #fff;
+  background: var(--app-surface);
   overflow: hidden;
 }
 
@@ -15,7 +15,7 @@
 }
 
 .brand-title {
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 40rpx;
   font-weight: 800;
 }
@@ -23,7 +23,7 @@
 .brand-subtitle,
 .version {
   margin-top: 12rpx;
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   font-size: 26rpx;
 }
 
@@ -33,8 +33,8 @@
   align-items: center;
   min-height: 92rpx;
   padding: 0 24rpx;
-  border-bottom: 1rpx solid #e8e8e8;
-  color: #1d1d1f;
+  border-bottom: 1rpx solid var(--app-divider);
+  color: var(--app-text-primary);
   font-size: 29rpx;
 }
 
@@ -43,5 +43,5 @@
 }
 
 .row text:last-child {
-  color: #8e8e93;
+  color: var(--app-text-secondary);
 }

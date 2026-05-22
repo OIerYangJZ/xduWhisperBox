@@ -1,3 +1,4 @@
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 const CONTENT = {
   'user-agreement': {
     title: '用户协议',
@@ -66,6 +67,9 @@ const CONTENT = {
 };
 
 Page({
+  onShow() {
+    applyThemeAndLanguage(this);
+  },
   data: {
     title: '',
     sections: []

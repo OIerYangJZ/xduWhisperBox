@@ -7,12 +7,12 @@
 }
 
 .count {
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   font-size: 26rpx;
 }
 
 .read-all {
-  color: #155e75;
+  color: var(--app-primary);
   font-size: 26rpx;
   font-weight: 600;
 }
@@ -22,8 +22,8 @@
   display: flex;
   gap: 16rpx;
   padding: 24rpx 4rpx;
-  border-bottom: 1rpx solid #e8e8e8;
-  background: #fff;
+  border-bottom: 1rpx solid var(--app-divider);
+  background: var(--app-surface);
 }
 
 .notice.read {
@@ -36,7 +36,7 @@
   height: 16rpx;
   margin-top: 10rpx;
   border-radius: 50%;
-  background: #ff3b30;
+  background: var(--app-error);
 }
 
 .notice-body {
@@ -45,20 +45,20 @@
 }
 
 .notice-title {
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 30rpx;
   font-weight: 650;
 }
 
 .notice-content {
   margin-top: 10rpx;
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 27rpx;
   line-height: 1.5;
 }
 
 .notice-time {
   margin-top: 14rpx;
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   font-size: 23rpx;
 }

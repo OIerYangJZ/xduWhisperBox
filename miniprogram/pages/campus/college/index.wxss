@@ -1,7 +1,7 @@
 .college-scroll {
   padding: 18rpx 0;
-  border-bottom: 1rpx solid #e8e8e8;
-  background: #fff;
+  border-bottom: 1rpx solid var(--app-divider);
+  background: var(--app-surface);
   white-space: nowrap;
 }
 
@@ -16,27 +16,27 @@
   height: 62rpx;
   padding: 0 24rpx;
   border-radius: 31rpx;
-  background: #f5f5f7;
-  color: #1d1d1f;
+  background: var(--app-control);
+  color: var(--app-text-primary);
   font-size: 26rpx;
   line-height: 62rpx;
 }
 
 .college-chip.active {
-  background: #155e75;
-  color: #fff;
+  background: var(--app-primary);
+  color: #ffffff;
   font-weight: 600;
 }
 
 .college-card {
   margin-top: 0;
   padding: 28rpx 24rpx;
-  border-bottom: 1rpx solid #e8e8e8;
-  background: #fff;
+  border-bottom: 1rpx solid var(--app-divider);
+  background: var(--app-surface);
 }
 
 .college-name {
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 36rpx;
   font-weight: 700;
 }
@@ -51,9 +51,9 @@
 .section-title {
   margin: 0;
   padding: 24rpx 24rpx 12rpx;
-  border-bottom: 1rpx solid #e8e8e8;
-  background: #fff;
-  color: #1d1d1f;
+  border-bottom: 1rpx solid var(--app-divider);
+  background: var(--app-surface);
+  color: var(--app-text-primary);
   font-size: 31rpx;
   font-weight: 700;
 }

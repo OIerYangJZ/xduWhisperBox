@@ -9,6 +9,7 @@ Page({
   },
 
   onShow() {
+    applyThemeAndLanguage(this);
     this.updateOptionsAndApply();
   },
 

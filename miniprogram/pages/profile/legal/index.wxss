@@ -4,25 +4,25 @@
 
 .legal-title {
   margin-bottom: 28rpx;
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 42rpx;
   font-weight: 800;
 }
 
 .section {
   padding: 28rpx 0;
-  border-bottom: 1rpx solid #e8e8e8;
+  border-bottom: 1rpx solid var(--app-divider);
 }
 
 .section-heading {
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 31rpx;
   font-weight: 700;
 }
 
 .section-body {
   margin-top: 14rpx;
-  color: #4a4a4f;
+  color: var(--app-text-primary);
   font-size: 28rpx;
   line-height: 1.7;
 }

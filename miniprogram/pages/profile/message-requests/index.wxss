@@ -3,7 +3,7 @@
   align-items: center;
   gap: 16rpx;
   padding: 24rpx;
-  border-bottom: 1rpx solid #e8e8e8;
+  border-bottom: 1rpx solid var(--app-divider);
 }
 
 .request-body {
@@ -12,7 +12,7 @@
 }
 
 .request-title {
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 30rpx;
   font-weight: 700;
 }
@@ -20,7 +20,7 @@
 .request-text,
 .request-time {
   margin-top: 8rpx;
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   font-size: 24rpx;
 }
 
@@ -28,13 +28,13 @@
   height: 58rpx;
   padding: 0 18rpx;
   border-radius: 29rpx;
-  background: #155e75;
-  color: #fff;
+  background: var(--app-primary);
+  color: #ffffff;
   font-size: 24rpx;
   line-height: 58rpx;
 }
 
 .request-button.reject {
-  background: #f5f5f7;
-  color: #ff3b30;
+  background: var(--app-control);
+  color: var(--app-error);
 }

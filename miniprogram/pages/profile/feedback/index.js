@@ -1,5 +1,6 @@
 import { requireLoginPage } from '../../../utils/auth_guard';
 import { submitFeedback } from '../../../api/user';
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 Page({
   data: {
@@ -9,6 +10,7 @@ Page({
   },
 
   onShow() {
+    applyThemeAndLanguage(this);
     requireLoginPage();
   },
 

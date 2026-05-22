@@ -1,5 +1,5 @@
 .conversations-page {
-  background: #fff;
+  background: var(--app-background);
 }
 
 .page-header {
@@ -7,12 +7,12 @@
   align-items: flex-end;
   justify-content: space-between;
   padding: 28rpx 24rpx 16rpx;
-  border-bottom: 1rpx solid #e8e8e8;
-  background: #fff;
+  border-bottom: 1rpx solid var(--app-divider);
+  background: var(--app-surface);
 }
 
 .page-title {
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 38rpx;
   font-weight: 700;
   line-height: 1.2;
@@ -20,7 +20,7 @@
 
 .page-subtitle {
   margin-top: 6rpx;
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   font-size: 24rpx;
   line-height: 1.4;
 }
@@ -32,33 +32,21 @@
   height: 56rpx;
   padding: 0 18rpx;
   border-radius: 28rpx;
-  background: rgba(21, 94, 117, .1);
-  color: #155e75;
+  background: var(--app-primary-soft);
+  color: var(--app-primary);
   font-size: 24rpx;
   font-weight: 600;
 }
 
-.header-badge {
-  min-width: 34rpx;
-  height: 34rpx;
-  padding: 0 10rpx;
-  border-radius: 17rpx;
-  background: #ff3b30;
-  color: #fff;
-  font-size: 22rpx;
-  line-height: 34rpx;
-  text-align: center;
-}
-
 .conversation-list {
-  background: #fff;
+  background: var(--app-surface);
 }
 
 .conversation-shell {
   position: relative;
   overflow: hidden;
-  border-bottom: 1rpx solid #e8e8e8;
-  background: #fff;
+  border-bottom: 1rpx solid var(--app-divider);
+  background: var(--app-surface);
 }
 
 .conversation-actions {
@@ -70,13 +58,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #ff3b30;
+  background: var(--app-error);
 }
 
 .delete-button {
   padding: 0;
   background: transparent;
-  color: #fff;
+  color: #ffffff;
   font-size: 28rpx;
   line-height: 1;
 }
@@ -88,7 +76,7 @@
   align-items: center;
   gap: 18rpx;
   padding: 24rpx;
-  background: #fff;
+  background: var(--app-surface);
   transition: transform 0.18s ease;
 }
 
@@ -97,7 +85,7 @@
   height: 86rpx;
   flex: 0 0 auto;
   border-radius: 50%;
-  background: #f5f5f7;
+  background: var(--app-control);
 }
 
 .conversation-body {
@@ -121,7 +109,7 @@
 
 .name {
   max-width: 330rpx;
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 30rpx;
   font-weight: 700;
   overflow: hidden;
@@ -137,15 +125,15 @@
   flex: 0 0 auto;
   padding: 0 8rpx;
   border-radius: 4rpx;
-  background: rgba(142, 142, 147, .18);
-  color: #8e8e93;
+  background: var(--app-control);
+  color: var(--app-text-secondary);
   font-size: 20rpx;
   line-height: 28rpx;
 }
 
 .time,
 .message {
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   font-size: 24rpx;
 }
 
@@ -154,36 +142,4 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.badge {
-  min-width: 34rpx;
-  height: 34rpx;
-  padding: 0 10rpx;
-  border-radius: 17rpx;
-  background: #ff3b30;
-  color: #fff;
-  font-size: 22rpx;
-  line-height: 34rpx;
-  text-align: center;
-}
-
-.theme-dark.conversations-page,
-.theme-dark .page-header,
-.theme-dark .conversation-list,
-.theme-dark .conversation-shell,
-.theme-dark .conversation-row {
-  background: #1c1c1e !important;
-  border-color: #3a3a3c !important;
-}
-
-.theme-dark .page-title,
-.theme-dark .name {
-  color: #f5f5f7 !important;
-}
-
-.theme-dark .page-subtitle,
-.theme-dark .time,
-.theme-dark .message {
-  color: #8e8e93 !important;
 }

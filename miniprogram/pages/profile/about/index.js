@@ -1,4 +1,8 @@
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 Page({
+  onShow() {
+    applyThemeAndLanguage(this);
+  },
   data: {
     version: '',
     items: [

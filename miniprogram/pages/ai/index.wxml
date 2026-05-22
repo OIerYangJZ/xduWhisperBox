@@ -1,22 +1,23 @@
-<view class="container">
+<view class="page ai-page {{themeClass}}">
   <view class="header">
     <image class="ai-logo" src="/assets/default-avatar.png" mode="aspectFill"></image>
     <view class="title">XDU AI 助手</view>
-    <view class="subtitle">基于校内知识库的智能问答 (RAG)</view>
+    <view class="subtitle">{{subtitleText}}</view>
     
     <button class="new-chat-btn" bindtap="startNewChat">
       <text class="icon">+</text> 发起新对话
     </button>
+    <button class="settings-btn" bindtap="goToSettings">AI 设置</button>
   </view>
 
   <view class="history-section">
-    <view class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20rpx;">
-      <view class="section-title" style="margin-bottom: 0;">历史对话</view>
-      <view class="more-link" bindtap="goToHistory" style="font-size: 26rpx; color: #0052D9;" wx:if="{{history.length}}">查看全部</view>
+      <view class="section-header">
+        <view class="section-title" style="margin-bottom: 0;">历史对话</view>
+      <view class="more-link" bindtap="goToHistory" wx:if="{{history.length}}">查看全部</view>
     </view>
     <view class="history-list">
       <view class="history-item" wx:for="{{history}}" wx:key="id" data-id="{{item.id}}" data-question="{{item.question}}" bindtap="continueChat">
-        <view class="item-icon">💬</view>
+        <view class="item-icon">对话</view>
         <view class="item-content">
           <view class="item-title">{{item.title}}</view>
           <view class="item-date">{{item.date}}</view>

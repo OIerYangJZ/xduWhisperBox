@@ -3,6 +3,7 @@ import { getChannels } from '../../api/posts';
 import { getAnnouncements, getColleges } from '../../api/campus';
 import { getNotifications } from '../../api/notifications';
 import { requireLoginPage } from '../../utils/auth_guard';
+import { applyThemeAndLanguage } from '../../utils/theme_i18n';
 
 const SORT_OPTIONS = [
   { label: '最新', value: 'latest' },
@@ -48,6 +49,7 @@ Page({
   },
 
   onShow() {
+    applyThemeAndLanguage(this);
     const token = wx.getStorageSync('token');
     if (!token) return;
 

@@ -1,19 +1,19 @@
 .report-card {
   padding: 28rpx;
-  border-bottom: 1rpx solid #e8e8e8;
-  background: #fff;
+  border-bottom: 1rpx solid var(--app-divider);
+  background: var(--app-surface);
 }
 
 .report-head {
   display: flex;
   justify-content: space-between;
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 30rpx;
   font-weight: 700;
 }
 
 .status {
-  color: #155e75;
+  color: var(--app-primary);
   font-size: 25rpx;
   font-weight: 650;
 }
@@ -23,11 +23,11 @@
 .report-result,
 .report-time {
   margin-top: 12rpx;
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   font-size: 26rpx;
   line-height: 1.5;
 }
 
 .report-result {
-  color: #1d1d1f;
+  color: var(--app-text-primary);
 }

@@ -1,61 +1,49 @@
-.page {
-  padding: 24rpx;
-  background: #f5f5f7;
-  min-height: 100vh;
+.settings-list-page {
+  padding: 0;
+  background: var(--app-background);
 }
 
 .empty {
   padding: 40rpx;
   text-align: center;
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   font-size: 28rpx;
 }
 
 .section {
-  margin-bottom: 24rpx;
-  border-radius: 16rpx;
-  background: #fff;
+  margin: 0;
+  background: var(--app-surface);
+  border-bottom: 1rpx solid var(--app-divider);
   overflow: hidden;
 }
 
-.menu-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 32rpx 32rpx;
-  border-bottom: 1rpx solid #f5f5f7;
+.section + .section {
+  margin-top: 18rpx;
+  border-top: 1rpx solid var(--app-divider);
 }
 
-.menu-item:last-child {
-  border-bottom: none;
+.menu-item {
+  min-height: 96rpx;
+  padding: 0 32rpx;
+  border-bottom: 1rpx solid var(--app-divider);
+  background: var(--app-surface);
 }
 
 .menu-item:active {
-  background-color: #fafafa;
-}
-
-.menu-title {
-  font-size: 30rpx;
-  color: #1d1d1f;
-}
-
-.menu-arrow {
-  font-size: 30rpx;
-  color: #c7c7cc;
-  font-family: monospace;
+  background: var(--app-control);
 }
 
 .logout-button {
-  margin-top: 48rpx;
   height: 96rpx;
+  margin: 48rpx 32rpx 0;
   border-radius: 16rpx;
-  background: #fff;
-  color: #ff3b30;
+  background: var(--app-surface);
+  color: var(--app-error);
   font-size: 32rpx;
   font-weight: 500;
   line-height: 96rpx;
 }
 
 .logout-button:active {
-  background-color: #fafafa;
+  background: var(--app-control);
 }

@@ -1,6 +1,10 @@
 import { register, verifyEmail } from '../../../api/auth';
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 Page({
+  onShow() {
+    applyThemeAndLanguage(this);
+  },
   data: {
     nickname: '',
     email: '',

@@ -315,6 +315,12 @@ class TreeholeHandler(BaseHTTPRequestHandler):
         if _static_handler.handle_storage_get(self, path):
             return
 
+        if path == "/api/ai/models":
+            with DB_LOCK:
+                db = load_db()
+            _ai_handler.handle_ai_models(self, db)
+            return
+
         with DB_LOCK:
             db = load_db()
 
@@ -509,6 +515,18 @@ class TreeholeHandler(BaseHTTPRequestHandler):
             json_error(self, HTTPStatus.NOT_FOUND, "Not Found")
 
     def _handle_post(self, path: str) -> None:
+        if path == "/api/ai/models":
+            with DB_LOCK:
+                db = load_db()
+            _ai_handler.handle_ai_models(self, db)
+            return
+
+        if path == "/api/ai/chat":
+            with DB_LOCK:
+                db = load_db()
+            _ai_handler.handle_ai_chat(self, db)
+            return
+
         with DB_LOCK:
             db = load_db()
 
@@ -518,11 +536,6 @@ class TreeholeHandler(BaseHTTPRequestHandler):
 
             if path == "/api/admin/auth/logout":
                 _admin_handler.handle_admin_auth_logout(self, db)
-                return
-
-            # AI assistant
-            if path == "/api/ai/chat":
-                _ai_handler.handle_ai_chat(self, db)
                 return
 
             if path == "/api/admin/admin-accounts":

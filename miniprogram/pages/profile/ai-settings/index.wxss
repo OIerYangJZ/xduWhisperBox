@@ -1,0 +1,103 @@
+.page {
+  min-height: 100vh;
+  padding: 24rpx;
+  box-sizing: border-box;
+  background: var(--app-background);
+}
+
+.section {
+  margin-bottom: 24rpx;
+  overflow: hidden;
+  border-radius: 16rpx;
+  background: var(--app-surface);
+  border-bottom: 1rpx solid var(--app-divider);
+}
+
+.section-title {
+  padding: 24rpx;
+  color: var(--app-text-primary);
+  font-size: 31rpx;
+  font-weight: 700;
+  border-bottom: 1rpx solid var(--app-divider);
+}
+
+.field {
+  padding: 24rpx;
+  border-bottom: 1rpx solid var(--app-divider);
+}
+
+.label {
+  margin-bottom: 12rpx;
+  color: var(--app-text-secondary);
+  font-size: 25rpx;
+}
+
+.input,
+.picker-value {
+  min-height: 72rpx;
+  padding: 0 20rpx;
+  border-radius: 12rpx;
+  background: var(--app-control);
+  color: var(--app-text-primary);
+  font-size: 28rpx;
+  line-height: 72rpx;
+  box-sizing: border-box;
+}
+
+.secondary-button,
+.save-button,
+.minor-button {
+  border-radius: 14rpx;
+  font-size: 29rpx;
+}
+
+.secondary-button {
+  margin: 24rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  background: var(--app-primary);
+  color: #ffffff;
+}
+
+.switch-row {
+  min-height: 92rpx;
+  padding: 0 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--app-text-primary);
+  font-size: 29rpx;
+  border-bottom: 1rpx solid var(--app-divider);
+}
+
+.knowledge-input {
+  width: auto;
+  min-height: 360rpx;
+  margin: 24rpx;
+  padding: 20rpx;
+  border-radius: 12rpx;
+  background: var(--app-control);
+  color: var(--app-text-primary);
+  font-size: 28rpx;
+  line-height: 1.55;
+  box-sizing: border-box;
+}
+
+.action-row {
+  padding: 0 24rpx 24rpx;
+}
+
+.minor-button {
+  height: 76rpx;
+  line-height: 76rpx;
+  background: var(--app-primary-soft);
+  color: var(--app-primary);
+}
+
+.save-button {
+  margin-top: 36rpx;
+  height: 96rpx;
+  line-height: 96rpx;
+  background: var(--app-primary);
+  color: #ffffff;
+}

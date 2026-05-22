@@ -1,5 +1,6 @@
 import { getReportDetail } from '../../../api/user';
 import { requireLoginPage } from '../../../utils/auth_guard';
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 const STATUS_TEXT = {
   pending: '待处理',
@@ -10,6 +11,9 @@ const STATUS_TEXT = {
 };
 
 Page({
+  onShow() {
+    applyThemeAndLanguage(this);
+  },
   data: {
     reportId: '',
     report: null,

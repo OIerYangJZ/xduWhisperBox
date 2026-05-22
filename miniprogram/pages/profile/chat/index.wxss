@@ -1,12 +1,12 @@
 .chat-page {
   min-height: 100vh;
   padding-bottom: 170rpx;
-  background: #f5f7fb;
+  background: var(--app-background);
 }
 
 .chat-header {
-  background: #fff;
-  border-bottom: 1rpx solid #e8e8e8;
+  background: var(--app-surface);
+  border-bottom: 1rpx solid var(--app-divider);
 }
 
 .chat-header-normal,
@@ -31,7 +31,7 @@
 .picker-avatar {
   flex: 0 0 auto;
   border-radius: 50%;
-  background: #f5f5f7;
+  background: var(--app-control);
 }
 
 .peer-avatar {
@@ -44,7 +44,7 @@
 }
 
 .peer-name {
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 32rpx;
   font-weight: 700;
   overflow: hidden;
@@ -59,8 +59,8 @@
   width: 56rpx;
   height: 56rpx;
   border-radius: 28rpx;
-  background: rgba(21, 94, 117, .1);
-  color: #155e75;
+  background: var(--app-primary-soft);
+  color: var(--app-primary);
   font-size: 32rpx;
   font-weight: 700;
 }
@@ -73,20 +73,20 @@
   height: 56rpx;
   padding: 0 18rpx;
   border-radius: 28rpx;
-  background: rgba(21, 94, 117, .1);
-  color: #155e75;
+  background: var(--app-primary-soft);
+  color: var(--app-primary);
   font-size: 24rpx;
   font-weight: 600;
 }
 
 .header-action.danger {
   background: rgba(255, 59, 48, .1);
-  color: #ff3b30;
+  color: var(--app-error);
 }
 
 .header-title {
   flex: 1;
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 30rpx;
   font-weight: 700;
   text-align: center;
@@ -98,9 +98,9 @@
   justify-content: space-between;
   gap: 16rpx;
   padding: 20rpx 24rpx;
-  background: #fffbe6;
-  border-bottom: 1rpx solid #ffe58f;
-  color: #d46b08;
+  background: var(--app-accent-soft);
+  border-bottom: 1rpx solid var(--app-accent-soft);
+  color: var(--app-warning);
   font-size: 26rpx;
   line-height: 1.4;
   font-weight: 500;
@@ -112,7 +112,7 @@
   height: 36rpx;
   border-radius: 18rpx;
   background: rgba(212, 107, 8, .12);
-  color: #d46b08;
+  color: var(--app-warning);
   font-size: 24rpx;
   line-height: 36rpx;
   text-align: center;
@@ -124,7 +124,7 @@
 
 .time-label {
   padding: 14rpx 0;
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   font-size: 22rpx;
   text-align: center;
 }
@@ -163,18 +163,19 @@
   max-width: 560rpx;
   overflow: hidden;
   border-radius: 18rpx;
-  background: #fff;
-  color: #1d1d1f;
-  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, .04);
+  background: var(--app-surface);
+  color: var(--app-text-primary);
+  border: 1rpx solid var(--app-divider);
 }
 
 .bubble.mine {
-  background: #155e75;
-  color: #fff;
+  background: var(--app-primary);
+  color: #ffffff;
+  border-color: var(--app-primary);
 }
 
 .bubble.selected {
-  box-shadow: 0 0 0 2rpx rgba(21, 94, 117, .22), 0 2rpx 6rpx rgba(0, 0, 0, .04);
+  border-color: var(--app-primary);
 }
 
 .reply-block {
@@ -229,14 +230,14 @@
 }
 
 .retry-link {
-  color: #ff3b30;
+  color: var(--app-error);
   font-size: 22rpx;
   font-weight: 600;
 }
 
 .recalled-placeholder {
   padding: 16rpx 14rpx;
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   font-size: 24rpx;
   text-align: center;
 }
@@ -246,14 +247,14 @@
   align-self: center;
   width: 34rpx;
   height: 34rpx;
-  border: 2rpx solid #c7c7cc;
+  border: 2rpx solid var(--app-text-tertiary);
   border-radius: 50%;
-  background: #fff;
+  background: var(--app-surface);
 }
 
 .select-circle.active {
-  border-color: #155e75;
-  background: #155e75;
+  border-color: var(--app-primary);
+  background: var(--app-primary);
 }
 
 .chat-actions {
@@ -267,8 +268,8 @@
   align-items: center;
   gap: 12rpx;
   padding: 16rpx 20rpx calc(16rpx + env(safe-area-inset-bottom));
-  background: #fff;
-  border-top: 1rpx solid #e8e8e8;
+  background: var(--app-surface);
+  border-top: 1rpx solid var(--app-divider);
 }
 
 .reply-preview {
@@ -276,8 +277,8 @@
   min-width: 0;
   padding: 10rpx 12rpx;
   border-radius: 16rpx;
-  background: rgba(21, 94, 117, .1);
-  color: #155e75;
+  background: var(--app-primary-soft);
+  color: var(--app-primary);
 }
 
 .input-row {
@@ -324,9 +325,10 @@
   min-width: 0;
   height: 70rpx;
   padding: 0 20rpx;
-  border: 1rpx solid #e8e8e8;
+  border: 1rpx solid var(--app-divider);
   border-radius: 14rpx;
-  background: #f5f7fb;
+  background: var(--app-control);
+  color: var(--app-text-primary);
   font-size: 28rpx;
 }
 
@@ -334,8 +336,8 @@
   width: 108rpx;
   height: 70rpx;
   border-radius: 14rpx;
-  background: #155e75;
-  color: #fff;
+  background: var(--app-primary);
+  color: #ffffff;
   font-size: 26rpx;
   line-height: 70rpx;
 }
@@ -353,12 +355,12 @@
   width: 100%;
   padding: 24rpx 24rpx calc(24rpx + env(safe-area-inset-bottom));
   border-radius: 24rpx 24rpx 0 0;
-  background: #fff;
+  background: var(--app-surface);
 }
 
 .picker-title {
   margin-bottom: 16rpx;
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 30rpx;
   font-weight: 700;
 }
@@ -373,7 +375,7 @@
   align-items: center;
   gap: 16rpx;
   padding: 16rpx 0;
-  border-bottom: 1rpx solid #f0f0f0;
+  border-bottom: 1rpx solid var(--app-divider);
 }
 
 .picker-avatar {
@@ -387,7 +389,7 @@
 }
 
 .picker-name {
-  color: #1d1d1f;
+  color: var(--app-text-primary);
   font-size: 28rpx;
   font-weight: 600;
   overflow: hidden;
@@ -397,7 +399,7 @@
 
 .picker-subtitle {
   margin-top: 4rpx;
-  color: #8e8e93;
+  color: var(--app-text-secondary);
   font-size: 22rpx;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -411,8 +413,8 @@
   height: 76rpx;
   margin-top: 20rpx;
   border-radius: 14rpx;
-  background: #f5f5f7;
-  color: #1d1d1f;
+  background: var(--app-control);
+  color: var(--app-text-primary);
   font-size: 28rpx;
   font-weight: 600;
 }
@@ -421,44 +423,8 @@
   padding: 28rpx 0;
 }
 
-.theme-dark.chat-page {
-  background: #1c1c1e !important;
-}
-
-.theme-dark .chat-header,
-.theme-dark .chat-actions,
-.theme-dark .picker-sheet {
-  background: #2c2c2e !important;
-  border-color: #3a3a3c !important;
-}
-
-.theme-dark .peer-name,
-.theme-dark .header-title,
-.theme-dark .picker-title,
-.theme-dark .picker-name,
-.theme-dark .picker-cancel {
-  color: #f5f5f7 !important;
-}
-
-.theme-dark .bubble {
-  background: #2c2c2e !important;
-  color: #f5f5f7 !important;
-}
-
-.theme-dark .bubble.mine {
-  background: #155e75 !important;
-  color: #fff !important;
-}
-
-.theme-dark .chat-input,
-.theme-dark .picker-cancel {
-  background: #1c1c1e !important;
-  border-color: #3a3a3c !important;
-  color: #f5f5f7 !important;
-}
-
 .theme-dark .warning-banner {
-  background: #2c2512 !important;
-  border-bottom-color: #614d1a !important;
-  color: #d48008 !important;
+  background: rgba(255, 149, 0, .12) !important;
+  border-bottom-color: rgba(255, 149, 0, .28) !important;
+  color: var(--app-warning) !important;
 }

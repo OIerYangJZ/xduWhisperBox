@@ -1,4 +1,4 @@
-<view class="page about-page">
+<view class="page about-page {{themeClass}}">
   <view class="brand-card">
     <view class="brand-title">XDU WhisperBox</view>
     <view class="brand-subtitle">西电树洞微信小程序</view>

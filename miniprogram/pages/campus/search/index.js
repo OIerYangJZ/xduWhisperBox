@@ -1,6 +1,7 @@
 import { getChannels, getPosts } from '../../../api/posts';
 import { searchUsers } from '../../../api/user';
 import { requireLoginPage } from '../../../utils/auth_guard';
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 const SORT_OPTIONS = [
   { label: '最新', value: 'latest' },
@@ -41,6 +42,7 @@ Page({
   },
 
   onShow() {
+    applyThemeAndLanguage(this);
     if (!requireLoginPage()) return;
     const history = wx.getStorageSync('searchHistory') || [];
     this.setData({ history });

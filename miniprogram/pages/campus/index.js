@@ -26,7 +26,9 @@ Page({
     activeSort: 'latest',
     unreadCount: 0,
     showPublishButton: true,
-    showChannelMenu: false
+    showChannelMenu: false,
+    navTop: 0,
+    navHeight: 48
   },
 
   onLoad() {
@@ -34,6 +36,7 @@ Page({
     this._lastScrollTop = 0;
     this._scrollTimeout = null;
     this._lastScrollTime = 0;
+    this.initCustomNav();
     
     // 延迟执行，让微信框架先完成 Service Worker 初始化，防止 WAServiceMainContext timeout
     setTimeout(() => {
@@ -51,6 +54,7 @@ Page({
 
   onShow() {
     applyThemeAndLanguage(this);
+    this.initCustomNav();
     const token = wx.getStorageSync('token');
     if (!token) return;
 
@@ -121,6 +125,14 @@ Page({
       return;
     }
     this.setData({ activeChannel: channel, posts: [], page: 1, hasMore: true, showChannelMenu: false }, () => this.fetchPosts());
+  },
+
+  initCustomNav() {
+    const menuButton = wx.getMenuButtonBoundingClientRect();
+    this.setData({
+      navTop: menuButton.top,
+      navHeight: menuButton.height
+    });
   },
 
   onSortTap(event) {

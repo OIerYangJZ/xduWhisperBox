@@ -1,92 +1,215 @@
-<view class="page create-page safe-bottom {{themeClass}}">
-  <view class="form-section">
-    <input class="title-input" placeholder="标题（可选）" maxlength="40" value="{{title}}" bindinput="onTitleInput" />
-    <textarea class="content-input" placeholder="写下你想说的话" maxlength="2000" value="{{content}}" bindinput="onContentInput" auto-height />
+<view class="page create-page {{themeClass}}">
+  <view class="create-appbar" style="padding-top: {{navTop}}px; height: {{navTop + navHeight + 8}}px;">
+    <view class="appbar-icon-button" bindtap="confirmDiscard" aria-label="关闭">
+      <view class="close-icon"></view>
+    </view>
+    <view class="content-counter {{contentLength > 2000 ? 'error' : ''}}">{{contentLength}} / 2000</view>
+    <button
+      class="publish-button {{canPublish ? '' : 'disabled'}}"
+      disabled="{{!canPublish}}"
+      loading="{{isPublishing}}"
+      bindtap="submitPost"
+    >发布</button>
   </view>
 
-  <view class="form-section">
-    <view class="image-head">
-      <view>
-        <view class="field-label">图片</view>
-        <view class="field-desc">最多 9 张，单张不超过 5MB</view>
+  <view class="create-content" style="padding-top: {{navTop + navHeight + 8}}px;">
+    <view class="compact-selector">
+      <view class="compact-selector-row" bindtap="toggleChannelSelector">
+        <text class="compact-selector-label">频道</text>
+        <text class="compact-selector-pill">{{channels[channelIndex]}}</text>
+        <text class="selector-arrow">{{channelSelectorOpen ? '⌃' : '⌄'}}</text>
       </view>
-      <view class="add-image" bindtap="chooseImages">添加</view>
-    </view>
-    <view class="image-grid" wx:if="{{images.length}}">
-      <view class="image-cell" wx:for="{{images}}" wx:key="localPath">
-        <image src="{{item.localPath}}" mode="aspectFill" data-path="{{item.localPath}}" bindtap="previewImage"></image>
-        <view class="image-loading" wx:if="{{item.uploading}}">上传中</view>
-        <view class="image-remove" data-index="{{index}}" catchtap="removeImage">×</view>
+      <view class="selector-chip-wrap" wx:if="{{channelSelectorOpen}}">
+        <view
+          wx:for="{{channels}}"
+          wx:key="*this"
+          data-channel="{{item}}"
+          class="pill-chip {{channelIndex === index ? 'active' : ''}}"
+          bindtap="onChannelTap"
+        >{{item}}</view>
       </view>
     </view>
-  </view>
 
-  <view class="form-section">
-    <view class="field-row">
-      <view class="field-label">频道</view>
-      <picker mode="selector" range="{{channels}}" value="{{channelIndex}}" bindchange="onChannelChange">
-        <view class="picker-value">{{channels[channelIndex]}}</view>
-      </picker>
-    </view>
-    <view class="field-row">
-      <view class="field-label">标签</view>
-      <input class="field-input" placeholder="用空格或逗号分隔，最多 5 个" value="{{tagText}}" bindinput="onTagInput" />
-    </view>
-    <view class="tag-cloud">
+    <view class="create-divider"></view>
+
+    <input
+      class="title-input"
+      placeholder="标题（选填）"
+      placeholder-class="input-placeholder"
+      maxlength="50"
+      value="{{title}}"
+      bindinput="onTitleInput"
+    />
+
+    <textarea
+      class="content-input"
+      placeholder="分享你的想法..."
+      placeholder-class="textarea-placeholder"
+      maxlength="2000"
+      value="{{content}}"
+      bindinput="onContentInput"
+      auto-height
+    />
+
+    <view class="selected-tags" wx:if="{{tags.length}}">
       <view
-        wx:for="{{tagOptions}}"
-        wx:key="label"
-        data-tag="{{item.label}}"
-        class="tag-chip {{item.selected ? 'active' : ''}}"
-        bindtap="toggleTag"
-      >{{item.label}}</view>
-    </view>
-    <view class="field-row">
-      <view class="field-label">状态</view>
-      <picker mode="selector" range="{{statusOptions}}" range-key="label" value="{{statusIndex}}" bindchange="onStatusChange">
-        <view class="picker-value">{{statusOptions[statusIndex].label}}</view>
-      </picker>
-    </view>
-    <view class="field-row">
-      <view class="field-label">可见性</view>
-      <picker mode="selector" range="{{visibilityOptions}}" range-key="label" value="{{visibilityIndex}}" bindchange="onVisibilityChange">
-        <view class="picker-value">{{visibilityOptions[visibilityIndex].label}}</view>
-      </picker>
+        wx:for="{{tags}}"
+        wx:key="*this"
+        data-tag="{{item}}"
+        class="selected-tag-chip"
+      >
+        <text>#{{item}}</text>
+        <text class="selected-tag-remove" data-tag="{{item}}" bindtap="removeTag">×</text>
+      </view>
     </view>
 
-    <view class="field-row">
-      <view class="field-label">置顶申请</view>
-      <picker mode="selector" range="{{pinOptions}}" range-key="label" value="{{pinIndex}}" bindchange="onPinChange">
-        <view class="picker-value">{{pinOptions[pinIndex].label}}</view>
-      </picker>
+    <view class="anonymous-row" wx:if="{{useAnonymousAlias}}">
+      <view class="eye-off-icon small"></view>
+      <input
+        class="anonymous-input"
+        placeholder="自定义匿名昵称（选填）"
+        placeholder-class="anonymous-placeholder"
+        maxlength="20"
+        value="{{anonymousAlias}}"
+        bindinput="onAnonymousAliasInput"
+      />
     </view>
-    <view class="field-row">
-      <view>
-        <view class="field-label">允许评论</view>
-        <view class="field-desc">关闭后其他人不能继续评论</view>
+
+    <view class="status-badge-row">
+      <view class="status-badge {{statusOptions[postStatusIndex].value}}">
+        {{statusOptions[postStatusIndex].label}}
       </view>
-      <switch checked="{{allowComment}}" bindchange="onAllowCommentChange" color="#155E75" />
     </view>
-    <view class="field-row">
-      <view>
-        <view class="field-label">允许私信</view>
-        <view class="field-desc">匿名发布默认关闭私信</view>
+
+    <scroll-view class="image-preview-list" wx:if="{{images.length}}" scroll-x>
+      <view class="image-preview-strip">
+        <view class="image-preview-cell" wx:for="{{images}}" wx:key="localPath">
+          <image
+            src="{{item.localPath}}"
+            mode="aspectFill"
+            data-path="{{item.localPath}}"
+            bindtap="previewImage"
+          ></image>
+          <view class="image-loading" wx:if="{{item.uploading}}">上传中...</view>
+          <view class="image-remove" data-index="{{index}}" catchtap="removeImage">
+            <view class="remove-cross"></view>
+          </view>
+        </view>
+        <view class="image-preview-add" bindtap="chooseImages">
+          <view class="image-add-icon"></view>
+        </view>
       </view>
-      <switch checked="{{allowDm}}" disabled="{{useAnonymousAlias}}" bindchange="onAllowDmChange" color="#155E75" />
-    </view>
-    <view class="field-row">
-      <view>
-        <view class="field-label">匿名发布</view>
-        <view class="field-desc">前台隐藏真实账号</view>
-      </view>
-      <switch checked="{{useAnonymousAlias}}" bindchange="onAnonymousChange" color="#155E75" />
-    </view>
-    <view class="field-row" wx:if="{{useAnonymousAlias}}">
-      <view class="field-label">匿名名</view>
-      <input class="field-input" placeholder="默认匿名同学" maxlength="16" value="{{anonymousAlias}}" bindinput="onAliasInput" />
-      <view class="inline-action" bindtap="randomAlias">随机</view>
-    </view>
+    </scroll-view>
   </view>
 
-  <button class="primary-button submit" loading="{{submitting}}" bindtap="submitPost">发布</button>
+  <view class="bottom-editor-bar">
+    <view class="inline-selector-area" wx:if="{{tagSelectorOpen || statusSelectorOpen || pinSelectorOpen || visibilitySelectorOpen}}">
+      <view class="status-selector" wx:if="{{statusSelectorOpen}}">
+        <view
+          wx:for="{{statusOptions}}"
+          wx:key="value"
+          data-index="{{index}}"
+          class="option-pill {{postStatusIndex === index ? 'active' : ''}}"
+          bindtap="onStatusTap"
+        >
+          <view class="status-option-icon {{item.icon}}"></view>
+          <text>{{item.label}}</text>
+        </view>
+      </view>
+
+      <view class="tag-selector-sheet" wx:if="{{tagSelectorOpen}}">
+        <view class="selector-head">
+          <text>标签（{{tagDraft.length}}/5）</text>
+          <view class="selector-actions">
+            <text class="selector-done" bindtap="confirmTags">完成</text>
+            <text class="selector-close" bindtap="closeTagSelector">×</text>
+          </view>
+        </view>
+        <view class="tag-option-wrap">
+          <view
+          wx:for="{{tagOptions}}"
+            wx:key="label"
+            data-tag="{{item.label}}"
+            class="option-pill {{item.selected ? 'active' : ''}}"
+            bindtap="toggleDraftTag"
+          >{{item.label}}</view>
+        </view>
+        <view class="custom-tag-row">
+          <input
+            class="custom-tag-input"
+            placeholder="自定义标签"
+            placeholder-class="custom-tag-placeholder"
+            value="{{customTagText}}"
+            bindinput="onCustomTagInput"
+            confirm-type="done"
+            bindconfirm="addCustomTag"
+          />
+          <view class="custom-tag-add" bindtap="addCustomTag">添加</view>
+        </view>
+      </view>
+
+      <view class="pin-selector" wx:if="{{pinSelectorOpen}}">
+        <view class="pin-selector-title">
+          <view class="pin-icon active"></view>
+          <text>发帖后立即置顶</text>
+        </view>
+        <view class="tag-option-wrap">
+          <view
+            wx:for="{{pinOptions}}"
+            wx:key="label"
+            data-index="{{index}}"
+            class="option-pill {{pinIndex === index ? 'active' : ''}}"
+            bindtap="onPinTap"
+          >{{item.label}}</view>
+        </view>
+      </view>
+
+      <view class="visibility-selector" wx:if="{{visibilitySelectorOpen}}">
+        <view
+          wx:for="{{visibilityOptions}}"
+          wx:key="value"
+          data-value="{{item.value}}"
+          class="visibility-item {{(privateOnly && item.value === 'private') || (!privateOnly && item.value === 'public') ? 'active' : ''}}"
+          bindtap="onVisibilityTap"
+        >
+          <view class="visibility-icon {{item.icon}}"></view>
+          <text>{{item.label}}</text>
+          <text class="visibility-check" wx:if="{{(privateOnly && item.value === 'private') || (!privateOnly && item.value === 'public')}}">✓</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="upload-row" wx:if="{{isUploading}}">
+      <view class="upload-spinner"></view>
+      <text>图片上传中...</text>
+    </view>
+
+    <view class="toolbar-row">
+      <view class="toolbar-icon-button" bindtap="chooseImages" aria-label="添加图片">
+        <view class="image-outline-icon"></view>
+      </view>
+      <view class="toolbar-icon-button {{tagSelectorOpen ? 'active' : ''}}" bindtap="toggleTagSelector" aria-label="标签">
+        <text class="tag-icon">#</text>
+      </view>
+      <view class="toolbar-icon-button {{statusSelectorOpen ? 'active' : ''}}" bindtap="toggleStatusSelector" aria-label="状态">
+        <view class="status-toolbar-icon {{statusOptions[postStatusIndex].icon}}"></view>
+      </view>
+      <view class="toolbar-icon-button {{useAnonymousAlias ? 'active' : ''}}" bindtap="toggleAnonymous" aria-label="匿名">
+        <view class="eye-off-icon"></view>
+      </view>
+      <view
+        wx:if="{{isLevelOneUser}}"
+        class="toolbar-icon-button {{pinIndex > 0 ? 'active' : ''}}"
+        bindtap="togglePinSelector"
+        aria-label="置顶"
+      >
+        <view class="pin-icon {{pinIndex > 0 ? 'active' : ''}}"></view>
+      </view>
+      <view class="toolbar-spacer"></view>
+      <view class="visibility-trigger" bindtap="toggleVisibilitySelector" aria-label="可见性">
+        <view class="visibility-icon {{privateOnly ? 'lock' : 'public'}}"></view>
+        <text class="visibility-arrow">▴</text>
+      </view>
+    </view>
+  </view>
 </view>

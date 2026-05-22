@@ -36,6 +36,7 @@ backend/__pycache__/
 .env
 .env.local
 .env.*.local
+miniprogram/config/env.local.js
 __pycache__/
 dist/
 

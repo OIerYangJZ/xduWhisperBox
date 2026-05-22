@@ -28,6 +28,7 @@
     "pages/profile/ai-settings/index",
     "pages/profile/edit-profile/index",
     "pages/profile/privacy/index",
+    "pages/profile/notification-settings/index",
     "pages/profile/account-security/index",
     "pages/profile/display-settings/index",
     "pages/profile/about/index",

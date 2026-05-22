@@ -53,10 +53,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       _showError('两次输入的密码不一致');
       return;
     }
-    if (nickname.isEmpty) {
-      _showError('请输入昵称');
-      return;
-    }
     if (!_agreeTerms) {
       _showError('请先同意用户协议与社区规范');
       return;
@@ -146,7 +142,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 controller: _nicknameController,
                 enabled: !_isLoading,
                 decoration: const InputDecoration(
-                  hintText: '昵称',
+                  labelText: '昵称（可选）',
+                  hintText: '留空将自动生成',
                   prefixIcon: Icon(Icons.badge_outlined),
                 ),
               ),

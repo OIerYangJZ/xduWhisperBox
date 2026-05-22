@@ -20,7 +20,7 @@ const networkErrorMessage = () => {
     return '真机无法访问 localhost，请改用电脑局域网 IP';
   }
   if (envName === 'lan' || envName === 'auto:lan') {
-    return '请确认手机和电脑在同一 Wi-Fi，且后端已启动';
+    return '请确认手机和电脑在同一 Wi-Fi，且电脑防火墙允许 8080 端口';
   }
   return '网络异常，请检查域名和 HTTPS 配置';
 };

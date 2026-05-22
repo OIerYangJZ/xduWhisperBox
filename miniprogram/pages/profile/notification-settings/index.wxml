@@ -1,0 +1,53 @@
+<view class="page notification-settings-page mobile-list-page {{themeClass}}">
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:else class="mobile-tile-card">
+    <view class="switch-row">
+      <text class="mobile-tile-icon">□</text>
+      <view class="mobile-tile-body">
+        <view class="mobile-tile-title">评论通知</view>
+        <view class="mobile-tile-subtitle">有人评论你的帖子时提醒</view>
+      </view>
+      <switch checked="{{prefs.notifyComment}}" data-key="notifyComment" bindchange="onSwitchChange" color="#155E75" />
+    </view>
+    <view class="switch-row">
+      <text class="mobile-tile-icon">◱</text>
+      <view class="mobile-tile-body">
+        <view class="mobile-tile-title">回复通知</view>
+        <view class="mobile-tile-subtitle">有人回复你的评论时提醒</view>
+      </view>
+      <switch checked="{{prefs.notifyReply}}" data-key="notifyReply" bindchange="onSwitchChange" color="#155E75" />
+    </view>
+    <view class="switch-row">
+      <text class="mobile-tile-icon">♡</text>
+      <view class="mobile-tile-body">
+        <view class="mobile-tile-title">点赞通知</view>
+        <view class="mobile-tile-subtitle">帖子或评论被点赞时提醒</view>
+      </view>
+      <switch checked="{{prefs.notifyLike}}" data-key="notifyLike" bindchange="onSwitchChange" color="#155E75" />
+    </view>
+    <view class="switch-row">
+      <text class="mobile-tile-icon">▱</text>
+      <view class="mobile-tile-body">
+        <view class="mobile-tile-title">收藏通知</view>
+        <view class="mobile-tile-subtitle">帖子被收藏时提醒</view>
+      </view>
+      <switch checked="{{prefs.notifyFavorite}}" data-key="notifyFavorite" bindchange="onSwitchChange" color="#155E75" />
+    </view>
+    <view class="switch-row">
+      <text class="mobile-tile-icon">!</text>
+      <view class="mobile-tile-body">
+        <view class="mobile-tile-title">举报结果</view>
+        <view class="mobile-tile-subtitle">举报处理完成后提醒</view>
+      </view>
+      <switch checked="{{prefs.notifyReportResult}}" data-key="notifyReportResult" bindchange="onSwitchChange" color="#155E75" />
+    </view>
+    <view class="switch-row">
+      <text class="mobile-tile-icon">ⓘ</text>
+      <view class="mobile-tile-body">
+        <view class="mobile-tile-title">系统通知</view>
+        <view class="mobile-tile-subtitle">接收系统公告与运营消息</view>
+      </view>
+      <switch checked="{{prefs.notifySystem}}" data-key="notifySystem" bindchange="onSwitchChange" color="#155E75" />
+    </view>
+  </view>
+</view>

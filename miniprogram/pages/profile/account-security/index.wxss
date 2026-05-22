@@ -1,7 +1,5 @@
-.page {
-  padding: 24rpx;
-  background: var(--app-control);
-  min-height: 100vh;
+.security-page {
+  background: var(--app-background);
 }
 
 .empty {
@@ -11,63 +9,10 @@
   font-size: 28rpx;
 }
 
-.section {
-  margin-bottom: 22rpx;
-  padding: 24rpx;
-  border-radius: 12rpx;
-  background: var(--app-surface);
+.danger-card {
+  margin-top: 48rpx;
 }
 
-.section-title {
-  margin-bottom: 12rpx;
-  color: var(--app-text-primary);
-  font-size: 31rpx;
-  font-weight: 700;
-}
-
-.info-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 86rpx;
-  border-bottom: 1rpx solid var(--app-divider);
-  color: var(--app-text-primary);
-  font-size: 28rpx;
-}
-
-.info-row:last-child {
-  border-bottom: none;
-}
-
-.info-row text:last-child {
-  color: var(--app-text-secondary);
-}
-
-.nav-row {
-  color: var(--app-text-primary);
-}
-
-.safe-button,
-.danger-outline-button {
-  height: 76rpx;
-  margin-top: 18rpx;
-  border-radius: 12rpx;
-  font-size: 28rpx;
-  line-height: 76rpx;
-}
-
-.safe-button {
-  background: var(--app-primary);
-  color: #ffffff;
-}
-
-.danger-outline-button {
-  border: 1rpx solid var(--app-error);
-  background: var(--app-surface);
+.danger-title {
   color: var(--app-error);
-}
-
-.safe-button[disabled],
-.danger-outline-button[disabled] {
-  opacity: .45;
 }

@@ -1,89 +1,198 @@
-<view class="container {{themeClass}}">
-  <view class="profile-cover" style="{{userInfo.backgroundImageUrl ? 'background-image: url(' + userInfo.backgroundImageUrl + '); background-size: cover; background-position: center;' : ''}}"></view>
-  <view class="profile-head">
-    <image class="avatar" src="{{userInfo ? (userInfo.avatarUrl || '/assets/default-avatar.png') : '/assets/default-avatar.png'}}" mode="aspectFill"></image>
-    <view class="edit-pill" bindtap="goToSettings">{{t.settings || '设置'}}</view>
-  </view>
-  <view class="profile-info">
-    <view class="user-info" wx:if="{{isLoggedIn}}">
-      <view class="nickname">{{userInfo.nickname || userInfo.alias || (t.nickname || '西电同学')}}</view>
-      <view class="student-id" wx:if="{{userInfo.studentId}}">@{{userInfo.studentId}}</view>
-      <view class="student-id" wx:else>@未绑定学号</view>
-      <view class="bio">{{userInfo.bio || '匿名交流，理性表达。'}}</view>
+<view class="page profile-page {{themeClass}}">
+  <view class="profile-header">
+    <view class="profile-background {{userInfo && userInfo.backgroundImageUrl ? 'has-image' : ''}}">
+      <image wx:if="{{userInfo && userInfo.backgroundImageUrl}}" class="profile-background-image" src="{{userInfo.backgroundImageUrl}}" mode="aspectFill"></image>
+      <view wx:if="{{userInfo && userInfo.backgroundImageUrl}}" class="profile-background-overlay"></view>
     </view>
-    <view class="login-prompt" wx:else bindtap="goToLogin">
-      <view class="login-title">{{t.login_prompt || '点击登录/注册'}}</view>
-      <view class="login-desc">{{t.login_desc || '登录后体验完整功能'}}</view>
+
+    <view class="profile-avatar-row">
+      <view class="profile-avatar-wrap" bindtap="goToEditProfile">
+        <image wx:if="{{userInfo && userInfo.avatarUrl}}" class="profile-avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+        <view wx:else class="profile-avatar profile-avatar-text">{{userInfo ? userInfo.avatarInitial : ''}}</view>
+      </view>
+      <view class="profile-actions">
+        <view class="profile-pill-button" bindtap="goToEditProfile">编辑资料</view>
+        <view class="profile-icon-button" bindtap="goToSettings">⚙</view>
+      </view>
+    </view>
+
+    <view class="profile-info {{userInfo && userInfo.backgroundImageUrl ? 'with-background' : ''}}">
+      <view class="profile-name">{{userInfo ? (userInfo.nickname || userInfo.alias || '匿名同学') : ''}}</view>
+      <view wx:if="{{userInfo && userInfo.bio}}" class="profile-bio">{{userInfo.bio}}</view>
+      <view wx:if="{{userInfo && userInfo.gender}}" class="profile-gender">
+        <text class="profile-gender-icon">{{userInfo.gender === '男' ? '♂' : '♀'}}</text>
+        <text>{{userInfo.gender}}</text>
+      </view>
+      <view class="profile-stats">
+        <view class="profile-stat" data-type="followers" bindtap="openFollowSheet">
+          <text class="profile-stat-value">{{followers.length}}</text>
+          <text class="profile-stat-label">粉丝</text>
+        </view>
+        <view class="profile-stat" data-type="following" bindtap="openFollowSheet">
+          <text class="profile-stat-value">{{following.length}}</text>
+          <text class="profile-stat-label">关注</text>
+        </view>
+        <view class="profile-level">{{(userInfo && userInfo.userLevelLabel) || 'Lv.1'}}</view>
+      </view>
+    </view>
+
+    <view class="profile-divider"></view>
+    <view class="profile-tabs">
+      <view
+        wx:for="{{tabs}}"
+        wx:key="key"
+        class="profile-tab {{activeTab === item.key ? 'active' : ''}}"
+        data-tab="{{item.key}}"
+        bindtap="switchProfileTab"
+      >
+        <text>{{item.label}}</text>
+        <view wx:if="{{activeTab === item.key}}" class="profile-tab-indicator"></view>
+      </view>
     </view>
   </view>
 
-  <view class="menu-list">
-    <view class="menu-item" bindtap="goToMyPosts">
-      <text class="menu-text">{{t.my_posts || '我的发布'}}</text>
-      <text class="menu-arrow">></text>
-    </view>
-    <view class="menu-item" bindtap="goToMyComments">
-      <text class="menu-text">{{t.my_comments || '我的评论'}}</text>
-      <text class="menu-arrow">></text>
-    </view>
-    <view class="menu-item" bindtap="goToMyReports">
-      <text class="menu-text">{{t.my_reports || '我的举报'}}</text>
-      <text class="menu-arrow">></text>
-    </view>
-    <view class="menu-item" bindtap="goToFavorites">
-      <text class="menu-text">{{t.my_favorites || '我的收藏'}}</text>
-      <text class="menu-arrow">></text>
-    </view>
-    <view class="menu-item" bindtap="goToConversations">
-      <text class="menu-text">{{t.messages || '私信'}}</text>
-      <view class="menu-right">
-        <text wx:if="{{messageUnreadCount}}" class="badge">{{messageUnreadCount > 99 ? '99+' : messageUnreadCount}}</text>
-        <text wx:elif="{{messageRequestPending}}" class="badge-dot"></text>
-        <text class="menu-arrow">></text>
+  <view class="profile-tab-body">
+    <block wx:if="{{activeTab === 'posts'}}">
+      <view wx:if="{{loadingPosts}}" class="profile-loading">加载中...</view>
+      <view wx:elif="{{!posts.length}}" class="profile-empty">
+        <view class="profile-empty-icon article-icon"></view>
+        <view>还没有发过帖子</view>
       </view>
-    </view>
-    <view class="menu-item" data-type="friends" bindtap="goToSocialList">
-      <text class="menu-text">{{t.friends || '好友'}}</text>
-      <text class="menu-arrow">></text>
-    </view>
-    <view class="menu-item" data-type="following" bindtap="goToSocialList">
-      <text class="menu-text">{{t.following || '关注'}}</text>
-      <text class="menu-arrow">></text>
-    </view>
-    <view class="menu-item" data-type="followers" bindtap="goToSocialList">
-      <text class="menu-text">{{t.followers || '粉丝'}}</text>
-      <text class="menu-arrow">></text>
-    </view>
-    <view class="menu-item" bindtap="goToNotifications">
-      <text class="menu-text">{{t.notifications || '通知中心'}}</text>
-      <view class="menu-right">
-        <text wx:if="{{unreadCount}}" class="badge">{{unreadCount}}</text>
-        <text class="menu-arrow">></text>
+      <view wx:else class="profile-feed">
+        <view class="feed-card profile-post-card" wx:for="{{posts}}" wx:for-index="postIndex" wx:key="id" data-id="{{item.id}}" bindtap="goPostDetail">
+          <image wx:if="{{item.authorAvatarUrl}}" class="feed-avatar" src="{{item.authorAvatarUrl}}" mode="aspectFill"></image>
+          <view wx:else class="feed-avatar">{{item.authorInitial}}</view>
+          <view class="feed-body">
+            <view class="feed-head">
+              <text class="feed-author">{{item.authorAlias}}</text>
+              <text class="feed-dot" style="background: {{item.channelColor}}"></text>
+              <text class="feed-channel" style="color: {{item.channelColor}}">{{item.displayChannel || item.channel}}</text>
+              <text wx:if="{{item.isPinned}}" class="pin-icon"></text>
+              <text class="feed-time">{{item.timeText}}</text>
+            </view>
+            <view wx:if="{{item.title}}" class="feed-title">{{item.title}}</view>
+            <swiper wx:if="{{item.imageUrls && item.imageUrls.length}}" class="profile-card-images" indicator-dots="{{item.imageUrls.length > 1}}" indicator-color="rgba(255,255,255,.5)" indicator-active-color="#ffffff">
+              <swiper-item wx:for="{{item.imageUrls}}" wx:for-item="img" wx:key="*this">
+                <image class="profile-card-image" src="{{img}}" mode="aspectFill" data-source="posts" data-post-index="{{postIndex}}" data-url="{{img}}" catchtap="previewPostImage"></image>
+              </swiper-item>
+            </swiper>
+            <view wx:else class="feed-summary">{{item.summary || item.content}}</view>
+            <view class="feed-tags" wx:if="{{item.tags && item.tags.length}}">
+              <text class="feed-tag" wx:for="{{item.tags}}" wx:key="*this">#{{item}}</text>
+            </view>
+            <view class="feed-actions">
+              <view class="feed-action {{item.liked || item.isLiked ? 'active' : ''}}" data-source="posts" data-index="{{postIndex}}" catchtap="toggleLike">
+                <view class="feed-action-icon like-icon"></view>
+                <text wx:if="{{item.likeCount}}">{{item.likeCount}}</text>
+              </view>
+              <view class="feed-action" data-id="{{item.id}}" catchtap="goPostDetail">
+                <view class="feed-action-icon comment-icon"></view>
+                <text wx:if="{{item.commentCount}}">{{item.commentCount}}</text>
+              </view>
+              <view class="feed-action share" catchtap="showShareToast">
+                <view class="feed-action-icon share-icon"></view>
+              </view>
+            </view>
+          </view>
+        </view>
       </view>
-    </view>
-    <view class="menu-item" bindtap="goToFeedback">
-      <text class="menu-text">{{t.feedback || '意见反馈'}}</text>
-      <text class="menu-arrow">></text>
-    </view>
-    <view class="menu-item" bindtap="goToSettings">
-      <text class="menu-text">{{t.settings || '设置'}}</text>
-      <text class="menu-arrow">></text>
-    </view>
-    <view class="menu-item" data-type="user-agreement" bindtap="goToLegal">
-      <text class="menu-text">{{t.user_agreement || '用户协议'}}</text>
-      <text class="menu-arrow">></text>
-    </view>
-    <view class="menu-item" data-type="privacy-policy" bindtap="goToLegal">
-      <text class="menu-text">{{t.privacy_policy || '隐私政策'}}</text>
-      <text class="menu-arrow">></text>
-    </view>
-    <view class="menu-item" data-type="community-guidelines" bindtap="goToLegal">
-      <text class="menu-text">{{t.community_guidelines || '社区规范/举报说明'}}</text>
-      <text class="menu-arrow">></text>
-    </view>
-    <view class="menu-item" data-type="acknowledgements" bindtap="goToLegal">
-      <text class="menu-text">{{t.acknowledgements || '致谢'}}</text>
-      <text class="menu-arrow">></text>
+    </block>
+
+    <block wx:elif="{{activeTab === 'favorites'}}">
+      <view wx:if="{{loadingFavorites}}" class="profile-loading">加载中...</view>
+      <view wx:elif="{{!favoritePosts.length}}" class="profile-empty">
+        <view class="profile-empty-icon star-icon"></view>
+        <view>还没有收藏</view>
+      </view>
+      <view wx:else class="profile-feed">
+        <view class="feed-card profile-post-card" wx:for="{{favoritePosts}}" wx:for-index="postIndex" wx:key="id" data-id="{{item.id}}" bindtap="goPostDetail">
+          <image wx:if="{{item.authorAvatarUrl}}" class="feed-avatar" src="{{item.authorAvatarUrl}}" mode="aspectFill"></image>
+          <view wx:else class="feed-avatar">{{item.authorInitial}}</view>
+          <view class="feed-body">
+            <view class="feed-head">
+              <text class="feed-author">{{item.authorAlias}}</text>
+              <text class="feed-dot" style="background: {{item.channelColor}}"></text>
+              <text class="feed-channel" style="color: {{item.channelColor}}">{{item.displayChannel || item.channel}}</text>
+              <text wx:if="{{item.isPinned}}" class="pin-icon"></text>
+              <text class="feed-time">{{item.timeText}}</text>
+            </view>
+            <view wx:if="{{item.title}}" class="feed-title">{{item.title}}</view>
+            <swiper wx:if="{{item.imageUrls && item.imageUrls.length}}" class="profile-card-images" indicator-dots="{{item.imageUrls.length > 1}}" indicator-color="rgba(255,255,255,.5)" indicator-active-color="#ffffff">
+              <swiper-item wx:for="{{item.imageUrls}}" wx:for-item="img" wx:key="*this">
+                <image class="profile-card-image" src="{{img}}" mode="aspectFill" data-source="favorites" data-post-index="{{postIndex}}" data-url="{{img}}" catchtap="previewPostImage"></image>
+              </swiper-item>
+            </swiper>
+            <view wx:else class="feed-summary">{{item.summary || item.content}}</view>
+            <view class="feed-tags" wx:if="{{item.tags && item.tags.length}}">
+              <text class="feed-tag" wx:for="{{item.tags}}" wx:key="*this">#{{item}}</text>
+            </view>
+            <view class="feed-actions">
+              <view class="feed-action {{item.liked || item.isLiked ? 'active' : ''}}" data-source="favorites" data-index="{{postIndex}}" catchtap="toggleLike">
+                <view class="feed-action-icon like-icon"></view>
+                <text wx:if="{{item.likeCount}}">{{item.likeCount}}</text>
+              </view>
+              <view class="feed-action" data-id="{{item.id}}" catchtap="goPostDetail">
+                <view class="feed-action-icon comment-icon"></view>
+                <text wx:if="{{item.commentCount}}">{{item.commentCount}}</text>
+              </view>
+              <view class="feed-action share" catchtap="showShareToast">
+                <view class="feed-action-icon share-icon"></view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <block wx:else>
+      <view wx:if="{{loadingComments}}" class="profile-loading">加载中...</view>
+      <view wx:elif="{{!comments.length}}" class="profile-empty">
+        <view class="profile-empty-icon comment-empty-icon"></view>
+        <view>还没有评论过</view>
+      </view>
+      <view wx:else class="activity-list">
+        <view
+          class="activity-item"
+          wx:for="{{comments}}"
+          wx:key="id"
+          data-post-id="{{item.postId}}"
+          data-comment-id="{{item.id}}"
+          bindtap="openCommentDetail"
+        >
+          <view class="activity-post">{{item.postTitle}}</view>
+          <view class="activity-content">{{item.content}}</view>
+          <view class="activity-time">{{item.timeText}}</view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view wx:if="{{showFollowSheet}}" class="follow-sheet-mask" bindtap="closeFollowSheet" catchtouchmove="stopTouchMove">
+    <view class="follow-sheet" catchtap="stopTouchMove">
+      <view class="follow-sheet-handle"></view>
+      <view class="follow-sheet-head">
+        <text class="follow-sheet-title">{{followSheetTitle}}</text>
+        <text class="follow-sheet-count">{{followSheetUsers.length}}</text>
+      </view>
+      <view class="follow-sheet-divider"></view>
+      <scroll-view class="follow-sheet-list" scroll-y>
+        <view wx:if="{{!followSheetUsers.length}}" class="follow-sheet-empty">暂无数据</view>
+        <block wx:else>
+          <view wx:if="{{followSheetMutualUsers.length}}" class="follow-sheet-section">好友</view>
+          <view class="follow-user-row" wx:for="{{followSheetMutualUsers}}" wx:key="id">
+            <image wx:if="{{item.avatarUrl}}" class="follow-avatar" src="{{item.avatarUrl}}" mode="aspectFill"></image>
+            <view wx:else class="follow-avatar follow-avatar-text">{{item.avatarInitial}}</view>
+            <view class="follow-name">{{item.nickname}}</view>
+            <view class="follow-mutual-badge">好友</view>
+          </view>
+          <view wx:if="{{followSheetMutualUsers.length && followSheetOtherUsers.length}}" class="follow-sheet-section">其他</view>
+          <view class="follow-user-row" wx:for="{{followSheetOtherUsers}}" wx:key="id">
+            <image wx:if="{{item.avatarUrl}}" class="follow-avatar" src="{{item.avatarUrl}}" mode="aspectFill"></image>
+            <view wx:else class="follow-avatar follow-avatar-text">{{item.avatarInitial}}</view>
+            <view class="follow-name">{{item.nickname}}</view>
+          </view>
+        </block>
+      </scroll-view>
     </view>
   </view>
 </view>

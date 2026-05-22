@@ -1,1 +1,5 @@
-{}
+{
+  "navigationBarTitleText": "",
+  "navigationStyle": "custom",
+  "enablePullDownRefresh": true
+}

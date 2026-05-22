@@ -1,11 +1,24 @@
+.page-head {
+  padding: 34rpx 28rpx 22rpx;
+  background: var(--app-surface);
+}
+
+.title {
+  color: var(--app-text-primary);
+  font-size: 40rpx;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin-top: 12rpx;
+  color: var(--app-text-secondary);
+  font-size: 26rpx;
+}
+
 .form-panel {
   padding: 28rpx;
   border-bottom: 1rpx solid var(--app-divider);
   background: var(--app-surface);
-}
-
-.verify-panel {
-  margin-top: 22rpx;
 }
 
 .input {
@@ -18,8 +31,39 @@
   font-size: 29rpx;
 }
 
+.student-id-field {
+  display: flex;
+  align-items: center;
+  height: 84rpx;
+  margin-bottom: 22rpx;
+  border-radius: 20rpx;
+  background: var(--app-control);
+}
+
+.student-id-input {
+  flex: 1;
+  min-width: 0;
+  height: 84rpx;
+  padding: 0 0 0 22rpx;
+  color: var(--app-text-primary);
+  font-size: 29rpx;
+}
+
+.email-suffix {
+  flex-shrink: 0;
+  padding: 0 22rpx 0 12rpx;
+  color: var(--app-text-secondary);
+  font-size: 27rpx;
+  line-height: 84rpx;
+  white-space: nowrap;
+}
+
 .debug-code {
   margin: 0 0 22rpx;
   color: var(--app-accent);
   font-size: 26rpx;
+}
+
+.secondary-button {
+  margin-bottom: 18rpx;
 }

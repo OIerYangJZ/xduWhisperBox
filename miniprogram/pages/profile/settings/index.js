@@ -1,17 +1,33 @@
-import { logout } from '../../../api/auth';
+import { getUserInfo, logout } from '../../../api/auth';
 import { requireLoginPage } from '../../../utils/auth_guard';
+import { avatarInitial } from '../../../utils/format';
 import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 Page({
   data: {
     loading: false,
-    loggingOut: false
+    loggingOut: false,
+    userInfo: null
   },
 
   onShow() {
     applyThemeAndLanguage(this);
     if (!requireLoginPage()) return;
     applyThemeAndLanguage(this);
+    this.fetchUserInfo();
+  },
+
+  async fetchUserInfo() {
+    const res = await getUserInfo();
+    if (res && res.data) {
+      const nickname = res.data.nickname || res.data.alias || '';
+      this.setData({
+        userInfo: {
+          ...res.data,
+          avatarInitial: avatarInitial(nickname)
+        }
+      });
+    }
   },
 
   navigateTo(event) {

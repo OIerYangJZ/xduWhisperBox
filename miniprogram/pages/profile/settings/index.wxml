@@ -1,44 +1,68 @@
-<view class="page settings-list-page {{themeClass}}">
+<view class="page settings-list-page mobile-list-page {{themeClass}}">
   <view wx:if="{{loading}}" class="empty">加载中...</view>
   <view wx:else>
-    <view class="section">
-      <view class="menu-item" bindtap="navigateTo" data-url="/pages/profile/edit-profile/index">
-        <text class="menu-title">{{t.personal_info || '个人资料'}}</text>
-        <text class="menu-arrow">></text>
-      </view>
-      <view class="menu-item" bindtap="navigateTo" data-url="/pages/profile/privacy/index">
-        <text class="menu-title">{{t.privacy_settings || '隐私与通知'}}</text>
-        <text class="menu-arrow">></text>
-      </view>
-      <view class="menu-item" bindtap="navigateTo" data-url="/pages/profile/account-security/index">
-        <text class="menu-title">{{t.security_settings || '账号与安全'}}</text>
-        <text class="menu-arrow">></text>
+    <view wx:if="{{userInfo}}" class="mobile-user-card">
+      <image wx:if="{{userInfo.avatarUrl}}" class="mobile-user-avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+      <view wx:else class="mobile-user-avatar">{{userInfo.avatarInitial}}</view>
+      <view class="mobile-user-info">
+        <view class="mobile-user-name">{{userInfo.nickname || userInfo.alias}}</view>
+        <view class="mobile-user-meta">{{userInfo.email}}</view>
       </view>
     </view>
 
-    <view class="section">
-      <view class="menu-item" bindtap="navigateTo" data-url="/pages/profile/display-settings/index">
-        <text class="menu-title">{{t.display_settings || '显示设置'}}</text>
-        <text class="menu-arrow">></text>
+    <view class="mobile-section-title">通用设置</view>
+    <view class="mobile-tile-card">
+      <view class="mobile-tile" bindtap="navigateTo" data-url="/pages/profile/account-security/index">
+        <text class="mobile-tile-icon">⌕</text>
+        <view class="mobile-tile-body">
+          <view class="mobile-tile-title">账号与安全</view>
+          <view class="mobile-tile-subtitle">修改密码、用户等级、注销账号</view>
+        </view>
+        <text class="mobile-tile-arrow">›</text>
       </view>
-      <view class="menu-item" bindtap="navigateTo" data-url="/pages/profile/ai-settings/index">
-        <text class="menu-title">AI 接口与知识库</text>
-        <text class="menu-arrow">></text>
+      <view class="mobile-tile" bindtap="navigateTo" data-url="/pages/profile/privacy/index">
+        <text class="mobile-tile-icon">◈</text>
+        <view class="mobile-tile-body">
+          <view class="mobile-tile-title">隐私设置</view>
+          <view class="mobile-tile-subtitle">私信权限、可见性管理</view>
+        </view>
+        <text class="mobile-tile-arrow">›</text>
       </view>
-      <view class="menu-item" bindtap="navigateTo" data-url="/pages/profile/about/index">
-        <text class="menu-title">{{t.about || '关于与更新'}}</text>
-        <text class="menu-arrow">></text>
-      </view>
-      <view class="menu-item" bindtap="navigateTo" data-url="/pages/profile/feedback/index">
-        <text class="menu-title">{{t.help_feedback || '帮助与反馈'}}</text>
-        <text class="menu-arrow">></text>
-      </view>
-      <view class="menu-item" bindtap="navigateTo" data-url="/pages/profile/legal/index?type=user-agreement">
-        <text class="menu-title">{{t.user_agreement || '用户协议'}}</text>
-        <text class="menu-arrow">></text>
+      <view class="mobile-tile" bindtap="navigateTo" data-url="/pages/profile/notification-settings/index">
+        <text class="mobile-tile-icon">○</text>
+        <view class="mobile-tile-body">
+          <view class="mobile-tile-title">通知设置</view>
+          <view class="mobile-tile-subtitle">推送消息、提醒项管理</view>
+        </view>
+        <text class="mobile-tile-arrow">›</text>
       </view>
     </view>
 
-    <button class="logout-button" loading="{{loggingOut}}" bindtap="handleLogout">{{t.logout || '退出登录'}}</button>
+    <view class="mobile-section-title">偏好设置</view>
+    <view class="mobile-tile-card">
+      <view class="mobile-tile" bindtap="navigateTo" data-url="/pages/profile/display-settings/index">
+        <text class="mobile-tile-icon">◐</text>
+        <view class="mobile-tile-body">
+          <view class="mobile-tile-title">界面外观</view>
+          <view class="mobile-tile-subtitle">深色模式、多语言</view>
+        </view>
+        <text class="mobile-tile-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="mobile-section-title">其他</view>
+    <view class="mobile-tile-card">
+      <view class="mobile-tile" bindtap="navigateTo" data-url="/pages/profile/about/index">
+        <text class="mobile-tile-icon">ⓘ</text>
+        <view class="mobile-tile-body">
+          <view class="mobile-tile-title">关于与支持</view>
+          <view class="mobile-tile-subtitle">版本更新、法律协议、帮助反馈</view>
+        </view>
+        <text class="mobile-tile-arrow">›</text>
+      </view>
+    </view>
+
+    <button class="logout-button" loading="{{loggingOut}}" bindtap="handleLogout">退出登录</button>
+    <view class="settings-brand">西电树洞 See电</view>
   </view>
 </view>

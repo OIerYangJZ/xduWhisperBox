@@ -4,7 +4,9 @@
   <scroll-view class="chat-scroll" scroll-y scroll-top="{{scrollTop}}" scroll-with-animation>
     <view class="chat-list">
       <view wx:for="{{messages}}" wx:key="id" class="message-item {{item.role === 'user' ? 'message-user' : 'message-assistant'}}">
-        <image class="avatar" src="{{item.role === 'user' ? '/assets/default-avatar.png' : '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+        <view class="avatar {{item.role === 'user' ? 'avatar-user' : 'avatar-assistant'}}">
+          {{item.role === 'user' ? '我' : 'AI'}}
+        </view>
         <view class="message-bubble">
           <text class="message-text">{{item.content}}</text>
           <view class="references" wx:if="{{item.references && item.references.length}}">
@@ -18,7 +20,7 @@
       
       <!-- Loading indicator for assistant -->
       <view class="message-item message-assistant" wx:if="{{isSending}}">
-        <image class="avatar" src="/assets/default-avatar.png" mode="aspectFill"></image>
+        <view class="avatar avatar-assistant">AI</view>
         <view class="message-bubble">
           <view class="typing-indicator">
             <view class="dot"></view>

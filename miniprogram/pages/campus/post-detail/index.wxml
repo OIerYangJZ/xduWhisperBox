@@ -1,14 +1,36 @@
-<view class="page post-detail-page {{themeClass}}" wx:if="{{!loading && post}}">
-  <scroll-view scroll-y class="main-scroll" scroll-into-view="{{targetAnchor}}" scroll-with-animation>
+<view class="page post-detail-page {{themeClass}}">
+  <view class="detail-appbar" style="padding-top: {{navTop}}px; height: {{navTop + navHeight + 8}}px;">
+    <view class="detail-nav-button" bindtap="goBack" aria-label="返回">
+      <view class="back-icon"></view>
+    </view>
+    <view class="detail-nav-title">帖子详情</view>
+    <view class="detail-nav-more" bindtap="showPostOptions" aria-label="更多">
+      <view class="more-dots"><view></view><view></view><view></view></view>
+    </view>
+  </view>
+
+  <scroll-view wx:if="{{!loading && post}}" scroll-y class="main-scroll" scroll-into-view="{{targetAnchor}}" scroll-with-animation style="padding-top: {{navTop + navHeight + 8}}px;">
     <view class="post-card">
       <view class="post-header">
-        <image class="post-avatar" src="{{post.authorAvatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill" bindtap="openAuthorProfile"></image>
+        <image wx:if="{{!post.isAnonymous && post.authorAvatarUrl}}" class="post-avatar" src="{{post.authorAvatarUrl}}" mode="aspectFill" bindtap="openAuthorProfile"></image>
+        <view wx:else class="post-avatar post-avatar-text" bindtap="openAuthorProfile">{{post.isAnonymous ? '匿' : post.authorInitial}}</view>
         <view class="post-meta" bindtap="openAuthorProfile">
           <view class="post-author">{{post.authorAlias || post.authorName || '匿名用户'}}</view>
-          <view class="post-time">{{post.createdAt}}</view>
+          <view class="post-subline">
+            <text class="post-time">{{post.timeText || post.createdAt}}</text>
+            <text wx:if="{{post.status === 'resolved'}}" class="resolved-badge">已解决</text>
+          </view>
         </view>
-        <button wx:if="{{post.authorUserId}}" class="small-button" bindtap="toggleFollowAuthor">{{post.followingAuthor || post.isFollowingAuthor || post.isFollowing ? '已关注' : '关注'}}</button>
-        <button wx:if="{{post.canMessageAuthor}}" class="small-button" bindtap="messageAuthor">私信</button>
+        <view class="header-actions" wx:if="{{(post.canMessageAuthor && post.authorUserId) || (post.canFollowAuthor && post.authorUserId && !(post.followingAuthor || post.isFollowingAuthor || post.isFollowing))}}">
+          <view wx:if="{{post.canMessageAuthor && post.authorUserId}}" class="header-action-button" bindtap="messageAuthor">
+            <view class="mini-chat-icon"></view>
+            <text>私信</text>
+          </view>
+          <view wx:if="{{post.canFollowAuthor && post.authorUserId && !(post.followingAuthor || post.isFollowingAuthor || post.isFollowing)}}" class="header-action-button" bindtap="toggleFollowAuthor">
+            <view class="mini-follow-icon"></view>
+            <text>关注</text>
+          </view>
+        </view>
       </view>
       <view class="post-title" wx:if="{{post.title}}">{{post.title}}</view>
       <view class="post-content">
@@ -17,66 +39,78 @@
       <view class="post-images" wx:if="{{post.imageUrls && post.imageUrls.length > 0}}">
         <image wx:for="{{post.imageUrls}}" wx:for-item="img" wx:key="*this" src="{{img}}" data-url="{{img}}" bindtap="previewPostImage" mode="widthFix" class="post-image"></image>
       </view>
+      <view class="post-tags" wx:if="{{post.tags && post.tags.length}}">
+        <text class="post-tag" wx:for="{{post.tags}}" wx:key="*this">#{{item}}</text>
+      </view>
       <view class="post-footer">
-        <view class="action-item" bindtap="handleLike">
-          <text class="action-label {{post.liked ? 'active' : ''}}">赞</text>
-          <text class="{{post.liked ? 'active' : ''}}">{{post.likeCount || 0}}</text>
+        <view class="detail-action {{post.liked ? 'active' : ''}}" bindtap="handleLike">
+          <view class="detail-action-icon like-icon"></view>
+          <text wx:if="{{post.likeCount > 0}}" class="{{post.liked ? 'active' : ''}}">{{post.likeCount}}</text>
         </view>
-        <view class="action-item" bindtap="handleFavorite">
-          <text class="action-label {{post.favorited ? 'active' : ''}}">藏</text>
-          <text class="{{post.favorited ? 'active' : ''}}">{{post.favoriteCount || 0}}</text>
+        <view class="detail-action {{post.favorited ? 'favorited' : ''}}" bindtap="handleFavorite">
+          <view class="detail-action-icon bookmark-icon"></view>
+          <text wx:if="{{post.favoriteCount > 0}}" class="{{post.favorited ? 'active' : ''}}">{{post.favoriteCount}}</text>
         </view>
-        <button class="share-button" open-type="share">分享</button>
-        <view class="action-item" bindtap="reportPost">举报</view>
-        <view class="action-item danger" wx:if="{{post.isOwnPost}}" bindtap="deleteOwnPost">删除</view>
+        <view class="detail-action" bindtap="scrollToComments">
+          <view class="detail-action-icon comment-icon"></view>
+          <text wx:if="{{post.commentCount > 0}}">{{post.commentCount}}</text>
+        </view>
+        <button class="detail-share-button" open-type="share">
+          <view class="detail-action-icon share-icon"></view>
+        </button>
       </view>
     </view>
 
-    <view class="comments-section">
+    <view id="comments-section" class="comments-section">
       <view class="comments-head">
-        <view class="section-title">全部评论 ({{post.commentCount || 0}})</view>
-        <view class="comment-sort">
-          <view
-            wx:for="{{commentSorts}}"
-            wx:key="value"
-            data-sort="{{item.value}}"
-            class="sort-pill {{commentSort === item.value ? 'active' : ''}}"
-            bindtap="onCommentSortTap"
-          >{{item.label}}</view>
+        <view class="comment-sort-trigger" bindtap="showCommentSortMenu">
+          <text>{{commentSortLabel}}</text>
+          <text class="comment-sort-arrow">⌄</text>
         </view>
       </view>
-      <view class="empty-state" wx:if="{{comments.length === 0}}">暂无评论，快来抢沙发吧~</view>
+      <view class="empty-state" wx:if="{{comments.length === 0}}">暂无评论，快来抢沙发~</view>
 
       <view id="{{item.anchorId}}" class="comment-item {{item.isTarget ? 'target' : ''}}" wx:for="{{comments}}" wx:key="id" style="{{item.indentStyle}}" data-index="{{index}}" bindlongpress="showCommentMenu">
-        <image class="comment-avatar" src="{{item.authorAvatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+        <image wx:if="{{item.authorAvatarUrl}}" class="comment-avatar" src="{{item.authorAvatarUrl}}" mode="aspectFill" data-id="{{item.authorUserId}}" bindtap="openCommentAuthor"></image>
+        <view wx:else class="comment-avatar comment-avatar-text" data-id="{{item.authorUserId}}" bindtap="openCommentAuthor">{{item.authorInitial}}</view>
         <view class="comment-content-box">
           <view class="comment-header">
-            <text class="comment-author">{{item.authorAlias || item.authorName || '匿名用户'}}</text>
-            <text class="comment-time">{{item.createdAt}}</text>
+            <text class="comment-author" data-id="{{item.authorUserId}}" bindtap="openCommentAuthor">{{item.authorAlias || item.authorName || '匿名用户'}}</text>
+            <text class="comment-time">{{item.timeText || item.createdAt}}</text>
           </view>
           <view class="comment-text"><text>{{item.content}}</text></view>
           <view class="comment-actions">
-            <text data-index="{{index}}" bindtap="likeComment">{{item.liked ? '已赞' : '点赞'}} {{item.likeCount || 0}}</text>
-            <text data-index="{{index}}" bindtap="setReplyTarget">回复</text>
-            <text data-index="{{index}}" bindtap="copyComment">复制</text>
-            <text data-index="{{index}}" bindtap="reportComment">举报</text>
-            <text wx:if="{{item.authorUserId}}" data-id="{{item.authorUserId}}" bindtap="openCommentAuthor">主页</text>
-            <text wx:if="{{item.isOwnComment}}" class="danger" data-index="{{index}}" bindtap="deleteOwnComment">删除</text>
+            <view class="comment-action {{item.liked ? 'active' : ''}}" data-index="{{index}}" bindtap="likeComment">
+              <view class="comment-action-icon like-icon"></view>
+              <text wx:if="{{item.likeCount}}">{{item.likeCount || 0}}</text>
+            </view>
+            <view class="comment-action" data-index="{{index}}" bindtap="setReplyTarget">
+              <view class="comment-action-icon comment-icon"></view>
+            </view>
           </view>
         </view>
       </view>
     </view>
   </scroll-view>
 
-  <view class="emoji-panel" wx:if="{{showEmojiPanel}}">
+  <view class="loading-state detail-loading" wx:if="{{loading}}" style="padding-top: {{navTop + navHeight + 8}}px;">加载中...</view>
+  <view class="empty-state detail-empty" wx:if="{{!loading && !post}}" style="padding-top: {{navTop + navHeight + 8}}px;">帖子不存在或已被删除</view>
+
+  <view class="emoji-panel" wx:if="{{!loading && post && showEmojiPanel}}">
     <text wx:for="{{emojis}}" wx:key="*this" data-emoji="{{item}}" bindtap="insertEmoji">{{item}}</text>
   </view>
-  <view class="bottom-bar">
-    <view wx:if="{{replyToId}}" class="reply-pill" bindtap="clearReplyTarget">回复 {{replyToName}} ×</view>
-    <view class="emoji-toggle" bindtap="toggleEmojiPanel">☺</view>
-    <input class="comment-input" placeholder="写下你的评论..." value="{{commentContent}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="submitComment" cursor-spacing="20" />
-    <button class="send-btn" bindtap="submitComment" disabled="{{isSending || !commentContent}}">发送</button>
+  <view class="bottom-bar" wx:if="{{!loading && post && post.allowComment !== false}}">
+    <view wx:if="{{replyToId}}" class="reply-banner">
+      <view class="reply-banner-left">
+        <view class="reply-banner-icon"></view>
+        <text class="reply-banner-text">回复 @{{replyToName}}</text>
+      </view>
+      <view class="reply-banner-close" bindtap="clearReplyTarget">×</view>
+    </view>
+    <view class="comment-compose">
+      <view class="emoji-toggle" bindtap="toggleEmojiPanel">☺</view>
+      <input class="comment-input" placeholder="写下你的评论..." value="{{commentContent}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="submitComment" cursor-spacing="20" />
+      <button class="send-btn" bindtap="submitComment" disabled="{{isSending || !canSendComment}}">发送</button>
+    </view>
   </view>
 </view>
-
-<view class="loading-state" wx:if="{{loading}}">加载中...</view>

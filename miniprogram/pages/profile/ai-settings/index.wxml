@@ -24,6 +24,9 @@
       <text>检索公开帖子</text>
       <switch checked="{{form.includePosts}}" bindchange="onIncludePostsChange" color="#155E75" />
     </view>
+    <view class="hint">
+      <text>基础资料按空行分段。每段建议先写标题，再写内容，例如“校历”“奖学金”“宿舍”。</text>
+    </view>
     <textarea
       class="knowledge-input"
       maxlength="-1"

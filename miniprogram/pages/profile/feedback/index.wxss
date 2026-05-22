@@ -1,6 +1,12 @@
+.feedback-page {
+  padding: 32rpx;
+  background: var(--app-background);
+}
+
 .form-panel {
-  padding: 24rpx;
-  border-bottom: 1rpx solid var(--app-divider);
+  padding: 32rpx;
+  border: 1rpx solid rgba(232, 232, 232, .5);
+  border-radius: 24rpx;
   background: var(--app-surface);
 }
 
@@ -10,6 +16,7 @@
   color: var(--app-text-primary);
   font-size: 29rpx;
   line-height: 1.6;
+  border-radius: 16rpx;
 }
 
 .contact-input {
@@ -22,5 +29,8 @@
 }
 
 .submit {
-  margin-top: 28rpx;
+  margin-top: 32rpx;
+  height: 100rpx;
+  border-radius: 24rpx;
+  line-height: 100rpx;
 }

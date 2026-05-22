@@ -1,5 +1,4 @@
 .settings-list-page {
-  padding: 0;
   background: var(--app-background);
 }
 
@@ -10,40 +9,21 @@
   font-size: 28rpx;
 }
 
-.section {
-  margin: 0;
-  background: var(--app-surface);
-  border-bottom: 1rpx solid var(--app-divider);
-  overflow: hidden;
-}
-
-.section + .section {
-  margin-top: 18rpx;
-  border-top: 1rpx solid var(--app-divider);
-}
-
-.menu-item {
-  min-height: 96rpx;
-  padding: 0 32rpx;
-  border-bottom: 1rpx solid var(--app-divider);
-  background: var(--app-surface);
-}
-
-.menu-item:active {
-  background: var(--app-control);
-}
-
 .logout-button {
-  height: 96rpx;
-  margin: 48rpx 32rpx 0;
-  border-radius: 16rpx;
-  background: var(--app-surface);
+  height: 100rpx;
+  margin: 16rpx 8rpx 0;
+  border: 1rpx solid var(--app-divider);
+  border-radius: 24rpx;
+  background: transparent;
   color: var(--app-error);
-  font-size: 32rpx;
-  font-weight: 500;
-  line-height: 96rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  line-height: 100rpx;
 }
 
-.logout-button:active {
-  background: var(--app-control);
+.settings-brand {
+  padding: 40rpx 0 0;
+  color: rgba(199, 199, 204, .6);
+  font-size: 24rpx;
+  text-align: center;
 }

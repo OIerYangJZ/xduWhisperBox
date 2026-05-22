@@ -136,10 +136,9 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     if (!_formKey.currentState!.validate()) return;
 
     final nickname = _nicknameController.text.trim();
-    if (nickname.isEmpty) {
-      _showToast('昵称不能为空');
-      return;
-    }
+    final nextNickname = nickname.isEmpty
+        ? (_profile?.nickname ?? '')
+        : nickname;
 
     setState(() {
       _saving = true;
@@ -170,7 +169,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       await ref
           .read(userRepositoryProvider)
           .updateProfile(
-            nickname: nickname,
+            nickname: nextNickname,
             avatarUrl: newAvatarUrl,
             bio: _bioController.text.trim(),
             backgroundImageUrl: newBgUrl,
@@ -298,15 +297,13 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                             controller: _nicknameController,
                             enabled: !_saving,
                             decoration: const InputDecoration(
-                              labelText: '昵称',
-                              hintText: '请输入昵称',
+                              labelText: '昵称（可选）',
+                              hintText: '留空保持当前昵称',
                               prefixIcon: Icon(Icons.person_outline),
                             ),
                             validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return '昵称不能为空';
-                              }
-                              if (value.trim().length > 20) {
+                              final trimmed = value?.trim() ?? '';
+                              if (trimmed.isNotEmpty && trimmed.length > 20) {
                                 return '昵称不能超过20个字符';
                               }
                               return null;

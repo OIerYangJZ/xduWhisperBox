@@ -22,7 +22,22 @@ const COMMENT_SORTS = [
   { label: '最新', value: 'latest' },
   { label: '热度', value: 'hot' }
 ];
-const EMOJIS = ['😀', '😂', '🥲', '😍', '👍', '🙏', '🎉', '🍉', '📚', '🔥'];
+const EMOJIS = [
+  '😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂',
+  '🙂', '😉', '😊', '😇', '🥰', '😍', '🤩', '😘',
+  '😋', '😛', '😜', '🤪', '😝', '🤗', '🤭', '🤫',
+  '🤔', '🤐', '🤨', '😐', '😑', '😶', '😏', '😒',
+  '🙄', '😬', '😮‍💨', '🤥', '😌', '😔', '😪', '🤤',
+  '😴', '😷', '🤒', '🤕', '🤢', '🤮', '🤧', '🥵',
+  '🥶', '🥴', '😵', '🤯', '🤠', '🥳', '😎', '🤓',
+  '😕', '😟', '🙁', '😮', '😯', '😲', '😳', '🥺',
+  '😦', '😧', '😨', '😰', '😥', '😢', '😭', '😱',
+  '👍', '👎', '👏', '🙌', '🤝', '🙏', '💪', '🤘'
+];
+const COMMENT_SORT_LABELS = {
+  latest: '时间',
+  hot: '热度'
+};
 
 const buildCommentRows = (comments, targetCommentId = '') => {
   const byParent = {};
@@ -51,23 +66,31 @@ const buildCommentRows = (comments, targetCommentId = '') => {
 Page({
   data: {
     postId: '',
+    navTop: 0,
+    navHeight: 0,
     post: null,
     contentNodes: [],
     comments: [],
     commentSorts: COMMENT_SORTS,
     commentSort: 'latest',
+    commentSortLabel: COMMENT_SORT_LABELS.latest,
     targetCommentId: '',
     targetAnchor: '',
     emojis: EMOJIS,
     showEmojiPanel: false,
     loading: true,
     commentContent: '',
+    canSendComment: false,
     replyToId: '',
     replyToName: '',
-    isSending: false
+    isSending: false,
+    isLiking: false,
+    isFavoriting: false,
+    isFollowing: false
   },
 
   onLoad(options) {
+    this.initCustomNav();
     applyThemeAndLanguage(this);
     if (options.id) this.setData({ postId: options.id });
     if (options.commentId) {
@@ -99,6 +122,18 @@ Page({
     };
   },
 
+  initCustomNav() {
+    const menuButton = wx.getMenuButtonBoundingClientRect();
+    this.setData({
+      navTop: menuButton.top,
+      navHeight: menuButton.height
+    });
+  },
+
+  goBack() {
+    wx.navigateBack({ fail: () => wx.switchTab({ url: '/pages/campus/index' }) });
+  },
+
   async loadDetail() {
     this.setData({ loading: true });
     try {
@@ -118,7 +153,8 @@ Page({
   },
 
   async handleLike() {
-    if (!this.data.post) return;
+    if (!this.data.post || this.data.isLiking) return;
+    this.setData({ isLiking: true });
     try {
       const result = await togglePostLike(this.data.postId);
       const liked = Boolean(result.liked);
@@ -131,11 +167,15 @@ Page({
           likeCount: Math.max(0, post.likeCount + (liked ? 1 : -1))
         }
       });
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      this.setData({ isLiking: false });
+    }
   },
 
   async handleFavorite() {
-    if (!this.data.post) return;
+    if (!this.data.post || this.data.isFavoriting) return;
+    this.setData({ isFavoriting: true });
     const post = this.data.post;
     try {
       const result = post.favorited ? await unfavoritePost(post.id) : await favoritePost(post.id);
@@ -147,7 +187,10 @@ Page({
           favoriteCount: Number(result.favoriteCount || post.favoriteCount)
         }
       });
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      this.setData({ isFavoriting: false });
+    }
   },
 
   reportPost() {
@@ -198,7 +241,12 @@ Page({
 
   openAuthorProfile() {
     const userId = this.data.post && this.data.post.authorUserId;
-    if (userId) wx.navigateTo({ url: `/pages/profile/public-user/index?id=${userId}` });
+    if (this.data.post && this.data.post.isOwnPost) {
+      wx.switchTab({ url: '/pages/profile/index' });
+      return;
+    }
+    if (!userId || this.data.post.isAnonymous) return;
+    wx.navigateTo({ url: `/pages/profile/public-user/index?id=${userId}` });
   },
 
   openCommentAuthor(event) {
@@ -222,7 +270,8 @@ Page({
   async toggleFollowAuthor() {
     const post = this.data.post;
     const userId = post && post.authorUserId;
-    if (!userId) return;
+    if (!userId || this.data.isFollowing) return;
+    this.setData({ isFollowing: true });
     try {
       if (post.followingAuthor || post.isFollowingAuthor || post.isFollowing) {
         await unfollowUser(userId);
@@ -230,8 +279,12 @@ Page({
       } else {
         await followUser(userId);
         this.setData({ post: { ...post, followingAuthor: true, isFollowingAuthor: true, isFollowing: true } });
+        wx.showToast({ title: '关注成功', icon: 'success' });
       }
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      this.setData({ isFollowing: false });
+    }
   },
 
   previewPostImage(event) {
@@ -243,12 +296,55 @@ Page({
   onCommentSortTap(event) {
     const sort = event.currentTarget.dataset.sort;
     if (!sort || sort === this.data.commentSort) return;
-    this.setData({ commentSort: sort });
+    this.setData({ commentSort: sort, commentSortLabel: COMMENT_SORT_LABELS[sort] || '时间' });
     this.loadDetail();
   },
 
+  showCommentSortMenu() {
+    wx.showActionSheet({
+      itemList: ['热度', '时间'],
+      success: (res) => {
+        const sort = res.tapIndex === 0 ? 'hot' : 'latest';
+        if (sort === this.data.commentSort) return;
+        this.setData({
+          commentSort: sort,
+          commentSortLabel: COMMENT_SORT_LABELS[sort]
+        });
+        this.loadDetail();
+      }
+    });
+  },
+
+  scrollToComments() {
+    this.setData({ targetAnchor: '' }, () => {
+      wx.nextTick(() => {
+        if (this.data.targetAnchor !== 'comments-section') {
+          this.setData({ targetAnchor: 'comments-section' });
+        }
+      });
+    });
+  },
+
+  showPostOptions() {
+    if (!this.data.post) return;
+    const itemList = ['举报'];
+    if (this.data.post.isOwnPost) itemList.push('删除');
+    wx.showActionSheet({
+      itemList,
+      success: (res) => {
+        const action = itemList[res.tapIndex];
+        if (action === '举报') this.reportPost();
+        if (action === '删除') this.deleteOwnPost();
+      }
+    });
+  },
+
   onCommentInput(event) {
-    this.setData({ commentContent: event.detail.value });
+    const value = event.detail.value;
+    this.setData({
+      commentContent: value,
+      canSendComment: value.trim().length > 0 && !this.data.isSending
+    });
   },
 
   toggleEmojiPanel() {
@@ -257,16 +353,20 @@ Page({
 
   insertEmoji(event) {
     const emoji = event.currentTarget.dataset.emoji || '';
-    this.setData({ commentContent: `${this.data.commentContent}${emoji}` });
+    const next = `${this.data.commentContent}${emoji}`;
+    this.setData({
+      commentContent: next,
+      canSendComment: next.trim().length > 0 && !this.data.isSending
+    });
   },
 
   setReplyTarget(event) {
     const item = this.data.comments[Number(event.currentTarget.dataset.index)];
     if (!item) return;
-    this.setData({
-      replyToId: item.id,
-      replyToName: item.authorAlias || item.authorName || '同学'
-    });
+      this.setData({
+        replyToId: item.id,
+        replyToName: item.authorAlias || item.authorName || '同学'
+      });
   },
 
   clearReplyTarget() {
@@ -286,11 +386,20 @@ Page({
         isAnonymous: false,
         parentId: this.data.replyToId
       });
-      this.setData({ commentContent: '', replyToId: '', replyToName: '', showEmojiPanel: false });
+      this.setData({
+        commentContent: '',
+        canSendComment: false,
+        replyToId: '',
+        replyToName: '',
+        showEmojiPanel: false
+      });
       await this.loadDetail();
       wx.showToast({ title: '评论成功', icon: 'success' });
     } catch (error) {}
-    this.setData({ isSending: false });
+    this.setData({
+      isSending: false,
+      canSendComment: this.data.commentContent.trim().length > 0
+    });
   },
 
   async likeComment(event) {
@@ -326,15 +435,13 @@ Page({
     const index = Number(event.currentTarget.dataset.index);
     const comment = this.data.comments[index];
     if (!comment) return;
-    const itemList = ['回复', '复制', '举报'];
+    const itemList = ['复制'];
     if (comment.isOwnComment) itemList.push('删除');
     wx.showActionSheet({
       itemList,
       success: (res) => {
         const action = itemList[res.tapIndex];
-        if (action === '回复') this.setReplyTarget({ currentTarget: { dataset: { index } } });
         if (action === '复制') this.copyComment({ currentTarget: { dataset: { index } } });
-        if (action === '举报') this.reportComment({ currentTarget: { dataset: { index } } });
         if (action === '删除') this.deleteOwnComment({ currentTarget: { dataset: { index } } });
       }
     });

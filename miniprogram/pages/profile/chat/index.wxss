@@ -31,12 +31,17 @@
 .picker-avatar {
   flex: 0 0 auto;
   border-radius: 50%;
-  background: var(--app-control);
+  background: var(--app-primary-soft);
+  color: var(--app-primary);
+  font-weight: 700;
+  text-align: center;
 }
 
 .peer-avatar {
   width: 72rpx;
   height: 72rpx;
+  font-size: 26rpx;
+  line-height: 72rpx;
 }
 
 .peer-meta {
@@ -147,6 +152,8 @@
 .avatar {
   width: 64rpx;
   height: 64rpx;
+  font-size: 24rpx;
+  line-height: 64rpx;
 }
 
 .bubble-column {
@@ -381,6 +388,8 @@
 .picker-avatar {
   width: 72rpx;
   height: 72rpx;
+  font-size: 26rpx;
+  line-height: 72rpx;
 }
 
 .picker-body {

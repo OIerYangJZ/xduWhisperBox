@@ -7,6 +7,7 @@ import {
   sendConversationMessage,
   unblockConversationPeer
 } from '../../../api/messages';
+import { avatarInitial } from '../../../utils/format';
 import { requireLoginPage } from '../../../utils/auth_guard';
 import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
@@ -18,8 +19,10 @@ Page({
     peerUserId: '',
     peerAvatar: '',
     peerName: '',
+    peerInitial: '',
     myUserId: '',
     myAvatar: '',
+    myInitial: '',
     messages: [],
     messageItems: [],
     content: '',
@@ -49,6 +52,7 @@ Page({
       peerUserId,
       peerAvatar,
       peerName,
+      peerInitial: avatarInitial(peerName),
       blockedByMe
     });
     this.loadCurrentUser();
@@ -66,7 +70,8 @@ Page({
       if (!user) return;
       this.setData({
         myUserId: user.userId || '',
-        myAvatar: user.avatarUrl || ''
+        myAvatar: user.avatarUrl || '',
+        myInitial: avatarInitial(user.nickname || user.alias || '我')
       });
     } catch (error) {}
   },
@@ -508,7 +513,12 @@ Page({
   async openForwardPicker(message) {
     try {
       const conversations = await getConversations();
-      const forwardTargets = conversations.filter(item => item.id !== this.data.conversationId && !item.blockedByMe && !item.blockedByPeer);
+      const forwardTargets = conversations
+        .filter(item => item.id !== this.data.conversationId && !item.blockedByMe && !item.blockedByPeer)
+        .map(item => ({
+          ...item,
+          avatarInitial: avatarInitial(item.name || '')
+        }));
       if (!forwardTargets.length) {
         wx.showToast({ title: '暂无可转发会话', icon: 'none' });
         return;

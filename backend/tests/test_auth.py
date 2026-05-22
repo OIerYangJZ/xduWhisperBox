@@ -1,6 +1,8 @@
 """认证接口测试。"""
 from __future__ import annotations
 
+import io
+import json
 import re
 import subprocess
 import sys
@@ -13,6 +15,23 @@ import pytest
 # 添加 backend 目录到 Python 路径
 backend_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(backend_dir))
+
+
+class FakeJsonHandler:
+    def __init__(self) -> None:
+        self.headers: dict[str, str] = {}
+        self.wfile = io.BytesIO()
+        self.status_code = 0
+        self.response_headers: list[tuple[str, str]] = []
+
+    def send_response(self, code: int) -> None:
+        self.status_code = code
+
+    def send_header(self, key: str, value: str) -> None:
+        self.response_headers.append((key, value))
+
+    def end_headers(self) -> None:
+        pass
 
 
 class TestAuthHelpers:
@@ -131,6 +150,80 @@ class TestAuthHelpers:
         # 无效值
         assert normalize_avatar_url("") == ""
         assert normalize_avatar_url("invalid") == ""
+
+
+class TestEmailCodeAuth:
+    """测试邮箱验证码登录 / 注册。"""
+
+    def test_verify_auto_registers_missing_user(self, monkeypatch: pytest.MonkeyPatch):
+        """未注册用户验证码验证后自动注册并登录。"""
+        from helpers._datetime_helpers import now_utc
+        from services._db_service import default_db
+        from handlers import _auth_handler
+
+        email = "2500001@stu.xidian.edu.cn"
+        code = "654321"
+        db = default_db()
+        db["emailCodes"][email] = {
+            "code": code,
+            "expiresAt": (now_utc() + _auth_handler.timedelta(minutes=10)).isoformat(),
+        }
+        handler = FakeJsonHandler()
+
+        monkeypatch.setattr(
+            _auth_handler,
+            "read_json_body",
+            lambda _handler: {"email": email, "code": code},
+        )
+        monkeypatch.setattr(_auth_handler, "save_db", lambda _db: None)
+
+        _auth_handler.handle_verify(handler, db)
+
+        payload = json.loads(handler.wfile.getvalue().decode("utf-8"))
+        created_user = next(user for user in db["users"] if user["email"] == email)
+
+        assert handler.status_code == HTTPStatus.OK
+        assert payload["data"]["token"]
+        assert payload["data"]["studentId"] == "2500001"
+        assert created_user["verified"] is True
+        assert created_user["nickname"] == "西电同学0001"
+        assert email not in db["emailCodes"]
+        assert payload["data"]["token"] in db["sessions"]
+
+
+class TestRegisterOptionalNickname:
+    """测试注册时昵称可选。"""
+
+    def test_register_allows_empty_nickname(self, monkeypatch: pytest.MonkeyPatch):
+        """昵称留空时，后端会自动生成默认昵称。"""
+        from handlers import _auth_handler
+        from services._db_service import default_db
+
+        email = "2500002@stu.xidian.edu.cn"
+        db = default_db()
+        handler = FakeJsonHandler()
+
+        monkeypatch.setattr(
+            _auth_handler,
+            "read_json_body",
+            lambda _handler: {
+                "email": email,
+                "password": "123456",
+                "nickname": "",
+            },
+        )
+        monkeypatch.setattr(_auth_handler, "save_db", lambda _db: None)
+
+        _auth_handler.handle_register(handler, db)
+
+        payload = json.loads(handler.wfile.getvalue().decode("utf-8"))
+        created_user = next(user for user in db["users"] if user["email"] == email)
+
+        assert handler.status_code == HTTPStatus.OK
+        assert payload["data"]["email"] == email
+        assert created_user["nickname"] == "西电同学0002"
+        assert created_user["alias"] == "西电同学0002"
+        assert created_user["studentId"] == "2500002"
 
 
 class TestPasswordReset:

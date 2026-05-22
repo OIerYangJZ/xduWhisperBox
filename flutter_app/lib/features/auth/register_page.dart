@@ -96,8 +96,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       TextField(
                         controller: _nicknameController,
                         decoration: const InputDecoration(
-                          labelText: '用户昵称',
-                          hintText: '例如：洞主-雾蓝',
+                          labelText: '用户昵称（可选）',
+                          hintText: '留空将自动生成',
                           prefixIcon: Icon(Icons.badge_outlined),
                         ),
                       ),
@@ -349,10 +349,6 @@ class _RegisterPageState extends State<RegisterPage> {
     }
     if (password != confirmPassword) {
       _showError('两次输入的密码不一致。');
-      return;
-    }
-    if (nickname.isEmpty) {
-      _showError('请输入用户昵称。');
       return;
     }
     if (!_isValidStudentId(studentId)) {

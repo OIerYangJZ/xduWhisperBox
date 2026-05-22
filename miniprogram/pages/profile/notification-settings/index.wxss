@@ -1,4 +1,4 @@
-.privacy-page {
+.notification-settings-page {
   background: var(--app-background);
 }
 

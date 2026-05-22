@@ -1,29 +1,35 @@
-<view class="page display-page {{themeClass}}">
-  <view class="section">
-    <view class="section-title">{{t.theme || '主题'}}</view>
+<view class="page display-page mobile-list-page {{themeClass}}">
+  <view class="mobile-tile-card">
     <view
       wx:for="{{themeOptions}}"
       wx:key="value"
-      class="option-row {{currentThemeOption === item.value ? 'active' : ''}}"
+      class="mobile-tile option-row {{currentThemeOption === item.value ? 'active' : ''}}"
       data-theme="{{item.value}}"
       bindtap="onThemeTap"
     >
-      <text>{{item.label}}</text>
-      <text wx:if="{{currentThemeOption === item.value}}">✓</text>
+      <text class="mobile-tile-icon">◐</text>
+      <view class="mobile-tile-body">
+        <view class="mobile-tile-title">{{item.label}}</view>
+        <view class="mobile-tile-subtitle">外观主题</view>
+      </view>
+      <text wx:if="{{currentThemeOption === item.value}}" class="check-mark">✓</text>
     </view>
   </view>
 
-  <view class="section">
-    <view class="section-title">{{t.language || '语言'}}</view>
+  <view class="mobile-tile-card">
     <view
       wx:for="{{langOptions}}"
       wx:key="value"
-      class="option-row {{currentLanguage === item.value ? 'active' : ''}}"
+      class="mobile-tile option-row {{currentLanguage === item.value ? 'active' : ''}}"
       data-lang="{{item.value}}"
       bindtap="onLangTap"
     >
-      <text>{{item.label}}</text>
-      <text wx:if="{{currentLanguage === item.value}}">✓</text>
+      <text class="mobile-tile-icon">◎</text>
+      <view class="mobile-tile-body">
+        <view class="mobile-tile-title">{{item.label}}</view>
+        <view class="mobile-tile-subtitle">多语言</view>
+      </view>
+      <text wx:if="{{currentLanguage === item.value}}" class="check-mark">✓</text>
     </view>
   </view>
 </view>

@@ -777,8 +777,8 @@ def handle_register(handler: BaseHTTPRequestHandler, db: dict[str, Any]) -> None
     body = read_json_body(handler)
     email = str(body.get("email", "")).strip().lower()
     password = str(body.get("password", "")).strip()
-    nickname = sanitize_alias(str(body.get("nickname", "")), fallback="")
     student_id = student_id_from_email(email)
+    nickname = sanitize_alias(str(body.get("nickname", "")), fallback="") or _default_user_nickname(student_id)
     avatar_url = normalize_avatar_url(str(body.get("avatarUrl", "")))
     avatar_data_base64 = str(body.get("avatarDataBase64", "")).strip()
     avatar_file_name = str(body.get("avatarFileName", "avatar.png")).strip() or "avatar.png"
@@ -789,9 +789,6 @@ def handle_register(handler: BaseHTTPRequestHandler, db: dict[str, Any]) -> None
         return
     if len(password) < 6:
         json_error(handler, HTTPStatus.BAD_REQUEST, "密码长度至少 6 位")
-        return
-    if not nickname:
-        json_error(handler, HTTPStatus.BAD_REQUEST, "昵称不能为空")
         return
     if not is_valid_student_id(student_id):
         json_error(handler, HTTPStatus.BAD_REQUEST, "邮箱前缀不符合学号格式（需为 6-20 位字母或数字）")
@@ -934,9 +931,13 @@ def handle_verify(handler: BaseHTTPRequestHandler, db: dict[str, Any]) -> None:
     email = str(body.get("email", "")).strip().lower()
     code = str(body.get("code", "")).strip()
     password = str(body.get("password", "")).strip()
+    student_id = student_id_from_email(email)
 
     if not is_campus_email(email):
         json_error(handler, HTTPStatus.BAD_REQUEST, _student_email_only_error())
+        return
+    if not is_valid_student_id(student_id):
+        json_error(handler, HTTPStatus.BAD_REQUEST, "邮箱前缀不符合学号格式（需为 6-20 位字母或数字）")
         return
     if len(code) != 6:
         json_error(handler, HTTPStatus.BAD_REQUEST, "验证码格式错误")
@@ -960,8 +961,39 @@ def handle_verify(handler: BaseHTTPRequestHandler, db: dict[str, Any]) -> None:
         json_error(handler, HTTPStatus.FORBIDDEN, "账号已注销，请联系管理员恢复")
         return
     if user is None:
-        json_error(handler, HTTPStatus.NOT_FOUND, "账号不存在，请先注册")
-        return
+        existing_student = find_user_by_student_id(db, student_id, include_deleted=False)
+        if existing_student is not None:
+            json_error(handler, HTTPStatus.CONFLICT, "该学号已绑定其他账号")
+            return
+        created_at = now_iso()
+        nickname = _default_user_nickname(student_id)
+        user = {
+            "id": _next_id(db, "user", "u"),
+            "email": email,
+            "password": hash_password(password) if password else "",
+            "alias": nickname,
+            "nickname": nickname,
+            "studentId": student_id,
+            "avatarUrl": "",
+            "userLevel": _globals.USER_LEVEL_TWO,
+            "verified": False,
+            "verifiedAt": "",
+            "allowStrangerDm": True,
+            "showContactable": True,
+            "notifyComment": True,
+            "notifyReply": True,
+            "notifyLike": True,
+            "notifyFavorite": True,
+            "notifyReportResult": True,
+            "notifySystem": True,
+            "createdAt": created_at,
+            "deleted": False,
+            "isAdmin": False,
+            "banned": False,
+            "muted": False,
+        }
+        db["users"].append(user)
+        add_audit_log(db, user["id"], "register_by_email_code", f"邮箱验证码首次登录 {email}")
 
     if password:
         user["password"] = hash_password(password)
@@ -969,7 +1001,7 @@ def handle_verify(handler: BaseHTTPRequestHandler, db: dict[str, Any]) -> None:
     user["verifiedAt"] = now_iso()
     user["nickname"] = user_nickname(user)
     user["alias"] = user_nickname(user)
-    user["studentId"] = str(user.get("studentId", "")).strip() or student_id_from_email(email)
+    user["studentId"] = str(user.get("studentId", "")).strip() or student_id
     user["avatarUrl"] = normalize_avatar_url(str(user.get("avatarUrl", "")))
 
     db["emailCodes"].pop(email, None)

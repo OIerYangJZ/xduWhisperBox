@@ -7,6 +7,8 @@ Page({
   data: {
     loading: true,
     profile: null,
+    levelUpgradeSubtitle: '',
+    cancellationSubtitle: '',
     submittingCancellation: false,
     submittingLevelUpgrade: false
   },
@@ -21,8 +23,15 @@ Page({
     this.setData({ loading: true });
     try {
       const response = await getUserInfo();
+      const profile = response.data || {};
       this.setData({
-        profile: response.data || {},
+        profile,
+        levelUpgradeSubtitle: profile.levelUpgradeRequest
+          ? `${profile.levelUpgradeRequest.statusLabel || profile.levelUpgradeRequest.status} · ${profile.levelUpgradeRequest.createdAt || ''}`
+          : '当前为二级用户，可申请升级为一级用户',
+        cancellationSubtitle: profile.accountCancellationRequest
+          ? `${profile.accountCancellationRequest.statusLabel || profile.accountCancellationRequest.status} · ${profile.accountCancellationRequest.createdAt || ''}`
+          : '永久注销此账号及所有关联数据',
         loading: false
       });
     } catch (error) {
@@ -31,7 +40,7 @@ Page({
   },
 
   requestCancellation() {
-    if (this.data.submittingCancellation) return;
+    if (this.data.submittingCancellation || (this.data.profile && this.data.profile.accountCancellationRequest)) return;
     wx.showModal({
       title: '账号注销申请',
       editable: true,
@@ -60,7 +69,7 @@ Page({
   },
 
   requestLevelUpgrade() {
-    if (this.data.submittingLevelUpgrade) return;
+    if (this.data.submittingLevelUpgrade || (this.data.profile && (this.data.profile.isLevelOneUser || this.data.profile.levelUpgradeRequest))) return;
     wx.showModal({
       title: '一级用户申请',
       editable: true,

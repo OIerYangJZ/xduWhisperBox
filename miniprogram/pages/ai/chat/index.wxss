@@ -49,6 +49,19 @@
   flex-shrink: 0;
   border-radius: 50%;
   background: var(--app-control);
+  color: var(--app-primary);
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 80rpx;
+  text-align: center;
+}
+
+.avatar-user {
+  background: var(--app-primary-soft);
+}
+
+.avatar-assistant {
+  background: rgba(142, 142, 147, .14);
 }
 
 .message-user .avatar {

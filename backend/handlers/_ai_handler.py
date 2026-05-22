@@ -23,6 +23,8 @@ from services._user_service import is_post_private
 
 DEFAULT_MODEL = "gpt-4o-mini"
 MAX_CONTEXT_ITEMS = 8
+MAX_KNOWLEDGE_ITEMS = 4
+MAX_POST_ITEMS = 4
 
 
 def _require_auth(handler: BaseHTTPRequestHandler, db: dict[str, Any]) -> dict[str, Any] | None:
@@ -92,6 +94,24 @@ def _score_text(query_terms: list[str], text: str) -> int:
     return score
 
 
+def _score_knowledge_item(query_terms: list[str], item: dict[str, str]) -> int:
+    title = item.get("title", "")
+    content = item.get("content", "")
+    score = _score_text(query_terms, title) * 3 + _score_text(query_terms, content)
+    return score
+
+
+def _score_post_item(query_terms: list[str], post: dict[str, Any]) -> int:
+    title = _clean_text(post.get("title", ""), 120)
+    content = _clean_text(post.get("content", ""), 800)
+    tags = " ".join(str(tag) for tag in post.get("tags", []) if tag)
+    channel = str(post.get("channel", ""))
+    score = _score_text(query_terms, title) * 3
+    score += _score_text(query_terms, tags) * 2
+    score += _score_text(query_terms, f"{content} {channel}")
+    return score
+
+
 def _query_terms(question: str) -> list[str]:
     text = question.lower()
     chunks = re.findall(r"[\w\u4e00-\u9fff]{2,}", text)
@@ -147,7 +167,7 @@ def _can_use_post_for_context(post: dict[str, Any], viewer_user_id: str) -> bool
     if post.get("reviewStatus") not in ("approved", "resolved"):
         return False
     if is_post_private(post):
-        return str(post.get("authorId", "")).strip() == viewer_user_id
+        return False
     return True
 
 
@@ -159,9 +179,7 @@ def _build_post_items(db: dict[str, Any], question: str, viewer_user_id: str) ->
             continue
         title = _clean_text(post.get("title", ""), 120)
         content = _clean_text(post.get("content", ""), 800)
-        tags = " ".join(str(tag) for tag in post.get("tags", []) if tag)
-        haystack = " ".join([title, content, str(post.get("channel", "")), tags])
-        score = _score_text(terms, haystack)
+        score = _score_post_item(terms, post)
         if score <= 0 and terms:
             continue
         rows.append((
@@ -177,25 +195,32 @@ def _build_post_items(db: dict[str, Any], question: str, viewer_user_id: str) ->
             },
         ))
     rows.sort(key=lambda item: (item[0], item[1]), reverse=True)
-    return [item[2] for item in rows[:MAX_CONTEXT_ITEMS]]
+    return [item[2] for item in rows[:MAX_POST_ITEMS]]
 
 
 def _build_context_items(db: dict[str, Any], body: dict[str, Any], question: str, viewer_user_id: str) -> list[dict[str, str]]:
     terms = _query_terms(question)
-    rows: list[tuple[int, str, dict[str, str]]] = []
+    knowledge_rows: list[tuple[int, str, dict[str, str]]] = []
+    post_rows: list[tuple[int, str, dict[str, str]]] = []
 
     for item in _split_knowledge_text(_extract_custom_knowledge(body)):
-        score = _score_text(terms, f"{item['title']} {item['content']}")
+        score = _score_knowledge_item(terms, item)
         if score > 0 or not terms:
-            rows.append((score + 4, item["id"], item))
+            knowledge_rows.append((score + 4, item["id"], item))
 
     if body.get("includePosts", True) is not False:
         for item in _build_post_items(db, question, viewer_user_id):
-            score = _score_text(terms, f"{item['title']} {item['content']} {item.get('channel', '')}")
-            rows.append((score, item.get("createdAt", ""), item))
+            score = _score_post_item(terms, item)
+            post_rows.append((score, item.get("createdAt", ""), item))
 
-    rows.sort(key=lambda item: (item[0], item[1]), reverse=True)
-    return [item[2] for item in rows[:MAX_CONTEXT_ITEMS]]
+    knowledge_rows.sort(key=lambda item: (item[0], item[1]), reverse=True)
+    post_rows.sort(key=lambda item: (item[0], item[1]), reverse=True)
+
+    merged: list[tuple[int, str, dict[str, str]]] = []
+    merged.extend(knowledge_rows[:MAX_KNOWLEDGE_ITEMS])
+    merged.extend(post_rows[:MAX_POST_ITEMS])
+    merged.sort(key=lambda item: (item[0], item[1]), reverse=True)
+    return [item[2] for item in merged[:MAX_CONTEXT_ITEMS]]
 
 
 def _context_text(items: list[dict[str, str]]) -> str:

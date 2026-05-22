@@ -739,10 +739,9 @@ class ProfilePageState extends State<ProfilePage> {
     final String avatarUrl = _avatarUrlController.text.trim();
     final String bio = _bioController.text.trim();
     final String backgroundImageUrl = _backgroundUrlController.text.trim();
-    if (nickname.isEmpty) {
-      _toast('昵称不能为空');
-      return;
-    }
+    final String nextNickname = nickname.isEmpty
+        ? (_profile?.nickname ?? '')
+        : nickname;
 
     setState(() {
       _saving = true;
@@ -750,14 +749,14 @@ class ProfilePageState extends State<ProfilePage> {
 
     try {
       await AppRepositories.users.updateProfile(
-        nickname: nickname,
+        nickname: nextNickname,
         avatarUrl: avatarUrl,
         bio: bio,
         backgroundImageUrl: backgroundImageUrl,
         gender: _gender,
       );
       final UserProfile nextProfile = (_profile ?? _fallbackProfile()).copyWith(
-        nickname: nickname,
+        nickname: nextNickname,
         avatarUrl: avatarUrl,
         bio: bio,
         backgroundImageUrl: backgroundImageUrl,

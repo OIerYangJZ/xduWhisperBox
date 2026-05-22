@@ -21,7 +21,7 @@ Page({
   async handleLogin() {
     const { identifier, password } = this.data;
     if (!identifier || !password) {
-      wx.showToast({ title: '请输入账号和密码', icon: 'none' });
+      wx.showToast({ title: '请输入学号和密码', icon: 'none' });
       return;
     }
 
@@ -45,7 +45,7 @@ Page({
           success: (modal) => {
             if (modal.confirm) {
               wx.navigateTo({
-                url: `/pages/profile/register/index?email=${encodeURIComponent(res.data.email || '')}&password=${encodeURIComponent(password)}&debugCode=${encodeURIComponent(res.data.debugCode || '')}`
+                url: `/pages/profile/register/index?email=${encodeURIComponent(res.data.email || '')}&debugCode=${encodeURIComponent(res.data.debugCode || '')}`
               });
             }
           }
@@ -57,7 +57,7 @@ Page({
     }
   },
 
-  handleRegister() {
+  handleEmailCodeLogin() {
     wx.navigateTo({ url: '/pages/profile/register/index' });
   },
 

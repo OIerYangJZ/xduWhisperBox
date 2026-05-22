@@ -53,7 +53,7 @@ class AuthRepository {
   Future<void> register({
     required String email,
     required String password,
-    required String nickname,
+    String nickname = '',
     String? avatarUrl,
     String? avatarFileName,
     String? avatarContentType,
@@ -65,7 +65,7 @@ class AuthRepository {
       body: <String, dynamic>{
         'email': email,
         'password': password,
-        'nickname': nickname,
+        if (nickname.trim().isNotEmpty) 'nickname': nickname.trim(),
         if (avatarUrl != null && avatarUrl.trim().isNotEmpty)
           'avatarUrl': avatarUrl.trim(),
         if (avatarFileName != null && avatarFileName.trim().isNotEmpty)

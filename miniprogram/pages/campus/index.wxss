@@ -35,13 +35,13 @@
 .menu-lines {
   display: flex;
   flex-direction: column;
-  gap: 7rpx;
-  width: 38rpx;
+  gap: 4px;
+  width: 20px;
 }
 
 .menu-lines view {
-  height: 4rpx;
-  border-radius: 2rpx;
+  height: 2px;
+  border-radius: 1px;
   background: var(--app-text-primary);
 }
 
@@ -65,8 +65,8 @@
 
 .search-icon {
   position: relative;
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   border: 2px solid var(--app-text-primary);
   border-radius: 50%;
 }
@@ -74,9 +74,9 @@
 .search-icon::after {
   content: '';
   position: absolute;
-  right: -8px;
-  bottom: -5px;
-  width: 12px;
+  right: -6px;
+  bottom: -4px;
+  width: 10px;
   height: 2px;
   border-radius: 1px;
   background: var(--app-text-primary);
@@ -85,19 +85,19 @@
 
 .bell-icon {
   position: relative;
-  width: 22px;
-  height: 24px;
+  width: 18px;
+  height: 20px;
   border: 2px solid var(--app-text-primary);
   border-bottom: none;
-  border-radius: 12px 12px 5px 5px;
+  border-radius: 10px 10px 4px 4px;
 }
 
 .bell-icon::before {
   content: '';
   position: absolute;
-  left: -5px;
-  right: -5px;
-  bottom: -5px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
   height: 2px;
   border-radius: 1px;
   background: var(--app-text-primary);
@@ -106,18 +106,18 @@
 .bell-icon::after {
   content: '';
   position: absolute;
-  left: 8px;
-  bottom: -11px;
-  width: 6px;
-  height: 6px;
+  left: 6px;
+  bottom: -9px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--app-text-primary);
 }
 
 .badge {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 5px;
+  right: 5px;
 }
 
 .channel-menu-mask {

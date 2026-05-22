@@ -7,7 +7,8 @@
     </view>
     <view wx:else class="chat-header-normal">
       <view class="peer-entry" bindtap="openPeerProfile">
-        <image class="peer-avatar" src="{{peerAvatar || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+        <image wx:if="{{peerAvatar}}" class="peer-avatar" src="{{peerAvatar}}" mode="aspectFill"></image>
+        <view wx:else class="peer-avatar">{{peerInitial}}</view>
         <view class="peer-meta">
           <view class="peer-name">{{peerName || '聊天'}}</view>
         </view>
@@ -33,9 +34,10 @@
           data-index="{{item.message.index}}"
           bindtap="onMessageTap"
           bindlongpress="onMessageLongPress"
-        >
+          >
           <view wx:if="{{!item.message.fromMe}}" class="avatar-wrap" catchtap="openPeerProfile">
-            <image class="avatar" src="{{peerAvatar || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+            <image wx:if="{{peerAvatar}}" class="avatar" src="{{peerAvatar}}" mode="aspectFill"></image>
+            <view wx:else class="avatar">{{peerInitial}}</view>
           </view>
 
           <view class="bubble-column {{item.message.fromMe ? 'mine-column' : ''}}">
@@ -54,7 +56,8 @@
           </view>
 
           <view wx:if="{{item.message.fromMe}}" class="avatar-wrap mine-avatar" catchtap="openMyProfile">
-            <image class="avatar" src="{{myAvatar || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+            <image wx:if="{{myAvatar}}" class="avatar" src="{{myAvatar}}" mode="aspectFill"></image>
+            <view wx:else class="avatar">{{myInitial}}</view>
           </view>
 
           <view wx:if="{{selectMode}}" class="select-circle {{item.message.selected ? 'active' : ''}}" data-message-id="{{item.message.id}}" catchtap="toggleSelect"></view>
@@ -69,7 +72,8 @@
       <view class="picker-title">转发给</view>
       <view wx:if="{{forwardTargets.length}}" class="picker-list">
         <view wx:for="{{forwardTargets}}" wx:key="id" class="picker-item" data-index="{{index}}" bindtap="chooseForwardTarget">
-          <image class="picker-avatar" src="{{item.avatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+          <image wx:if="{{item.avatarUrl}}" class="picker-avatar" src="{{item.avatarUrl}}" mode="aspectFill"></image>
+          <view wx:else class="picker-avatar">{{item.avatarInitial}}</view>
           <view class="picker-body">
             <view class="picker-name">{{item.name}}</view>
             <view class="picker-subtitle">{{item.lastMessage || '开始聊天吧'}}</view>

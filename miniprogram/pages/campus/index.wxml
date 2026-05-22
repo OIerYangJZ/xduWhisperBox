@@ -1,22 +1,63 @@
 <view class="page campus-page {{themeClass}}">
-  <view class="community-tools" wx:if="{{currentTab === 'community'}}">
-    <view class="tool-button" bindtap="goSearch">搜索</view>
-    <scroll-view class="channel-scroll" scroll-x enhanced show-scrollbar="{{false}}">
-      <view class="channel-row">
-        <view wx:for="{{channels}}" wx:key="*this" data-channel="{{item}}" class="channel-chip {{activeChannel === item ? 'active' : ''}}" bindtap="onChannelTap">{{item}}</view>
+  <view class="home-appbar" wx:if="{{currentTab === 'community'}}">
+    <view class="channel-trigger {{showChannelMenu ? 'active' : ''}}" bindtap="toggleChannelMenu" aria-label="切换频道">
+      <view class="menu-lines">
+        <view></view>
+        <view></view>
+        <view></view>
       </view>
-    </scroll-view>
-    <view class="notify-button" bindtap="goNotifications">
-      通知
+    </view>
+
+    <view class="toolbar-spacer"></view>
+
+    <view class="icon-button" bindtap="goSearch" aria-label="搜索">
+      <view class="search-icon"></view>
+    </view>
+    <view class="icon-button notify-icon-button" bindtap="goNotifications" aria-label="通知">
+      <view class="bell-icon"></view>
       <text wx:if="{{unreadCount}}" class="badge">{{unreadCount > 99 ? '99+' : unreadCount}}</text>
     </view>
   </view>
 
-  <view class="sort-row" wx:if="{{currentTab === 'community'}}">
-    <view wx:for="{{sortOptions}}" wx:key="value" data-sort="{{item.value}}" class="sort-chip {{activeSort === item.value ? 'active' : ''}}" bindtap="onSortTap">{{item.label}}</view>
-    <view class="sort-spacer"></view>
-    <view class="secondary-entry" data-tab="news" bindtap="switchTab">公告</view>
-    <view class="secondary-entry" data-tab="college" bindtap="switchTab">学院</view>
+  <view class="channel-menu-mask" wx:if="{{showChannelMenu && currentTab === 'community'}}" bindtap="closeChannelMenu"></view>
+  <view class="channel-menu" wx:if="{{showChannelMenu && currentTab === 'community'}}">
+    <view class="channel-menu-section">
+      <view class="channel-menu-title">频道</view>
+    </view>
+    <view
+      wx:for="{{channels}}"
+      wx:key="*this"
+      data-channel="{{item}}"
+      class="channel-menu-item {{activeChannel === item ? 'active' : ''}}"
+      bindtap="onChannelTap"
+    >
+      <text>{{item}}</text>
+      <text wx:if="{{activeChannel === item}}" class="check-mark">✓</text>
+    </view>
+    <view class="channel-menu-section">
+      <view class="channel-menu-title">排序</view>
+    </view>
+    <view
+      wx:for="{{sortOptions}}"
+      wx:key="value"
+      data-sort="{{item.value}}"
+      class="channel-menu-item {{activeSort === item.value ? 'active' : ''}}"
+      bindtap="onSortTap"
+    >
+      <text>{{item.label}}</text>
+      <text wx:if="{{activeSort === item.value}}" class="check-mark">✓</text>
+    </view>
+    <view class="channel-menu-section">
+      <view class="channel-menu-title">入口</view>
+    </view>
+    <view class="channel-menu-item" data-tab="news" bindtap="switchTab">
+      <text>公告</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="channel-menu-item" data-tab="college" bindtap="switchTab">
+      <text>学院</text>
+      <text class="menu-arrow">></text>
+    </view>
   </view>
 
   <scroll-view class="feed-list" scroll-y wx:if="{{currentTab === 'community'}}" bindscrolltolower="onReachBottom" bindscroll="onScroll">

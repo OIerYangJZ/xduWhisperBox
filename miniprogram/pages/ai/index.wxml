@@ -1,11 +1,8 @@
 <view class="page ai-page {{themeClass}}">
-  <view class="header">
-    <image class="ai-logo" src="/assets/default-avatar.png" mode="aspectFill"></image>
-    <view class="title">XDU AI 助手</view>
-    <view class="subtitle">{{subtitleText}}</view>
-    
+  <view class="ai-action-bar">
     <button class="new-chat-btn" bindtap="startNewChat">
-      <text class="icon">+</text> 发起新对话
+      <text class="icon">+</text>
+      <text>发起新对话</text>
     </button>
     <button class="settings-btn" bindtap="goToSettings">AI 设置</button>
   </view>

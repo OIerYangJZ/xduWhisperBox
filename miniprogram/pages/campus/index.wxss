@@ -2,61 +2,186 @@
   background: var(--app-background);
 }
 
-.community-tools,
-.sort-row,
-.sub-header {
+.home-appbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
   display: flex;
   align-items: center;
-  gap: 14rpx;
-  padding: 16rpx 24rpx;
+  height: 100rpx;
+  padding: 10rpx 8rpx 10rpx 0;
   background: var(--app-surface);
   border-bottom: 1rpx solid var(--app-divider);
 }
 
-.community-tools {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.channel-scroll {
-  flex: 1;
-  white-space: nowrap;
-}
-
-.channel-row {
+.channel-trigger {
   display: flex;
-  gap: 12rpx;
+  align-items: center;
+  justify-content: center;
+  width: 120rpx;
+  height: 80rpx;
+  margin-left: 0;
+  border-radius: 24rpx;
+  background: var(--app-background);
 }
 
-.tool-button,
-.notify-button,
-.secondary-entry {
-  position: relative;
-  height: 56rpx;
-  padding: 0 20rpx;
-  border-radius: 28rpx;
+.channel-trigger.active {
   background: var(--app-primary-soft);
-  color: var(--app-primary);
-  font-size: 25rpx;
-  font-weight: 600;
-  line-height: 56rpx;
-  white-space: nowrap;
 }
 
-.sort-spacer {
+.menu-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 7rpx;
+  width: 38rpx;
+}
+
+.menu-lines view {
+  height: 4rpx;
+  border-radius: 2rpx;
+  background: var(--app-text-primary);
+}
+
+.channel-trigger.active .menu-lines view {
+  background: var(--app-primary);
+}
+
+.toolbar-spacer {
   flex: 1;
+}
+
+.icon-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 40rpx;
+}
+
+.search-icon {
+  position: relative;
+  width: 33rpx;
+  height: 33rpx;
+  border: 4rpx solid var(--app-text-primary);
+  border-radius: 50%;
+}
+
+.search-icon::after {
+  content: '';
+  position: absolute;
+  right: -13rpx;
+  bottom: -9rpx;
+  width: 18rpx;
+  height: 4rpx;
+  border-radius: 2rpx;
+  background: var(--app-text-primary);
+  transform: rotate(45deg);
+}
+
+.bell-icon {
+  position: relative;
+  width: 34rpx;
+  height: 38rpx;
+  border: 4rpx solid var(--app-text-primary);
+  border-bottom: none;
+  border-radius: 19rpx 19rpx 8rpx 8rpx;
+}
+
+.bell-icon::before {
+  content: '';
+  position: absolute;
+  left: -8rpx;
+  right: -8rpx;
+  bottom: -7rpx;
+  height: 4rpx;
+  border-radius: 2rpx;
+  background: var(--app-text-primary);
+}
+
+.bell-icon::after {
+  content: '';
+  position: absolute;
+  left: 12rpx;
+  bottom: -16rpx;
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: var(--app-text-primary);
 }
 
 .badge {
   position: absolute;
-  top: -10rpx;
-  right: -10rpx;
+  top: 7rpx;
+  right: 7rpx;
+}
+
+.channel-menu-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: transparent;
+}
+
+.channel-menu {
+  position: fixed;
+  top: 100rpx;
+  left: 16rpx;
+  z-index: 40;
+  width: 392rpx;
+  max-height: 68vh;
+  overflow-y: auto;
+  border: 1rpx solid var(--app-divider);
+  border-radius: 24rpx;
+  background: var(--app-surface);
+}
+
+.channel-menu-section {
+  min-height: 58rpx;
+  padding: 18rpx 28rpx 0;
+  background: var(--app-surface);
+}
+
+.channel-menu-title {
+  color: var(--app-text-secondary);
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.channel-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 96rpx;
+  padding: 0 28rpx;
+  border-bottom: 1rpx solid var(--app-divider);
+  color: var(--app-text-primary);
+  font-size: 30rpx;
+}
+
+.channel-menu-item:last-child {
+  border-bottom: none;
+}
+
+.channel-menu-item.active {
+  color: var(--app-primary);
+  font-weight: 650;
+}
+
+.check-mark {
+  color: var(--app-primary);
+  font-size: 30rpx;
+}
+
+.menu-arrow {
+  color: var(--app-text-tertiary);
+  font-size: 30rpx;
 }
 
 .feed-list,
 .news-list {
-  height: calc(100vh - 188rpx - env(safe-area-inset-bottom));
+  height: calc(100vh - 100rpx - env(safe-area-inset-bottom));
   background: var(--app-background);
 }
 
@@ -114,9 +239,24 @@
 }
 
 .sub-header {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding-top: 24rpx;
-  padding-bottom: 20rpx;
+  padding: 24rpx 24rpx 20rpx;
+  background: var(--app-surface);
+  border-bottom: 1rpx solid var(--app-divider);
+}
+
+.tool-button {
+  height: 56rpx;
+  padding: 0 20rpx;
+  border-radius: 28rpx;
+  background: var(--app-primary-soft);
+  color: var(--app-primary);
+  font-size: 25rpx;
+  font-weight: 600;
+  line-height: 56rpx;
+  white-space: nowrap;
 }
 
 .sub-title {

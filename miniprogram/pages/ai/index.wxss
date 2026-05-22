@@ -2,47 +2,29 @@
   background: var(--app-background);
 }
 
-.header {
+.ai-action-bar {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 56rpx 40rpx 44rpx;
+  gap: 20rpx;
+  min-height: 112rpx;
+  padding: 12rpx 24rpx;
   background: var(--app-surface);
   border-bottom: 1rpx solid var(--app-divider);
-}
-
-.ai-logo {
-  width: 144rpx;
-  height: 144rpx;
-  margin-bottom: 30rpx;
-  border-radius: 50%;
-  background: var(--app-control);
-}
-
-.title {
-  margin-bottom: 16rpx;
-  color: var(--app-text-primary);
-  font-size: 40rpx;
-  font-weight: 700;
-}
-
-.subtitle {
-  margin-bottom: 44rpx;
-  color: var(--app-text-secondary);
-  font-size: 28rpx;
 }
 
 .new-chat-btn {
   display: flex;
   align-items: center;
-  height: 88rpx;
-  padding: 0 60rpx;
-  border-radius: 44rpx;
+  justify-content: center;
+  flex: 1;
+  height: 80rpx;
+  padding: 0 28rpx;
+  border-radius: 40rpx;
   background: var(--app-primary);
   color: #ffffff;
-  font-size: 32rpx;
+  font-size: 30rpx;
   font-weight: 600;
-  line-height: 88rpx;
+  line-height: 80rpx;
 }
 
 .new-chat-btn .icon {
@@ -52,14 +34,15 @@
 }
 
 .settings-btn {
-  height: 72rpx;
-  margin-top: 20rpx;
-  padding: 0 48rpx;
-  border-radius: 36rpx;
+  flex: 0 0 auto;
+  height: 80rpx;
+  padding: 0 28rpx;
+  border-radius: 40rpx;
   background: var(--app-primary-soft);
   color: var(--app-primary);
   font-size: 28rpx;
-  line-height: 72rpx;
+  font-weight: 600;
+  line-height: 80rpx;
 }
 
 .history-section {

@@ -25,7 +25,8 @@ Page({
     sortOptions: SORT_OPTIONS,
     activeSort: 'latest',
     unreadCount: 0,
-    showPublishButton: true
+    showPublishButton: true,
+    showChannelMenu: false
   },
 
   onLoad() {
@@ -105,7 +106,8 @@ Page({
       currentTab: tab,
       posts: [],
       page: 1,
-      hasMore: true
+      hasMore: true,
+      showChannelMenu: false
     }, () => {
       this.fetchData();
     });
@@ -113,14 +115,30 @@ Page({
 
   onChannelTap(event) {
     const channel = event.currentTarget.dataset.channel;
-    if (!channel || channel === this.data.activeChannel) return;
-    this.setData({ activeChannel: channel, posts: [], page: 1, hasMore: true }, () => this.fetchPosts());
+    if (!channel) return;
+    if (channel === this.data.activeChannel) {
+      this.setData({ showChannelMenu: false });
+      return;
+    }
+    this.setData({ activeChannel: channel, posts: [], page: 1, hasMore: true, showChannelMenu: false }, () => this.fetchPosts());
   },
 
   onSortTap(event) {
     const sort = event.currentTarget.dataset.sort;
-    if (!sort || sort === this.data.activeSort) return;
-    this.setData({ activeSort: sort, posts: [], page: 1, hasMore: true }, () => this.fetchPosts());
+    if (!sort) return;
+    if (sort === this.data.activeSort) {
+      this.setData({ showChannelMenu: false });
+      return;
+    }
+    this.setData({ activeSort: sort, posts: [], page: 1, hasMore: true, showChannelMenu: false }, () => this.fetchPosts());
+  },
+
+  toggleChannelMenu() {
+    this.setData({ showChannelMenu: !this.data.showChannelMenu });
+  },
+
+  closeChannelMenu() {
+    this.setData({ showChannelMenu: false });
   },
 
   async fetchPosts() {

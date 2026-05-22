@@ -7,13 +7,17 @@ Page({
   },
 
   onLoad() {
-    if (!requireLoginPage()) return;
-    this.loadHistory();
+    setTimeout(() => {
+      if (!requireLoginPage()) return;
+      this.loadHistory();
+    }, 0);
   },
 
   onShow() {
-    if (!requireLoginPage()) return;
-    this.loadHistory();
+    setTimeout(() => {
+      if (!requireLoginPage()) return;
+      this.loadHistory();
+    }, 0);
   },
 
   loadHistory() {
@@ -39,6 +43,13 @@ Page({
     const question = e.currentTarget.dataset.question || '';
     wx.navigateTo({
       url: `/pages/ai/chat/index?id=${encodeURIComponent(id)}&q=${encodeURIComponent(question)}`
+    });
+  },
+
+  goToHistory() {
+    if (!requireLoginPage()) return;
+    wx.navigateTo({
+      url: '/pages/ai/history/index'
     });
   }
 });

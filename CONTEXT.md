@@ -133,21 +133,27 @@ Do not place Flutter-specific files such as `pubspec.yaml` at the repository roo
    - ICP filing
    - Backup / rollback
    - Logging and alerting
-5. **Mini Program Migration (Ongoing, audited 2026-05-20):**
-   - **已完成并确认 (含 P0 硬缺口)：**
-     - 原生微信小程序结构已初始化：`miniprogram/`。
+5. **Mini Program Migration (Audited & Cleaned 2026-05-22):**
+   - **已完成并确认：**
+     - 完成小程序端的功能排查与清理审计，生成了详细审计报告 [miniprogram_audit_results.md](file:///Users/yangjinsey/.gemini/antigravity/brain/330c931c-7d93-4df0-bd79-de025d5e3bbd/miniprogram_audit_results.md)。
+     - 彻底删除了小程序端的管理员后台模块及相关 API 文件（`miniprogram/pages/admin/` 与 `miniprogram/api/admin.js`）。
+     - 删除了已整合进主页的冗余资讯与板块页面（`miniprogram/pages/campus/community/` 与 `miniprogram/pages/campus/news/`）并清理了 `app.json` 中的路由。
+     - 接通并验证了孤立页面：学院详情页（`pages/campus/college/index`）与 AI 对话历史页（`pages/ai/history/index`）。
      - 登录/注册/邮箱验证/重置密码已实现。
-     - 管理后台页面组（控制台、审核、举报、图片）已补齐。
-     - 发帖已支持私密、置顶、Markdown、开关配置。
-     - 帖子详情已支持 Markdown、画廊、评论排序、表情、复制、深链定位。
-     - 私信已支持回复、撤回、转发、私信请求处理。
-     - 搜索已支持用户搜索。
-   - **体验对齐与信息架构 (P1 - 正在进行)：**
-     - **设置页重构：** 目前为单页聚合，需拆分为资料编辑（含背景图上传）、隐私、通知、账号安全、显示（深色模式）、关于等独立页或等价架构。
-     - **首页对齐：** 需增加频道选择、排序切换、通知徽标和发布按钮状态联动。
-     - **举报详情：** 我的举报列表缺少处理结果详情页。
-     - **公开主页：** 缺少用户帖子列表。
-   - **Next:** 完成 P1 体验对齐任务（设置拆分、首页组件、举报详情、主页信息流）。
+     - 首页对齐已完成：支持频道选择、排序切换、未读通知徽标、发布状态及按钮联动。
+     - 帖子详情已支持 Markdown 渲染、画廊、评论排序、表情、复制、深链定位。
+     - 搜索已支持帖子搜索和用户搜索。
+     - 举报处理结果详情页（`pages/profile/report-detail/index`）已补齐。
+     - 他人公开主页已支持拉取并展示“TA 的发布”帖子列表。
+     - 设置页已完成拆分重构：拆分为资料编辑、隐私与通知、账号安全、显示设置（多语言及主题）、关于、意见反馈等独立子页面。
+     - 个人中心已支持自定义背景图展示，修复了资料更新/背景更换时接口字段置空的 Bug。
+     - 支持多语言切换（简/繁/英）与深浅色（主题）模式，并适配微信深色模式。
+     - 移除了小程序端发帖的 Markdown 开关（默认为 Plain 文本发帖，Markdown 发帖只允许在 Web 端存在，小程序和 App 仅支持展示他人帖子 Markdown 渲染）。
+     - 私信会话列表及对话功能已完善，支持对话回复、撤回、转发，并针对无历史消息的新聊天对话页新增了“只能发1条消息（对方回复或关注后解锁）”的警示横幅。
+   - **小程序端功能与体验差距清单：**
+     - **微信生态对齐**：缺少微信原生一键登录（`wx.login` / 获取 OpenID）及微信账号绑定机制，用户需使用学号+密码手动登录。
+     - **Markdown 渲染能力受限**：简易 Markdown 解析器仅支持 `#` 标题、引用、粗体和列表，缺少对行内代码、代码块、链接、斜体等排版格式的渲染，排版稍显单薄。
+     - **私信体验差距**：会话列表中不支持像 Flutter 移动端那样的左滑侧滑删除，目前仅支持弹出 Modal 二次确认框删除。
 
 ## Operational Safety
 

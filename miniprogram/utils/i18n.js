@@ -1,0 +1,136 @@
+const translations = {
+  'zh-CN': {
+    theme: '主题',
+    theme_system: '跟随系统',
+    theme_light: '浅色',
+    theme_dark: '深色',
+    language: '语言',
+    lang_cn: '简体中文',
+    lang_tw: '繁體中文',
+    lang_en: 'English',
+    save_success: '保存成功',
+    settings: '设置',
+    profile: '个人主页',
+    edit_profile: '编辑资料',
+    my_posts: '我的发布',
+    my_comments: '我的评论',
+    my_reports: '我的举报',
+    my_favorites: '我的收藏',
+    messages: '私信',
+    friends: '好友',
+    following: '关注',
+    followers: '粉丝',
+    notifications: '通知中心',
+    feedback: '意见反馈',
+    admin_console: '管理员后台',
+    user_agreement: '用户协议',
+    privacy_policy: '隐私政策',
+    community_guidelines: '社区规范/举报说明',
+    acknowledgements: '致谢',
+    login_prompt: '点击登录/注册',
+    login_desc: '登录后体验完整功能',
+    logout: '退出登录',
+    personal_info: '个人资料',
+    privacy_settings: '隐私与通知',
+    security_settings: '账号与安全',
+    display_settings: '显示设置',
+    about: '关于与更新',
+    help_feedback: '帮助与反馈',
+    chat_banner_warning: '只能发1条消息（对方回复或关注后解锁）'
+  },
+  'zh-TW': {
+    theme: '主題',
+    theme_system: '跟隨系統',
+    theme_light: '淺色',
+    theme_dark: '深色',
+    language: '語言',
+    lang_cn: '简体中文',
+    lang_tw: '繁體中文',
+    lang_en: 'English',
+    save_success: '保存成功',
+    settings: '設置',
+    profile: '個人主頁',
+    edit_profile: '編輯資料',
+    my_posts: '我的發布',
+    my_comments: '我的評論',
+    my_reports: '我的舉報',
+    my_favorites: '我的收藏',
+    messages: '私信',
+    friends: '好友',
+    following: '關注',
+    followers: '粉絲',
+    notifications: '通知中心',
+    feedback: '意見反饋',
+    admin_console: '管理員後台',
+    user_agreement: '用戶協議',
+    privacy_policy: '隱私政策',
+    community_guidelines: '社區規範/舉報說明',
+    acknowledgements: '致謝',
+    login_prompt: '點擊登錄/註冊',
+    login_desc: '登錄後體驗完整功能',
+    logout: '退出登錄',
+    personal_info: '個人資料',
+    privacy_settings: '隱私與通知',
+    security_settings: '賬號與安全',
+    display_settings: '顯示設置',
+    about: '關於與更新',
+    help_feedback: '幫助與反饋',
+    chat_banner_warning: '只能發1條消息（對方回復或關注後解鎖）'
+  },
+  'en': {
+    theme: 'Theme',
+    theme_system: 'System',
+    theme_light: 'Light',
+    theme_dark: 'Dark',
+    language: 'Language',
+    lang_cn: 'Simplified Chinese',
+    lang_tw: 'Traditional Chinese',
+    lang_en: 'English',
+    save_success: 'Settings saved',
+    settings: 'Settings',
+    profile: 'Profile',
+    edit_profile: 'Edit Profile',
+    my_posts: 'My Posts',
+    my_comments: 'My Comments',
+    my_reports: 'My Reports',
+    my_favorites: 'My Favorites',
+    messages: 'Messages',
+    friends: 'Friends',
+    following: 'Following',
+    followers: 'Followers',
+    notifications: 'Notifications',
+    feedback: 'Feedback',
+    admin_console: 'Admin Console',
+    user_agreement: 'User Agreement',
+    privacy_policy: 'Privacy Policy',
+    community_guidelines: 'Community Guidelines',
+    acknowledgements: 'Acknowledgements',
+    login_prompt: 'Tap to Login/Register',
+    login_desc: 'Login to experience full features',
+    logout: 'Logout',
+    personal_info: 'Personal Info',
+    privacy_settings: 'Privacy & Notifications',
+    security_settings: 'Account & Security',
+    display_settings: 'Display Settings',
+    about: 'About & Updates',
+    help_feedback: 'Help & Feedback',
+    chat_banner_warning: 'Only 1 message allowed (unlocks on reply or follow)'
+  }
+};
+
+export const getLanguage = () => {
+  return wx.getStorageSync('language') || 'zh-CN';
+};
+
+export const setLanguage = (lang) => {
+  wx.setStorageSync('language', lang);
+};
+
+export const getTranslation = (lang) => {
+  return translations[lang || getLanguage()] || translations['zh-CN'];
+};
+
+export const translate = (key, lang) => {
+  const t = getTranslation(lang);
+  return t[key] || key;
+};

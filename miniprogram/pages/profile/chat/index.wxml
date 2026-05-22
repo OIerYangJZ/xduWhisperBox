@@ -1,4 +1,7 @@
-<view class="chat-page">
+<view class="chat-page {{themeClass}}">
+  <view wx:if="{{!loading && messages.length === 0}}" class="warning-banner">
+    <text>⚠️ {{t.chat_banner_warning || '只能发1条消息（对方回复或关注后解锁）'}}</text>
+  </view>
   <view class="message-list">
     <view wx:if="{{loading}}" class="empty">加载中...</view>
     <view wx:elif="{{!messages.length}}" class="empty">暂无消息</view>

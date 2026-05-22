@@ -33,15 +33,18 @@ Page({
     this._scrollTimeout = null;
     this._lastScrollTime = 0;
     
-    const token = wx.getStorageSync('token');
-    if (!token) {
-      wx.navigateTo({ url: '/pages/profile/auth/index' });
-      return;
-    }
-    
-    this.loadChannels();
-    this.loadUnreadCount();
-    this.fetchData();
+    // 延迟执行，让微信框架先完成 Service Worker 初始化，防止 WAServiceMainContext timeout
+    setTimeout(() => {
+      const token = wx.getStorageSync('token');
+      if (!token) {
+        wx.navigateTo({ url: '/pages/profile/auth/index' });
+        return;
+      }
+      
+      this.loadChannels().catch(() => {});
+      this.loadUnreadCount().catch(() => {});
+      this.fetchData().catch(() => {});
+    }, 0);
   },
 
   onShow() {
@@ -50,10 +53,10 @@ Page({
 
     if (!this._didLoadData) {
       this._didLoadData = true;
-      this.loadChannels();
-      this.fetchData();
+      this.loadChannels().catch(() => {});
+      this.fetchData().catch(() => {});
     }
-    this.loadUnreadCount();
+    this.loadUnreadCount().catch(() => {});
   },
 
   onPullDownRefresh() {
@@ -241,5 +244,14 @@ Page({
     wx.navigateTo({
       url: `/pages/campus/announcement-detail/index?title=${encodeURIComponent(title || '')}&content=${encodeURIComponent(content || '')}&createdAt=${encodeURIComponent(createdAt || '')}`
     });
+  },
+
+  onCollegeItemTap(e) {
+    const name = e.currentTarget.dataset.name;
+    if (name) {
+      wx.navigateTo({
+        url: `/pages/campus/college/index?name=${encodeURIComponent(name)}`
+      });
+    }
   }
 });

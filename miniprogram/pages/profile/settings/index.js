@@ -1,5 +1,6 @@
 import { logout } from '../../../api/auth';
 import { requireLoginPage } from '../../../utils/auth_guard';
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 Page({
   data: {
@@ -8,7 +9,8 @@ Page({
   },
 
   onShow() {
-    requireLoginPage();
+    if (!requireLoginPage()) return;
+    applyThemeAndLanguage(this);
   },
 
   navigateTo(event) {
@@ -20,14 +22,19 @@ Page({
 
   async handleLogout() {
     if (this.data.loggingOut) return;
+    const isEn = this.data.currentLanguage === 'en';
     const { confirm } = await wx.showModal({
-      title: '确认退出',
-      content: '退出后将无法接收通知和消息，确认退出登录吗？',
-      confirmColor: '#FF3B30'
+      title: this.data.t.logout || '确认退出',
+      content: isEn 
+        ? 'Are you sure you want to log out?' 
+        : '退出后将无法接收通知和消息，确认退出登录吗？',
+      confirmColor: '#FF3B30',
+      confirmText: isEn ? 'Logout' : '确认',
+      cancelText: isEn ? 'Cancel' : '取消'
     });
     if (!confirm) return;
     this.setData({ loggingOut: true });
-    wx.showLoading({ title: '退出中' });
+    wx.showLoading({ title: isEn ? 'Logging out...' : '退出中' });
     try {
       await logout();
       wx.removeStorageSync('token');

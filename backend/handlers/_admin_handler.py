@@ -760,7 +760,7 @@ def handle_admin_report_action(
 
     body = read_json_body(handler)
     action = str(body.get("action", "")).strip().lower()
-    review_note = str(body.get("reviewNote", "")).strip()
+    review_note = str(body.get("reviewNote", body.get("result", body.get("note", body.get("reason", ""))))).strip()
 
     report = next((r for r in db["reports"] if r.get("id") == report_id), None)
     if report is None:
@@ -801,6 +801,15 @@ def handle_admin_report_action(
                 target_user["banned"] = True
                 target_user["verified"] = False
                 cancel_user_account(db, target_user, actor_id=admin.get("adminId", "-"), detail=f"因举报封禁 {owner_id}")
+        
+        notif_post_id = ""
+        if target_type == "post":
+            notif_post_id = target_id
+        elif target_type == "comment":
+            comment = next((c for c in db.get("comments", []) if c.get("id") == target_id), None)
+            if comment:
+                notif_post_id = str(comment.get("postId", "")).strip()
+
         create_notification(
             db,
             user_id=owner_id,
@@ -809,6 +818,7 @@ def handle_admin_report_action(
             content=notif_content,
             related_type=target_type,
             related_id=target_id,
+            post_id=notif_post_id,
             actor_id=str(admin.get("adminId", "")),
             actor_alias="管理员",
         )
@@ -830,7 +840,7 @@ def handle_admin_post_pin_request_action(
 
     body = read_json_body(handler)
     action = str(body.get("action", "")).strip().lower()
-    review_note = str(body.get("reviewNote", "")).strip()
+    review_note = str(body.get("reviewNote", body.get("result", body.get("note", body.get("reason", ""))))).strip()
 
     req = next((r for r in db.get("postPinRequests", []) if r.get("id") == request_id), None)
     if req is None:
@@ -867,6 +877,7 @@ def handle_admin_post_pin_request_action(
             content=content,
             related_type="post",
             related_id=post_id,
+            post_id=post_id,
             actor_id=str(admin.get("adminId", "")),
             actor_alias="管理员",
         )
@@ -888,7 +899,7 @@ def handle_admin_user_level_request_action(
 
     body = read_json_body(handler)
     action = str(body.get("action", "")).strip().lower()
-    review_note = str(body.get("reviewNote", "")).strip()
+    review_note = str(body.get("reviewNote", body.get("result", body.get("note", body.get("reason", ""))))).strip()
 
     req = next((r for r in db.get("userLevelRequests", []) if r.get("id") == request_id), None)
     if req is None:
@@ -1016,7 +1027,7 @@ def handle_admin_user_action(
 
     body = read_json_body(handler)
     action = str(body.get("action", "")).strip().lower()
-    review_note = str(body.get("reviewNote", "")).strip()
+    review_note = str(body.get("reviewNote", body.get("result", body.get("note", body.get("reason", ""))))).strip()
 
     target_user = find_user_by_id(db, user_id, include_deleted=True)
     if target_user is None:
@@ -1062,7 +1073,7 @@ def handle_admin_appeal_action(
 
     body = read_json_body(handler)
     action = str(body.get("action", "")).strip().lower()
-    review_note = str(body.get("reviewNote", "")).strip()
+    review_note = str(body.get("reviewNote", body.get("result", body.get("note", body.get("reason", ""))))).strip()
 
     appeal = next((a for a in db.get("appeals", []) if a.get("id") == appeal_id), None)
     if appeal is None:
@@ -1154,7 +1165,7 @@ def handle_admin_image_review(
 
     body = read_json_body(handler)
     action = str(body.get("action", "")).strip().lower()
-    review_note = str(body.get("reviewNote", "")).strip()
+    review_note = str(body.get("reviewNote", body.get("result", body.get("note", body.get("reason", ""))))).strip()
 
     upload = next((u for u in db.get("mediaUploads", []) if u.get("id") == upload_id), None)
     if upload is None:

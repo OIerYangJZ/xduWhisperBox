@@ -1,4 +1,4 @@
-<view class="page edit-profile-page">
+<view class="page edit-profile-page {{themeClass}}">
   <view wx:if="{{loading}}" class="empty">加载中...</view>
   <view wx:else>
     <view class="section">

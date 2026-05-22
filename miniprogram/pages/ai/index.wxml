@@ -10,7 +10,10 @@
   </view>
 
   <view class="history-section">
-    <view class="section-title">历史对话</view>
+    <view class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20rpx;">
+      <view class="section-title" style="margin-bottom: 0;">历史对话</view>
+      <view class="more-link" bindtap="goToHistory" style="font-size: 26rpx; color: #0052D9;" wx:if="{{history.length}}">查看全部</view>
+    </view>
     <view class="history-list">
       <view class="history-item" wx:for="{{history}}" wx:key="id" data-id="{{item.id}}" data-question="{{item.question}}" bindtap="continueChat">
         <view class="item-icon">💬</view>

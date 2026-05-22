@@ -1,6 +1,15 @@
 import { baseUrl, envName } from '../config/env';
 import { clearLoginAndRedirect } from './auth_guard';
 
+// 防止多个并发请求失败时弹出多个 Toast
+let _lastToastTime = 0;
+const showToastOnce = (title, icon = 'none') => {
+  const now = Date.now();
+  if (now - _lastToastTime < 2000) return;
+  _lastToastTime = now;
+  wx.showToast({ title, icon });
+};
+
 const buildUrl = (url) => {
   if (url.startsWith('http')) return url;
   return `${baseUrl.replace(/\/$/, '')}${url}`;
@@ -21,8 +30,7 @@ const networkErrorMessage = () => {
  */
 const request = (options) => {
   return new Promise((resolve, reject) => {
-    const tokenKey = options.tokenKey || 'token';
-    const token = wx.getStorageSync(tokenKey);
+    const token = wx.getStorageSync('token');
     const requestUrl = options.url || '';
     const publicAuthPaths = [
       '/api/auth/login',
@@ -31,16 +39,9 @@ const request = (options) => {
       '/api/auth/send-code',
       '/api/auth/resend-code',
       '/api/auth/password/send-code',
-      '/api/auth/password/reset',
-      '/api/admin/auth/login'
+      '/api/auth/password/reset'
     ];
     const isPublicAuthPath = publicAuthPaths.some((path) => requestUrl === path);
-
-    if (!token && !isPublicAuthPath && tokenKey === 'adminToken') {
-      wx.redirectTo({ url: '/pages/admin/login/index' });
-      reject({ statusCode: 401, data: { message: '请先登录管理员账号' } });
-      return;
-    }
 
     if (!token && !isPublicAuthPath) {
       clearLoginAndRedirect();
@@ -66,7 +67,7 @@ const request = (options) => {
       method: options.method || 'GET',
       data: options.data || {},
       header: header,
-      timeout: 10000,
+      timeout: 5000,
       success: (res) => {
         const { statusCode, data } = res;
         
@@ -84,19 +85,13 @@ const request = (options) => {
         } else {
           // 其他服务器错误
           console.error('[request http error]', url, res);
-          wx.showToast({
-            title: (data && data.message) || networkErrorMessage(),
-            icon: 'none'
-          });
+          showToastOnce((data && data.message) || networkErrorMessage());
           reject(res);
         }
       },
       fail: (err) => {
         console.error('[request failed]', url, err);
-        wx.showToast({
-          title: networkErrorMessage(),
-          icon: 'none'
-        });
+        showToastOnce(networkErrorMessage());
         reject(err);
       }
     });

@@ -7,6 +7,7 @@ import {
   blockConversationPeer
 } from '../../../api/messages';
 import { requireLoginPage } from '../../../utils/auth_guard';
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 Page({
   data: {
@@ -33,6 +34,10 @@ Page({
       blockedByMe: options.blockedByMe === '1'
     });
     if (conversationId) this.loadMessages();
+  },
+
+  onShow() {
+    applyThemeAndLanguage(this);
   },
 
   async loadMessages() {

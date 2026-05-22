@@ -2,6 +2,7 @@ import { getUserInfo } from '../../../api/auth';
 import { uploadAvatarImage, uploadBackgroundImage } from '../../../api/uploads';
 import { updateProfile } from '../../../api/user';
 import { requireLoginPage } from '../../../utils/auth_guard';
+import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
 Page({
   data: {
@@ -20,6 +21,7 @@ Page({
 
   onShow() {
     if (!requireLoginPage()) return;
+    applyThemeAndLanguage(this);
     this.loadProfile();
   },
 
@@ -90,6 +92,14 @@ Page({
         wx.showLoading({ title: '上传中' });
         try {
           const uploadRes = await uploadBackgroundImage(tempPath);
+          // Update profile immediately to persist the background image url and keep other fields
+          await updateProfile({
+            nickname: this.data.form.nickname.trim(),
+            bio: this.data.form.bio.trim(),
+            gender: this.data.form.gender === '未设置' ? '' : (this.data.form.gender || ''),
+            avatarUrl: this.data.profile.avatarUrl || '',
+            backgroundImageUrl: uploadRes.url || ''
+          });
           await this.loadProfile();
           wx.hideLoading();
           wx.showToast({ title: '背景已更新', icon: 'success' });
@@ -120,7 +130,9 @@ Page({
       await updateProfile({
         nickname,
         bio,
-        gender
+        gender,
+        avatarUrl: this.data.profile.avatarUrl || '',
+        backgroundImageUrl: this.data.profile.backgroundImageUrl || ''
       });
       wx.hideLoading();
       wx.showToast({ title: '资料已保存', icon: 'success' });

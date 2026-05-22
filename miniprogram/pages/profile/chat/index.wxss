@@ -98,3 +98,53 @@
   background: #f5f7fb;
   font-size: 28rpx;
 }
+
+.warning-banner {
+  padding: 20rpx 24rpx;
+  background: #fffbe6;
+  border-bottom: 1rpx solid #ffe58f;
+  color: #d46b08;
+  font-size: 26rpx;
+  text-align: center;
+  line-height: 1.4;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-dark .warning-banner {
+  background: #2c2512 !important;
+  border-bottom: 1rpx solid #614d1a !important;
+  color: #d48008 !important;
+}
+
+.theme-dark .message-list {
+  background-color: #1c1c1e !important;
+}
+
+.theme-dark .bubble {
+  background: #2c2c2e !important;
+  color: #f5f5f7 !important;
+}
+
+.theme-dark .mine .bubble {
+  background: #155e75 !important;
+  color: #fff !important;
+}
+
+.theme-dark .chat-actions {
+  background: #2c2c2e !important;
+  border-top: 1rpx solid #3a3a3c !important;
+}
+
+.theme-dark .chat-input {
+  background: #1c1c1e !important;
+  color: #f5f5f7 !important;
+}
+
+.theme-dark .block-button {
+  background: #3a3a3c !important;
+  color: #f5f5f7 !important;
+}
+

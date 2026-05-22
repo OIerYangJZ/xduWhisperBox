@@ -1,6 +1,7 @@
 import { getUserInfo } from '../../api/auth';
 import { getNotifications } from '../../api/notifications';
 import { requireLoginPage } from '../../utils/auth_guard';
+import { applyThemeAndLanguage } from '../../utils/theme_i18n';
 
 Page({
   data: {
@@ -10,7 +11,10 @@ Page({
   },
 
   onShow() {
-    this.checkLoginStatus();
+    setTimeout(() => {
+      applyThemeAndLanguage(this);
+      this.checkLoginStatus();
+    }, 0);
   },
 
   checkLoginStatus() {
@@ -25,16 +29,17 @@ Page({
   },
 
   async fetchUserInfo() {
-    try {
-      const res = await getUserInfo();
-      if (res.data) {
+    // 并发请求，互不阻塞
+    getUserInfo().then(res => {
+      if (res && res.data) {
         this.setData({ userInfo: res.data });
       }
-      const notifications = await getNotifications();
-      this.setData({ unreadCount: notifications.unreadCount });
-    } catch (err) {
+    }).catch(err => {
       console.error('获取用户信息失败', err);
-    }
+    });
+    getNotifications().then(notifications => {
+      this.setData({ unreadCount: (notifications && notifications.unreadCount) || 0 });
+    }).catch(() => {});
   },
 
   goToLogin() {
@@ -87,12 +92,9 @@ Page({
     wx.navigateTo({ url: '/pages/profile/settings/index' });
   },
 
-  goToAdmin() {
-    wx.navigateTo({ url: '/pages/admin/login/index' });
-  },
-
   goToLegal(event) {
     const type = event.currentTarget.dataset.type || 'about';
     wx.navigateTo({ url: `/pages/profile/legal/index?type=${type}` });
   }
 });
+

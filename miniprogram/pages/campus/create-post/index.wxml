@@ -53,13 +53,7 @@
         <view class="picker-value">{{visibilityOptions[visibilityIndex].label}}</view>
       </picker>
     </view>
-    <view class="field-row">
-      <view>
-        <view class="field-label">Markdown</view>
-        <view class="field-desc">正文按 Markdown 渲染</view>
-      </view>
-      <switch checked="{{contentFormat === 'markdown'}}" bindchange="onContentFormatChange" color="#155E75" />
-    </view>
+
     <view class="field-row">
       <view class="field-label">置顶申请</view>
       <picker mode="selector" range="{{pinOptions}}" range-key="label" value="{{pinIndex}}" bindchange="onPinChange">

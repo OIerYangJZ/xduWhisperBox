@@ -10,8 +10,11 @@ Page({
     loading: true
   },
 
-  onLoad() {
+  onLoad(options) {
     if (!requireLoginPage()) return;
+    if (options && options.name) {
+      this.setData({ activeCollege: decodeURIComponent(options.name) });
+    }
     this._didLoadData = true;
     this.loadCollege();
   },

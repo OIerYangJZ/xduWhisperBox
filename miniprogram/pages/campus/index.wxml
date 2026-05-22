@@ -78,7 +78,7 @@
 
   <!-- 学院专区 -->
   <view class="college-grid" wx:if="{{currentTab === 'college'}}">
-    <view class="college-item" wx:for="{{colleges}}" wx:key="id">
+    <view class="college-item" wx:for="{{colleges}}" wx:key="id" bindtap="onCollegeItemTap" data-name="{{item.name}}">
       <view class="college-icon">{{item.icon}}</view>
       <view class="college-name">{{item.name}}</view>
     </view>

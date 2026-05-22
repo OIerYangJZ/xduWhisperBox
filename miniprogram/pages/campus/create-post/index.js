@@ -104,9 +104,6 @@ Page({
     this.setData({ allowDm: event.detail.value });
   },
 
-  onContentFormatChange(event) {
-    this.setData({ contentFormat: event.detail.value ? 'markdown' : 'plain' });
-  },
 
   onAnonymousChange(event) {
     const useAnonymousAlias = event.detail.value;

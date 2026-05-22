@@ -3,10 +3,8 @@
     "pages/campus/index",
     "pages/ai/index",
     "pages/profile/index",
-    "pages/campus/news/index",
     "pages/campus/announcement-detail/index",
     "pages/campus/college/index",
-    "pages/campus/community/index",
     "pages/campus/post-detail/index",
     "pages/campus/create-post/index",
     "pages/campus/search/index",
@@ -33,12 +31,7 @@
     "pages/profile/display-settings/index",
     "pages/profile/about/index",
     "pages/profile/feedback/index",
-    "pages/profile/legal/index",
-    "pages/admin/login/index",
-    "pages/admin/console/index",
-    "pages/admin/reviews/index",
-    "pages/admin/reports/index",
-    "pages/admin/images/index"
+    "pages/profile/legal/index"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -66,5 +59,6 @@
     ]
   },
   "style": "v2",
+  "lazyCodeLoading": "requiredComponents",
   "sitemapLocation": "sitemap.json"
 }

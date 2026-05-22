@@ -1,21 +1,50 @@
-<view class="page">
-  <view class="toolbar">
-    <view class="toolbar-button" bindtap="goRequests">私信请求</view>
+<view class="page conversations-page {{themeClass}}">
+  <view class="page-header">
+    <view>
+      <view class="page-title">消息</view>
+      <view class="page-subtitle">查看私信与申请</view>
+    </view>
+    <view class="header-action" bindtap="goRequests">
+      <text>私信请求</text>
+      <text wx:if="{{requestCount}}" class="header-badge">{{requestCount > 99 ? '99+' : requestCount}}</text>
+    </view>
   </view>
+
   <view wx:if="{{loading}}" class="empty">加载中...</view>
-  <view wx:elif="{{!conversations.length}}" class="empty">暂无私信</view>
-  <view wx:else>
-    <view class="conversation-row" wx:for="{{conversations}}" wx:key="id" data-index="{{index}}" bindtap="openChat">
-      <image class="avatar" src="{{item.avatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
-      <view class="conversation-body">
-        <view class="conversation-head">
-          <text class="name">{{item.name}}</text>
-          <text class="time">{{item.timeText}}</text>
-        </view>
-        <view class="message">{{item.lastMessage}}</view>
+  <view wx:elif="{{!conversations.length}}" class="empty">暂无会话</view>
+  <view wx:else class="conversation-list">
+    <view class="conversation-shell" wx:for="{{conversations}}" wx:key="id">
+      <view class="conversation-actions">
+        <button class="delete-button" data-index="{{index}}" catchtap="removeConversation">删除</button>
       </view>
-      <view class="badge" wx:if="{{item.hasUnread}}">{{item.unreadCount}}</view>
-      <text class="delete" data-index="{{index}}" catchtap="removeConversation">删除</text>
+      <view
+        class="conversation-row"
+        style="transform: translateX({{item.offsetX || 0}}rpx);"
+        data-index="{{index}}"
+        bindtap="openChat"
+        bindtouchstart="onRowTouchStart"
+        bindtouchmove="onRowTouchMove"
+        bindtouchend="onRowTouchEnd"
+      >
+        <image
+          class="avatar"
+          src="{{item.avatarUrl || '/assets/default-avatar.png'}}"
+          mode="aspectFill"
+          data-id="{{item.peerUserId}}"
+          catchtap="openProfile"
+        ></image>
+        <view class="conversation-body">
+          <view class="conversation-head">
+            <view class="name-row">
+              <text class="name {{item.hasUnread ? 'name-unread' : ''}}">{{item.name}}</text>
+              <text wx:if="{{item.blockedByMe || item.blockedByPeer}}" class="blocked-tag">已屏蔽</text>
+            </view>
+            <text class="time">{{item.timeText}}</text>
+          </view>
+          <view class="message">{{item.lastMessage}}</view>
+        </view>
+        <view class="badge" wx:if="{{item.hasUnread}}">{{item.unreadCount > 99 ? '99+' : item.unreadCount}}</view>
+      </view>
     </view>
   </view>
 </view>

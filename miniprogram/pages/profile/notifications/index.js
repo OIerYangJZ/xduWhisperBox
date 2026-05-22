@@ -59,7 +59,7 @@ Page({
       return;
     }
     if (item.relatedType === 'conversation' || item.type === 'message') {
-      wx.navigateTo({ url: '/pages/profile/conversations/index' });
+      wx.switchTab({ url: '/pages/profile/conversations/index' });
       return;
     }
     if (item.relatedType === 'user') {

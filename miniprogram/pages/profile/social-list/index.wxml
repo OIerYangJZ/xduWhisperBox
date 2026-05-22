@@ -8,7 +8,7 @@
         <view class="name">{{item.nickname || item.alias || item.name || '西电同学'}}</view>
         <view class="bio">{{item.bio || item.userLevelLabel || '校园用户'}}</view>
       </view>
-      <button class="message-button" data-id="{{item.id || item.userId}}" bindtap="messageUser">私信</button>
+      <button class="message-button" data-id="{{item.id || item.userId}}" data-avatar="{{item.avatarUrl || ''}}" bindtap="messageUser">私信</button>
     </view>
   </view>
 </view>

@@ -25,6 +25,7 @@
     "pages/profile/public-user/index",
     "pages/profile/notifications/index",
     "pages/profile/settings/index",
+    "pages/profile/ai-settings/index",
     "pages/profile/edit-profile/index",
     "pages/profile/privacy/index",
     "pages/profile/account-security/index",
@@ -46,11 +47,15 @@
     "list": [
       {
         "pagePath": "pages/campus/index",
-        "text": "校园"
+        "text": "首页"
       },
       {
         "pagePath": "pages/ai/index",
         "text": "AI"
+      },
+      {
+        "pagePath": "pages/profile/conversations/index",
+        "text": "消息"
       },
       {
         "pagePath": "pages/profile/index",

@@ -125,3 +125,10 @@ page {
   line-height: 34rpx;
   text-align: center;
 }
+
+.badge-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: #ff3b30;
+}

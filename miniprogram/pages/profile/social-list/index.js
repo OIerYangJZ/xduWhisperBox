@@ -44,11 +44,12 @@ Page({
 
   async messageUser(event) {
     const id = event.currentTarget.dataset.id;
+    const avatarUrl = event.currentTarget.dataset.avatar || '';
     if (!id) return;
     try {
       const conversation = await createDirectConversation({ targetUserId: id });
       wx.navigateTo({
-        url: `/pages/profile/chat/index?id=${conversation.id}&name=${encodeURIComponent(conversation.name || '私信')}`
+        url: `/pages/profile/chat/index?id=${conversation.id}&name=${encodeURIComponent(conversation.name || '私信')}&peerUserId=${encodeURIComponent(id)}&peerAvatar=${encodeURIComponent(avatarUrl || conversation.avatarUrl || '')}`
       });
     } catch (error) {}
   }

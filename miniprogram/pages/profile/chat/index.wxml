@@ -1,24 +1,97 @@
 <view class="chat-page {{themeClass}}">
-  <view wx:if="{{!loading && messages.length === 0}}" class="warning-banner">
-    <text>⚠️ {{t.chat_banner_warning || '只能发1条消息（对方回复或关注后解锁）'}}</text>
-  </view>
-  <view class="message-list">
-    <view wx:if="{{loading}}" class="empty">加载中...</view>
-    <view wx:elif="{{!messages.length}}" class="empty">暂无消息</view>
-    <view wx:else>
-      <view class="message-row {{item.fromMe ? 'mine' : ''}}" wx:for="{{messages}}" wx:key="id" data-index="{{index}}" bindlongpress="onMessageLongPress">
-        <view class="bubble">
-          <view class="reply" wx:if="{{item.replyToContent}}">{{item.replyToSender}}：{{item.replyToContent}}</view>
-          <view>{{item.content}}</view>
-          <view class="time">{{item.timeText || item.createdAt}}</view>
+  <view class="chat-header">
+    <view wx:if="{{selectMode}}" class="chat-header-select">
+      <view class="header-action" bindtap="exitSelectMode">关闭</view>
+      <view class="header-title">已选择 {{selectedMessageIds.length}} 条</view>
+      <view class="header-action danger" bindtap="batchRecall">删除</view>
+    </view>
+    <view wx:else class="chat-header-normal">
+      <view class="peer-entry" bindtap="openPeerProfile">
+        <image class="peer-avatar" src="{{peerAvatar || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+        <view class="peer-meta">
+          <view class="peer-name">{{peerName || '聊天'}}</view>
         </view>
       </view>
+      <view class="header-more" bindtap="showOptionsSheet">···</view>
     </view>
   </view>
-  <view class="chat-actions">
-    <button class="block-button" bindtap="toggleBlock">{{blockedByMe ? '解除屏蔽' : '屏蔽'}}</button>
-    <view wx:if="{{replyToId}}" class="reply-pill" bindtap="clearReply">回复 {{replyToSender}} ×</view>
-    <input class="chat-input" value="{{content}}" bindinput="onInput" confirm-type="send" bindconfirm="sendMessage" placeholder="输入消息" />
-    <button class="send-button" loading="{{sending}}" bindtap="sendMessage">发送</button>
+
+  <view wx:if="{{!loading && messages.length === 0 && !firstMessageWarningDismissed}}" class="warning-banner">
+    <text>你与对方尚未建立会话。在对方回复或关注你之前，你只能发送一条消息，请谨慎措辞。</text>
+    <view class="warning-close" bindtap="dismissFirstMessageWarning">×</view>
+  </view>
+
+  <view class="message-list">
+    <view wx:if="{{loading}}" class="empty">加载中...</view>
+    <view wx:elif="{{!messageItems.length}}" class="empty">暂无消息，开始聊天吧~</view>
+    <view wx:else>
+      <view wx:for="{{messageItems}}" wx:key="id">
+        <view wx:if="{{item.type === 'time'}}" class="time-label">{{item.label}}</view>
+        <view
+          wx:else
+          class="message-row {{item.message.fromMe ? 'mine' : ''}}"
+          data-index="{{item.message.index}}"
+          bindtap="onMessageTap"
+          bindlongpress="onMessageLongPress"
+        >
+          <view wx:if="{{!item.message.fromMe}}" class="avatar-wrap" catchtap="openPeerProfile">
+            <image class="avatar" src="{{peerAvatar || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+          </view>
+
+          <view class="bubble-column {{item.message.fromMe ? 'mine-column' : ''}}">
+            <view class="bubble {{item.message.fromMe ? 'mine' : ''}} {{item.message.selected ? 'selected' : ''}}">
+              <view wx:if="{{item.message.hasReplyContent}}" class="reply-block">
+                <view class="reply-sender">{{item.message.replyToSender || (item.message.fromMe ? '我' : '对方')}}</view>
+                <view class="reply-content">{{item.message.replyToContent}}</view>
+              </view>
+              <view wx:if="{{item.message.isRecalled}}" class="recalled-placeholder">{{item.message.content}}</view>
+              <view wx:else class="bubble-content">{{item.message.content}}</view>
+              <view class="bubble-meta">
+                <text class="bubble-time">{{item.message.displayTime}}</text>
+                <text wx:if="{{item.message.fromMe && item.message.deliveryStatus === 'failed'}}" class="retry-link" data-index="{{item.message.index}}" catchtap="retrySend">点击重试</text>
+              </view>
+            </view>
+          </view>
+
+          <view wx:if="{{item.message.fromMe}}" class="avatar-wrap mine-avatar" catchtap="openMyProfile">
+            <image class="avatar" src="{{myAvatar || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+          </view>
+
+          <view wx:if="{{selectMode}}" class="select-circle {{item.message.selected ? 'active' : ''}}" data-message-id="{{item.message.id}}" catchtap="toggleSelect"></view>
+        </view>
+      </view>
+      <view id="bottom-anchor"></view>
+    </view>
+  </view>
+
+  <view wx:if="{{showForwardPicker}}" class="picker-mask" bindtap="closeForwardPicker">
+    <view class="picker-sheet" catchtap="noop">
+      <view class="picker-title">转发给</view>
+      <view wx:if="{{forwardTargets.length}}" class="picker-list">
+        <view wx:for="{{forwardTargets}}" wx:key="id" class="picker-item" data-index="{{index}}" bindtap="chooseForwardTarget">
+          <image class="picker-avatar" src="{{item.avatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+          <view class="picker-body">
+            <view class="picker-name">{{item.name}}</view>
+            <view class="picker-subtitle">{{item.lastMessage || '开始聊天吧'}}</view>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="empty picker-empty">暂无可转发会话</view>
+      <view class="picker-cancel" bindtap="closeForwardPicker">取消</view>
+    </view>
+  </view>
+
+  <view wx:if="{{!selectMode}}" class="chat-actions">
+    <view wx:if="{{replyToId}}" class="reply-preview" bindtap="clearReply">
+      <view class="reply-preview-head">
+        <text class="reply-preview-title">回复 {{replyToSender}}</text>
+        <text class="reply-preview-close">×</text>
+      </view>
+      <view class="reply-preview-text">{{replyToContent}}</view>
+    </view>
+    <view class="input-row">
+      <input class="chat-input" value="{{content}}" bindinput="onInput" confirm-type="send" bindconfirm="sendMessage" placeholder="输入消息" />
+      <button class="send-button" loading="{{sending}}" bindtap="sendMessage">发送</button>
+    </view>
   </view>
 </view>

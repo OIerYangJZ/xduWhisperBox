@@ -1,4 +1,5 @@
 import { getUserInfo } from '../../api/auth';
+import { fetchDmRequests, getConversations } from '../../api/messages';
 import { getNotifications } from '../../api/notifications';
 import { requireLoginPage } from '../../utils/auth_guard';
 import { applyThemeAndLanguage } from '../../utils/theme_i18n';
@@ -7,7 +8,9 @@ Page({
   data: {
     isLoggedIn: false,
     userInfo: null,
-    unreadCount: 0
+    unreadCount: 0,
+    messageUnreadCount: 0,
+    messageRequestPending: false
   },
 
   onShow() {
@@ -23,7 +26,13 @@ Page({
       this.setData({ isLoggedIn: true });
       this.fetchUserInfo();
     } else {
-      this.setData({ isLoggedIn: false, userInfo: null, unreadCount: 0 });
+      this.setData({
+        isLoggedIn: false,
+        userInfo: null,
+        unreadCount: 0,
+        messageUnreadCount: 0,
+        messageRequestPending: false
+      });
       wx.navigateTo({ url: '/pages/profile/auth/index' });
     }
   },
@@ -40,6 +49,30 @@ Page({
     getNotifications().then(notifications => {
       this.setData({ unreadCount: (notifications && notifications.unreadCount) || 0 });
     }).catch(() => {});
+    this.fetchMessageBadge();
+  },
+
+  async fetchMessageBadge() {
+    try {
+      const [conversations, requests] = await Promise.all([
+        getConversations(),
+        fetchDmRequests()
+      ]);
+      const messageUnreadCount = conversations.reduce(
+        (sum, item) => sum + (Number(item.unreadCount) || 0),
+        0
+      );
+      const messageRequestPending = requests.some(item => item.status === 'pending');
+      this.setData({
+        messageUnreadCount,
+        messageRequestPending
+      });
+    } catch (error) {
+      this.setData({
+        messageUnreadCount: 0,
+        messageRequestPending: false
+      });
+    }
   },
 
   goToLogin() {
@@ -68,7 +101,7 @@ Page({
 
   goToConversations() {
     if (!this.data.isLoggedIn) return this.goToLogin();
-    wx.navigateTo({ url: '/pages/profile/conversations/index' });
+    wx.switchTab({ url: '/pages/profile/conversations/index' });
   },
 
   goToSocialList(event) {

@@ -208,7 +208,7 @@ Page({
         postId: this.data.post.id
       });
       wx.navigateTo({
-        url: `/pages/profile/chat/index?id=${conversation.id}&name=${encodeURIComponent(conversation.name || '私信')}`
+        url: `/pages/profile/chat/index?id=${conversation.id}&name=${encodeURIComponent(conversation.name || '私信')}&peerUserId=${encodeURIComponent(this.data.post.authorUserId)}&peerAvatar=${encodeURIComponent((this.data.post && this.data.post.authorAvatarUrl) || conversation.avatarUrl || '')}`
       });
     } catch (error) {}
   },

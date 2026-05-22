@@ -48,7 +48,7 @@ Page({
     try {
       const conversation = await createDirectConversation({ targetUserId: this.data.userId });
       wx.navigateTo({
-        url: `/pages/profile/chat/index?id=${conversation.id}&name=${encodeURIComponent(conversation.name || '私信')}`
+        url: `/pages/profile/chat/index?id=${conversation.id}&name=${encodeURIComponent(conversation.name || '私信')}&peerUserId=${encodeURIComponent(this.data.userId)}&peerAvatar=${encodeURIComponent((this.data.profile && this.data.profile.avatarUrl) || conversation.avatarUrl || '')}`
       });
     } catch (error) {}
   },

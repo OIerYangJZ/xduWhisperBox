@@ -62,27 +62,40 @@
 
   <scroll-view class="feed-list" scroll-y wx:if="{{currentTab === 'community'}}" bindscrolltolower="onReachBottom" bindscroll="onScroll">
     <view class="feed-card" wx:for="{{posts}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
-      <image class="post-avatar" src="{{item.authorAvatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+      <image wx:if="{{item.authorAvatarUrl}}" class="feed-avatar" src="{{item.authorAvatarUrl}}" mode="aspectFill"></image>
+      <view wx:else class="feed-avatar">{{item.authorInitial}}</view>
       <view class="feed-body">
         <view class="feed-head">
           <view class="feed-author">{{item.authorAlias || item.authorName || '匿名用户'}}</view>
-          <view class="feed-channel">{{item.channel || '综合'}}</view>
-          <view class="feed-time">{{item.createdAt}}</view>
+          <view class="feed-dot" style="background: {{item.channelColor}}"></view>
+          <view class="feed-channel" style="color: {{item.channelColor}}">{{item.displayChannel || item.channel || '综合'}}</view>
+          <view wx:if="{{item.isPinned}}" class="pin-icon"></view>
+          <view class="feed-time">{{item.timeText}}</view>
         </view>
         <view class="feed-title" wx:if="{{item.title}}">{{item.title}}</view>
-        <view class="feed-summary">
-          <text>{{item.content}}</text>
+        <view class="feed-summary" wx:if="{{!(item.images && item.images.length > 0)}}">
+          <text>{{item.summary || item.content}}</text>
         </view>
         <view class="feed-tags" wx:if="{{item.tags && item.tags.length}}">
           <text class="feed-tag" wx:for="{{item.tags}}" wx:key="*this">#{{item}}</text>
         </view>
-        <view class="post-images" wx:if="{{item.images && item.images.length > 0}}">
-          <image wx:for="{{item.images}}" wx:for-item="img" wx:key="*this" src="{{img}}" mode="aspectFill" class="post-image"></image>
-        </view>
+        <swiper class="post-images" wx:if="{{item.images && item.images.length > 0}}" indicator-dots="{{item.images.length > 1}}" indicator-color="rgba(255,255,255,.5)" indicator-active-color="#ffffff">
+          <swiper-item wx:for="{{item.images}}" wx:for-item="img" wx:key="*this">
+            <image src="{{img}}" mode="aspectFill" class="post-image"></image>
+          </swiper-item>
+        </swiper>
         <view class="feed-actions">
-          <text>评论 {{item.commentCount || 0}}</text>
-          <text class="{{item.liked || item.isLiked ? 'active' : ''}}">赞 {{item.likeCount || 0}}</text>
-          <text wx:if="{{item.statusLabel}}">{{item.statusLabel}}</text>
+          <view class="feed-action {{item.liked || item.isLiked ? 'active' : ''}}">
+            <view class="feed-action-icon like-icon"></view>
+            <text>{{item.likeCount || 0}}</text>
+          </view>
+          <view class="feed-action">
+            <view class="feed-action-icon comment-icon"></view>
+            <text>{{item.commentCount || 0}}</text>
+          </view>
+          <view class="feed-action share">
+            <view class="feed-action-icon share-icon"></view>
+          </view>
         </view>
       </view>
     </view>

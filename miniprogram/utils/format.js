@@ -41,14 +41,13 @@ export const formatTime = (value) => {
   const minute = 60 * 1000;
   const hour = 60 * minute;
   const day = 24 * hour;
-  if (diff >= 0 && diff < minute) return '刚刚';
-  if (diff >= 0 && diff < hour) return `${Math.floor(diff / minute)}分钟前`;
-  if (diff >= 0 && diff < day) return `${Math.floor(diff / hour)}小时前`;
-  if (diff >= 0 && diff < 2 * day) return '昨天';
+  if (diff >= 0 && diff < 5 * minute) return 'now';
+  if (diff >= 0 && diff < hour) return `${Math.floor(diff / minute)}min`;
+  if (diff >= 0 && diff < day) return `${Math.floor(diff / hour)}h`;
+  if (diff >= 0 && diff < 7 * day) return `${Math.floor(diff / day)}d`;
 
-  const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  const d = `${date.getDate()}`.padStart(2, '0');
-  return `${month}-${d}`;
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 };
 
 const CHANNEL_COLORS = {
@@ -73,7 +72,7 @@ export const channelColor = (channel) => {
 
 export const avatarInitial = (value) => {
   const text = String(value || '').trim();
-  if (!text) return '匿';
+  if (!text) return '';
   return text.slice(0, 1);
 };
 
@@ -102,6 +101,7 @@ export const normalizePost = (raw = {}) => {
   const displayTitle = title || truncate(content, 24) || '无标题帖子';
   const authorAlias = String(raw.authorAlias || raw.alias || raw.authorName || '匿名同学');
   const channel = String(raw.channel || raw.channelName || '综合');
+  const displayChannel = channel === '其他' ? '综合' : channel;
   return {
     ...raw,
     id: String(raw.id || raw.postId || ''),
@@ -110,6 +110,7 @@ export const normalizePost = (raw = {}) => {
     content,
     summary: truncate(content, 96),
     channel,
+    displayChannel,
     channelColor: channelColor(channel),
     tags,
     tagText: tags.join(' / '),

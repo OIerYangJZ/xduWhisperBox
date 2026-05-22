@@ -51,14 +51,24 @@
         <view class="feed-head">
           <text class="feed-author">{{item.authorAlias}}</text>
           <text class="feed-dot" style="background: {{item.channelColor}}"></text>
-          <text class="feed-channel" style="color: {{item.channelColor}}">{{item.channel}}</text>
+          <text class="feed-channel" style="color: {{item.channelColor}}">{{item.displayChannel || item.channel}}</text>
+          <text wx:if="{{item.isPinned}}" class="pin-icon"></text>
           <text class="feed-time">{{item.timeText}}</text>
         </view>
         <view class="feed-title">{{item.displayTitle}}</view>
         <view class="feed-summary">{{item.summary}}</view>
         <view class="feed-actions">
-          <text>赞 {{item.likeCount}}</text>
-          <text>评论 {{item.commentCount}}</text>
+          <view class="feed-action {{item.liked ? 'active' : ''}}">
+            <view class="feed-action-icon like-icon"></view>
+            <text>{{item.likeCount}}</text>
+          </view>
+          <view class="feed-action">
+            <view class="feed-action-icon comment-icon"></view>
+            <text>{{item.commentCount}}</text>
+          </view>
+          <view class="feed-action share">
+            <view class="feed-action-icon share-icon"></view>
+          </view>
         </view>
       </view>
     </view>

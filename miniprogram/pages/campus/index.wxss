@@ -185,29 +185,18 @@
   background: var(--app-background);
 }
 
-.feed-card {
-  padding: 22rpx 24rpx;
-}
-
-.post-avatar {
-  width: 80rpx;
-  height: 80rpx;
-  flex: 0 0 auto;
-  border-radius: 50%;
-  background: var(--app-control);
-}
-
 .post-images {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10rpx;
+  width: 100%;
+  height: 560rpx;
   margin-top: 16rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  background: var(--app-divider);
 }
 
 .post-image {
-  width: 200rpx;
-  height: 200rpx;
-  border-radius: 16rpx;
+  width: 100%;
+  height: 100%;
   background: var(--app-divider);
 }
 

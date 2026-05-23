@@ -51,6 +51,9 @@ from services import (
     user_avatar_url,
     user_level_label,
     user_nickname,
+    is_user_blocked,
+    iso_to_time_text,
+    reject_pending_dm_requests_between,
 )
 
 
@@ -410,3 +413,108 @@ def handle_get_friends(
         HTTPStatus.OK,
         {"data": list_friend_users(db, user_id=user["id"])},
     )
+
+
+def serialize_blocked_user(db: dict[str, Any], block_record: dict[str, Any]) -> dict[str, Any]:
+    blocked_id = str(block_record.get("blockedUserId", "")).strip()
+    target_user = find_user_by_id(db, blocked_id)
+    nickname = user_nickname(target_user) if target_user else "已注销用户"
+    avatar_url = user_avatar_url(target_user)
+    bio = str(target_user.get("bio", "")).strip() if target_user else ""
+    return {
+        "id": blocked_id,
+        "nickname": nickname,
+        "avatarUrl": avatar_url,
+        "bio": bio,
+        "blockedAt": block_record.get("createdAt", ""),
+        "timeText": iso_to_time_text(block_record.get("createdAt")),
+    }
+
+
+def handle_get_blocks(
+    handler: BaseHTTPRequestHandler,
+    db: dict[str, Any],
+) -> None:
+    """GET /api/users/me/blocks"""
+    user, _ = auth_user_helper(handler, db)
+    if user is None:
+        json_error(handler, HTTPStatus.UNAUTHORIZED, "Unauthorized")
+        return
+
+    records = [
+        r for r in db.get("userBlocks", [])
+        if str(r.get("blockerUserId", "")).strip() == user["id"]
+    ]
+    records.sort(key=lambda x: x.get("createdAt", ""), reverse=True)
+
+    data = [serialize_blocked_user(db, r) for r in records]
+    send_json(handler, HTTPStatus.OK, {"data": data})
+
+
+def handle_block_user_globally(
+    handler: BaseHTTPRequestHandler,
+    db: dict[str, Any],
+) -> None:
+    """POST /api/users/me/blocks"""
+    user, _ = auth_user_helper(handler, db)
+    if user is None:
+        json_error(handler, HTTPStatus.UNAUTHORIZED, "Unauthorized")
+        return
+
+    body = read_json_body(handler)
+    target_user_id = str(body.get("targetUserId") or body.get("userId") or "").strip()
+    if not target_user_id:
+        json_error(handler, HTTPStatus.BAD_REQUEST, "缺少目标用户ID")
+        return
+
+    if target_user_id == user["id"]:
+        json_error(handler, HTTPStatus.BAD_REQUEST, "不能屏蔽自己")
+        return
+
+    target = find_user_by_id(db, target_user_id)
+    if target is None or target.get("deleted"):
+        json_error(handler, HTTPStatus.NOT_FOUND, "目标用户不存在")
+        return
+
+    if not is_user_blocked(db, user["id"], target_user_id):
+        blocked_at = _globals.now_iso()
+        db.setdefault("userBlocks", []).append({
+            "blockerUserId": user["id"],
+            "blockedUserId": target_user_id,
+            "createdAt": blocked_at,
+        })
+        reject_pending_dm_requests_between(
+            db,
+            left_user_id=user["id"],
+            right_user_id=target_user_id,
+            updated_at=blocked_at,
+        )
+        add_audit_log(db, user["id"], "block_user", f"屏蔽用户 {target_user_id}")
+        save_db(db)
+
+    send_json(handler, HTTPStatus.OK, {"data": {"blocked": True}})
+
+
+def handle_unblock_user_globally(
+    handler: BaseHTTPRequestHandler,
+    db: dict[str, Any],
+    target_user_id: str,
+) -> None:
+    """DELETE /api/users/me/blocks/<target_user_id>"""
+    user, _ = auth_user_helper(handler, db)
+    if user is None:
+        json_error(handler, HTTPStatus.UNAUTHORIZED, "Unauthorized")
+        return
+
+    target_user_id = target_user_id.strip()
+    db["userBlocks"][:] = [
+        b for b in db.get("userBlocks", [])
+        if not (
+            str(b.get("blockerUserId", "")).strip() == user["id"]
+            and str(b.get("blockedUserId", "")).strip() == target_user_id
+        )
+    ]
+    add_audit_log(db, user["id"], "unblock_user", f"解除屏蔽用户 {target_user_id}")
+    save_db(db)
+    send_json(handler, HTTPStatus.OK, {"data": {"blocked": False}})
+

@@ -1,0 +1,19 @@
+<view class="page blocklist-page {{themeClass}}">
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+  <view wx:elif="{{!blocks.length}}" class="empty-state">
+    <view class="empty-icon">🚫</view>
+    <view class="empty-text">你的黑名单是空的</view>
+  </view>
+  <view wx:else>
+    <view class="user-row" wx:for="{{blocks}}" wx:key="id">
+      <image wx:if="{{item.avatarUrl}}" class="avatar" src="{{item.avatarUrl}}" mode="aspectFill"></image>
+      <view wx:else class="avatar avatar-initial">{{item.nickname ? item.nickname[0] : '匿'}}</view>
+      <view class="user-body">
+        <view class="name">{{item.nickname}}</view>
+        <view class="bio" wx:if="{{item.bio}}">{{item.bio}}</view>
+        <view class="time">屏蔽于 {{item.timeText || '最近'}}</view>
+      </view>
+      <button class="unblock-button" data-id="{{item.id}}" data-nickname="{{item.nickname}}" bindtap="onUnblockTap">解除</button>
+    </view>
+  </view>
+</view>

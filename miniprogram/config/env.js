@@ -55,7 +55,7 @@ const getRuntimePlatform = () => {
 
 const isDevtoolsRuntime = () => {
   const platform = getRuntimePlatform();
-  return platform === 'devtools' || platform.indexOf('mac') >= 0 || platform.indexOf('windows') >= 0;
+  return platform === 'devtools';
 };
 
 const resolveConfig = () => {

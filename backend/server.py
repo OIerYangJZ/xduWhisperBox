@@ -424,6 +424,9 @@ class TreeholeHandler(BaseHTTPRequestHandler):
             if path == "/api/users/me/friends":
                 _user_handler.handle_get_friends(self, db)
                 return
+            if path == "/api/users/me/blocks":
+                _user_handler.handle_get_blocks(self, db)
+                return
             if path == "/api/users/me":
                 _user_handler.handle_get_me(self, db)
                 return
@@ -612,6 +615,10 @@ class TreeholeHandler(BaseHTTPRequestHandler):
 
             if path == "/api/users/me/level-upgrade-request":
                 _comment_handler.handle_level_upgrade_request(self, db)
+                return
+
+            if path == "/api/users/me/blocks":
+                _user_handler.handle_block_user_globally(self, db)
                 return
 
             match_follow_user = re.fullmatch(r"/api/users/([^/]+)/(follow|unfollow)", path)
@@ -896,6 +903,11 @@ class TreeholeHandler(BaseHTTPRequestHandler):
             match_favorite = re.fullmatch(r"/api/posts/([^/]+)/favorite", path)
             if match_favorite:
                 _post_handler.handle_remove_favorite(self, db, match_favorite.group(1))
+                return
+
+            match_block = re.fullmatch(r"/api/users/me/blocks/([^/]+)", path)
+            if match_block:
+                _user_handler.handle_unblock_user_globally(self, db, match_block.group(1))
                 return
 
             match_del_channel = re.fullmatch(r"/api/admin/channels/(.+)", path)

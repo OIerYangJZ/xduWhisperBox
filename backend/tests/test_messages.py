@@ -202,3 +202,93 @@ class TestMessageQueries:
                 if (c["userId"] in key_parts and c["peerUserId"] in key_parts)
             ]
             # 注意：可能找不到精确匹配，这是正常的
+
+
+class TestUserBlockHandlers:
+    """测试全局黑名单 API 处理函数。"""
+
+    def test_block_and_unblock_user_globally(self, monkeypatch: pytest.MonkeyPatch):
+        from server import default_db
+        from handlers import _user_handler
+        import json
+        import io
+
+        db = default_db()
+        # Add two users
+        user_a = {"id": "user_a", "email": "a@stu.xidian.edu.cn", "nickname": "User A"}
+        user_b = {"id": "user_b", "email": "b@stu.xidian.edu.cn", "nickname": "User B"}
+        db["users"].extend([user_a, user_b])
+
+        # Clear existing blocks
+        db["userBlocks"] = []
+
+        class FakeHandler:
+            def __init__(self, body=None):
+                self.wfile = io.BytesIO()
+                self.status_code = 0
+                self.response_headers = []
+                self.body = body
+                self.headers = {}
+
+            def send_response(self, code):
+                self.status_code = code
+
+            def send_header(self, key, val):
+                self.response_headers.append((key, val))
+
+            def end_headers(self):
+                pass
+
+        # Mock authentication to return user_a
+        monkeypatch.setattr(
+            _user_handler,
+            "auth_user_helper",
+            lambda h, d: (user_a, "session_token_a"),
+        )
+        monkeypatch.setattr(
+            _user_handler,
+            "save_db",
+            lambda d: None,
+        )
+
+        # 1. Test GET /api/users/me/blocks when empty
+        handler1 = FakeHandler()
+        _user_handler.handle_get_blocks(handler1, db)
+        assert handler1.status_code == 200
+        res1 = json.loads(handler1.wfile.getvalue().decode("utf-8"))
+        assert len(res1["data"]) == 0
+
+        # 2. Test POST /api/users/me/blocks (block user_b)
+        handler2 = FakeHandler(body={"targetUserId": "user_b"})
+        monkeypatch.setattr(
+            _user_handler,
+            "read_json_body",
+            lambda h: {"targetUserId": "user_b"},
+        )
+        _user_handler.handle_block_user_globally(handler2, db)
+        assert handler2.status_code == 200
+        res2 = json.loads(handler2.wfile.getvalue().decode("utf-8"))
+        assert res2["data"]["blocked"] is True
+
+        # 3. Test GET /api/users/me/blocks (should have user_b now)
+        handler3 = FakeHandler()
+        _user_handler.handle_get_blocks(handler3, db)
+        assert handler3.status_code == 200
+        res3 = json.loads(handler3.wfile.getvalue().decode("utf-8"))
+        assert len(res3["data"]) == 1
+        assert res3["data"][0]["id"] == "user_b"
+        assert res3["data"][0]["nickname"] == "User B"
+
+        # 4. Test DELETE /api/users/me/blocks/user_b
+        handler4 = FakeHandler()
+        _user_handler.handle_unblock_user_globally(handler4, db, "user_b")
+        assert handler4.status_code == 200
+        res4 = json.loads(handler4.wfile.getvalue().decode("utf-8"))
+        assert res4["data"]["blocked"] is False
+
+        # 5. Test GET /api/users/me/blocks when empty again
+        handler5 = FakeHandler()
+        _user_handler.handle_get_blocks(handler5, db)
+        assert handler5.status_code == 200
+        res5 = json.loads(handler5.wfile.getvalue().decode("utf-8"))
+        assert len(res5["data"]) == 0

@@ -82,5 +82,12 @@ Page({
     } catch (error) {
       await this.loadProfile();
     }
+  },
+
+  navigateTo(event) {
+    const url = event.currentTarget.dataset.url;
+    if (url) {
+      wx.navigateTo({ url });
+    }
   }
 });

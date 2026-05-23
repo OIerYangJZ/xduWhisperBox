@@ -20,6 +20,9 @@ logger = logging.getLogger(__name__)
 
 
 def next_id(db: dict[str, Any], key: str, prefix: str) -> str:
+    db.setdefault("seq", {})
+    if key not in db["seq"]:
+        db["seq"][key] = 0
     db["seq"][key] += 1
     return f"{prefix}{db['seq'][key]}"
 
@@ -1723,6 +1726,15 @@ def ensure_db() -> None:
                 _globals.REPOSITORY.save_state(legacy_db)
         except Exception:
             pass
+    else:
+        # Not first boot, but let's migrate any missing schema items/sequences
+        try:
+            db = _globals.REPOSITORY.load_state()
+            if migrate_db(db):
+                logger.info("[db] Migrating existing database schema and sequences...")
+                _globals.REPOSITORY.save_state(db)
+        except Exception as e:
+            logger.error(f"[db] Migration check failed: {e}", exc_info=True)
 
 
 def save_db(db: dict[str, Any]) -> None:
@@ -1947,4 +1959,8 @@ def migrate_db(db: dict[str, Any]) -> bool:
 
 
 def load_db() -> dict[str, Any]:
-    return _globals.REPOSITORY.load_state()
+    db = _globals.REPOSITORY.load_state()
+    if migrate_db(db):
+        logger.info("[db] Database schema auto-migration performed during load_db.")
+        _globals.REPOSITORY.save_state(db)
+    return db

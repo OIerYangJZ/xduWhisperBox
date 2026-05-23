@@ -14,7 +14,8 @@ This file is the main handoff context for AI coding assistants working in this r
 - 通知中心的评论/回复/点赞/收藏/举报结果/系统公告通知、未读数、已读逻辑已进入代码库
 - AI 助手后端 RAG 接口已完成，并与小程序端联调
 - 管理员后台已强化，包含审核/举报关键字搜索、批量审核、数据导出等能力
-- 微信小程序最近几轮推送已重点对齐主 App 的 UI 与交互，包括首页顶部入口、帖子卡片、发帖页、帖子详情页、设置页和通知设置页
+- **[最新进展]** 全局黑名单（屏蔽用户）功能已完成前后端联调与存储迁移，微信小程序端已上线“黑名单管理”页面并支持乐观更新，后端附带单元测试验证
+- **[最新进展]** 微信小程序端 Markdown 渲染器大幅升级，支持代码块、表格、超链接、粗斜体、列表等多元素解析渲染，并修正了 DevTools 运行时判定与 loading/toast 冲突等 Bug
 
 ## Recent Pushes
 
@@ -27,6 +28,9 @@ This file is the main handoff context for AI coding assistants working in this r
 5. 小程序帖子详情页重做为主 App 同款结构，修正时间显示、关注按钮位置、评论排序入口、回复条和按钮逻辑
 6. 小程序设置相关页面继续复用主 App 的卡片与列表样式
 7. 新增小程序通知设置页
+8. 新增全局黑名单（屏蔽用户）前后端功能，包含 SQLite 迁移、新 API 路由与小程序黑名单管理页面
+9. 重构微信小程序端的 Markdown 解析与渲染逻辑，全面支持复杂的 Markdown 块（如表格、代码块）和行内样式
+10. 修复小程序多端运行时对 `isDevtoolsRuntime` 的判定 Bug 并在 AI 模型切换页面修复 Loading/Toast 冲突问题
 
 ## Repository Layout
 
@@ -111,6 +115,12 @@ Do not place Flutter-specific files such as `pubspec.yaml` at the repository roo
 11. `miniprogram/pages/profile/notification-settings/index.*`
     - Mini program notification settings page
 
+12. `miniprogram/pages/profile/privacy/blocklist/index.*`
+    - Mini program blocklist page (user blacklist)
+
+13. `miniprogram/utils/markdown.js`
+    - Mini program markdown parsing and rendering node generation logic
+
 ## Architecture Conventions
 
 - Frontend code should go through the `Repository` layer; do not build ad hoc HTTP calls directly in pages
@@ -158,4 +168,3 @@ Do not place Flutter-specific files such as `pubspec.yaml` at the repository roo
 ## Workspace Note
 
 - The workspace may still contain unrelated local edits. Preserve them unless the task explicitly asks to change them.
-

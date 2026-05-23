@@ -18,6 +18,14 @@
         </view>
         <switch checked="{{form.showContactable}}" data-key="showContactable" bindchange="onPrivacySwitchChange" color="#155E75" />
       </view>
+      <view class="mobile-tile" bindtap="navigateTo" data-url="/pages/profile/privacy/blocklist/index" style="border-top: 1rpx solid var(--app-divider);">
+        <text class="mobile-tile-icon">🚫</text>
+        <view class="mobile-tile-body">
+          <view class="mobile-tile-title">黑名单管理</view>
+          <view class="mobile-tile-subtitle">查看或解除已被屏蔽的账户</view>
+        </view>
+        <text class="mobile-tile-arrow">›</text>
+      </view>
     </view>
   </view>
 </view>

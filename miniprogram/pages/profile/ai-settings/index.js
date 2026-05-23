@@ -89,11 +89,12 @@ Page({
         modelIndex: Math.max(0, models.findIndex((item) => item === model)),
         'form.model': model
       });
+      wx.hideLoading();
       wx.showToast({ title: models.length ? '已更新模型' : '未找到模型', icon: 'none' });
     } catch (error) {
+      wx.hideLoading();
       wx.showToast({ title: '拉取失败', icon: 'none' });
     } finally {
-      wx.hideLoading();
       this.setData({ loadingModels: false });
     }
   },

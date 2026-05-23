@@ -689,3 +689,59 @@
 .reply-banner-icon {
   position: relative;
 }
+
+/* Upgraded Markdown Styling */
+.md-inline-code {
+  background-color: var(--app-control);
+  padding: 2rpx 8rpx;
+  border-radius: 6rpx;
+  font-family: monospace, Consolas, Courier;
+  font-size: 0.9em;
+  word-break: break-all;
+  color: var(--app-accent);
+}
+
+.md-code {
+  background-color: var(--app-control);
+  border: 1rpx solid var(--app-divider);
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin: 16rpx 0;
+  overflow-x: auto;
+  display: block;
+}
+
+.md-code-inner {
+  font-family: monospace, Consolas, Courier;
+  font-size: 26rpx;
+  line-height: 1.45;
+  color: var(--app-text-primary);
+  white-space: pre;
+}
+
+.md-link {
+  color: var(--app-primary);
+  text-decoration: underline;
+  word-break: break-all;
+}
+
+.md-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16rpx 0;
+  border: 1rpx solid var(--app-divider);
+  font-size: 26rpx;
+}
+
+.md-th {
+  background-color: var(--app-control);
+  font-weight: bold;
+  border: 1rpx solid var(--app-divider);
+  padding: 12rpx 16rpx;
+}
+
+.md-td {
+  border: 1rpx solid var(--app-divider);
+  padding: 12rpx 16rpx;
+  color: var(--app-text-primary);
+}

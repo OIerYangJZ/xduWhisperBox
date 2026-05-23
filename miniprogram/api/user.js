@@ -95,3 +95,21 @@ export const submitFeedback = async (payload) => {
   const response = await request.post('/api/feedback', payload);
   return getData(response, {});
 };
+
+export const getBlocks = async () => {
+  const response = await request.get('/api/users/me/blocks');
+  return toArray(getData(response, [])).map((item) => ({
+    ...item,
+    avatarUrl: resolveUrl(item.avatarUrl || '')
+  }));
+};
+
+export const blockUserGlobally = async (targetUserId) => {
+  const response = await request.post('/api/users/me/blocks', { targetUserId });
+  return getData(response, {});
+};
+
+export const unblockUserGlobally = async (targetUserId) => {
+  const response = await request.delete(`/api/users/me/blocks/${targetUserId}`);
+  return getData(response, {});
+};

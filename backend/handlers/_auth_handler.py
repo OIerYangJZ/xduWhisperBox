@@ -81,6 +81,9 @@ _WEB_ATTEMPT_COOKIE_NAME = "xdu_whisper_xidian_attempt"
 
 
 def _next_id(db: dict[str, Any], key: str, prefix: str) -> str:
+    db.setdefault("seq", {})
+    if key not in db["seq"]:
+        db["seq"][key] = 0
     db["seq"][key] += 1
     return f"{prefix}{db['seq'][key]}"
 

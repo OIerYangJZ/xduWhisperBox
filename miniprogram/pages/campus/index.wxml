@@ -60,8 +60,22 @@
 
   <scroll-view class="feed-list" scroll-y wx:if="{{currentTab === 'community'}}" bindscrolltolower="onReachBottom" bindscroll="onScroll" style="padding-top: {{navTop + navHeight + 8}}px;">
     <view class="feed-card" wx:for="{{posts}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
-      <image wx:if="{{item.authorAvatarUrl}}" class="feed-avatar" src="{{item.authorAvatarUrl}}" mode="aspectFill"></image>
-      <view wx:else class="feed-avatar">{{item.authorInitial}}</view>
+      <image
+        wx:if="{{item.authorAvatarUrl}}"
+        class="feed-avatar"
+        src="{{item.authorAvatarUrl}}"
+        mode="aspectFill"
+        data-user-id="{{item.authorUserId || item.authorId || ''}}"
+        data-anonymous="{{item.isAnonymous ? 1 : 0}}"
+        catchtap="openAuthorProfile"
+      ></image>
+      <view
+        wx:else
+        class="feed-avatar"
+        data-user-id="{{item.authorUserId || item.authorId || ''}}"
+        data-anonymous="{{item.isAnonymous ? 1 : 0}}"
+        catchtap="openAuthorProfile"
+      >{{item.authorInitial}}</view>
       <view class="feed-body">
         <view class="feed-head">
           <view class="feed-author">{{item.authorAlias || item.authorName || '匿名用户'}}</view>

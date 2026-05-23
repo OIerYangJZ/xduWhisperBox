@@ -249,6 +249,13 @@ Page({
     wx.navigateTo({ url: `/pages/campus/post-detail/index?id=${postId}` });
   },
 
+  openAuthorProfile(event) {
+    const userId = event.currentTarget.dataset.userId || '';
+    const isAnonymous = String(event.currentTarget.dataset.anonymous || '0') === '1';
+    if (!userId || isAnonymous) return;
+    wx.navigateTo({ url: `/pages/profile/public-user/index?id=${userId}` });
+  },
+
   goSearch() {
     wx.navigateTo({ url: '/pages/campus/search/index' });
   },

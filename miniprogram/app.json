@@ -20,7 +20,6 @@
     "pages/profile/report-detail/index",
     "pages/profile/conversations/index",
     "pages/profile/chat/index",
-    "pages/profile/message-requests/index",
     "pages/profile/social-list/index",
     "pages/profile/public-user/index",
     "pages/profile/notifications/index",

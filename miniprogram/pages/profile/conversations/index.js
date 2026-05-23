@@ -1,4 +1,4 @@
-import { deleteConversation, fetchDmRequests, getConversations } from '../../../api/messages';
+import { deleteConversation, getConversations } from '../../../api/messages';
 import { requireLoginPage } from '../../../utils/auth_guard';
 import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
 
@@ -7,8 +7,7 @@ const REVEAL_WIDTH_RPX = 128;
 Page({
   data: {
     loading: true,
-    conversations: [],
-    requestCount: 0
+    conversations: []
   },
 
   onShow() {
@@ -25,17 +24,13 @@ Page({
   async loadData() {
     this.setData({ loading: true });
     try {
-      const [conversations, requests] = await Promise.all([
-        getConversations(),
-        fetchDmRequests()
-      ]);
+      const conversations = await getConversations();
       const normalized = conversations.map(item => ({
         ...item,
         offsetX: 0,
         avatarInitial: item.avatarInitial || item.name?.slice(0, 1) || '匿'
       }));
-      const requestCount = requests.filter(item => item.status === 'pending').length;
-      this.setData({ conversations: normalized, requestCount, loading: false });
+      this.setData({ conversations: normalized, loading: false });
     } catch (error) {
       this.setData({ loading: false });
     }
@@ -58,10 +53,6 @@ Page({
     const id = event.currentTarget.dataset.id || '';
     if (!id) return;
     wx.navigateTo({ url: `/pages/profile/public-user/index?id=${id}` });
-  },
-
-  goRequests() {
-    wx.navigateTo({ url: '/pages/profile/message-requests/index' });
   },
 
   removeConversation(event) {

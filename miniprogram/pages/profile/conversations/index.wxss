@@ -25,19 +25,6 @@
   line-height: 1.4;
 }
 
-.header-action {
-  display: flex;
-  align-items: center;
-  gap: 10rpx;
-  height: 56rpx;
-  padding: 0 18rpx;
-  border-radius: 28rpx;
-  background: var(--app-primary-soft);
-  color: var(--app-primary);
-  font-size: 24rpx;
-  font-weight: 600;
-}
-
 .conversation-list {
   background: var(--app-surface);
 }

@@ -17,7 +17,7 @@
     </view>
     <view class="actions">
       <button class="primary" bindtap="toggleFollow">{{profile.isFollowing ? '已关注' : '关注'}}</button>
-      <button class="secondary" bindtap="messageUser">私信</button>
+      <button wx:if="{{profile.canDirectMessage}}" class="secondary" bindtap="messageUser">私信</button>
     </view>
     <view class="post-section">
       <view class="section-title">TA 的发布</view>

@@ -255,7 +255,7 @@ Page({
   },
 
   async messageAuthor() {
-    if (!this.data.post || !this.data.post.authorUserId) return;
+    if (!this.data.post || !this.data.post.authorUserId || this.data.post.isAnonymous || !this.data.post.canMessageAuthor) return;
     try {
       const conversation = await createDirectConversation({
         targetUserId: this.data.post.authorUserId,

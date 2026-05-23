@@ -49,6 +49,7 @@ Page({
   },
 
   async messageUser() {
+    if (!this.data.profile || !this.data.profile.canDirectMessage) return;
     try {
       const conversation = await createDirectConversation({ targetUserId: this.data.userId });
       wx.navigateTo({

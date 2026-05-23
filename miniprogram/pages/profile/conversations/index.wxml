@@ -2,11 +2,7 @@
   <view class="page-header">
     <view>
       <view class="page-title">消息</view>
-      <view class="page-subtitle">查看私信与申请</view>
-    </view>
-    <view class="header-action" bindtap="goRequests">
-      <text>私信请求</text>
-      <text wx:if="{{requestCount}}" class="header-badge">{{requestCount > 99 ? '99+' : requestCount}}</text>
+      <view class="page-subtitle">查看私信会话</view>
     </view>
   </view>
 

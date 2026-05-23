@@ -21,8 +21,8 @@
             <text wx:if="{{post.status === 'resolved'}}" class="resolved-badge">已解决</text>
           </view>
         </view>
-        <view class="header-actions" wx:if="{{(post.canMessageAuthor && post.authorUserId) || (post.canFollowAuthor && post.authorUserId && !(post.followingAuthor || post.isFollowingAuthor || post.isFollowing))}}">
-          <view wx:if="{{post.canMessageAuthor && post.authorUserId}}" class="header-action-button" bindtap="messageAuthor">
+        <view class="header-actions" wx:if="{{(post.canMessageAuthor && post.authorUserId && !post.isAnonymous) || (post.canFollowAuthor && post.authorUserId && !(post.followingAuthor || post.isFollowingAuthor || post.isFollowing))}}">
+          <view wx:if="{{post.canMessageAuthor && post.authorUserId && !post.isAnonymous}}" class="header-action-button" bindtap="messageAuthor">
             <view class="mini-chat-icon"></view>
             <text>私信</text>
           </view>

@@ -15,31 +15,6 @@ export const getConversations = async () => {
   });
 };
 
-export const fetchDmRequests = async () => {
-  const response = await request.get('/api/messages/requests');
-  return toArray(getData(response, [])).map((item) => {
-    const name = String(item.fromUserName || item.fromAlias || '同学');
-    return {
-      ...item,
-      id: String(item.id || ''),
-      fromUserName: name,
-      fromAlias: String(item.fromAlias || name),
-      avatarInitial: avatarInitial(name)
-    };
-  });
-};
-
-export const handleDmRequest = async (requestId, accept) => {
-  const action = accept ? 'accept' : 'reject';
-  const response = await request.post(`/api/messages/requests/${requestId}/${action}`, {});
-  return getData(response, {});
-};
-
-export const createDmRequest = async (payload) => {
-  const response = await request.post('/api/messages/requests', payload);
-  return getData(response, {});
-};
-
 export const getConversationMessages = async (conversationId) => {
   const response = await request.get(`/api/messages/conversations/${conversationId}/messages`);
   return toArray(getData(response, []));

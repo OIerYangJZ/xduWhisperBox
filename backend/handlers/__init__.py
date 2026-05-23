@@ -161,8 +161,8 @@ __all__ = [
     "handle_admin_appeal_action",
     "handle_admin_post_pin_request_action",
     "handle_admin_post_pin_requests",
-    handle_admin_cancellation_action,
-    handle_admin_export,
+    "handle_admin_cancellation_action",
+    "handle_admin_export",
     # ai
     "handle_ai_chat",
     # auth

@@ -6,7 +6,7 @@
       <view class="avatar-panel">
         <view class="avatar-preview" bindtap="chooseAvatar">
           <image wx:if="{{avatarPreview}}" src="{{avatarPreview}}" mode="aspectFill"></image>
-          <text wx:else>{{avatarFallback()}}</text>
+          <text wx:else>{{avatarInitial}}</text>
         </view>
         <view class="panel-actions">
           <button class="avatar-button" loading="{{uploadingAvatar}}" bindtap="chooseAvatar">更换头像</button>

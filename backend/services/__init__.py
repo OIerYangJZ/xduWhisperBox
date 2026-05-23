@@ -150,7 +150,6 @@ __all__ = [
     "serialize_comment",
     "serialize_post",
     "set_android_release",
-    "sync_cancellation_requests_after_admin_cancel",
     "target_owner",
     # user service
     "account_cancellation_status_label",

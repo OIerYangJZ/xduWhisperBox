@@ -20,7 +20,8 @@ Page({
       email: ''
     },
     avatarPreview: '',
-    backgroundPreview: ''
+    backgroundPreview: '',
+    avatarInitial: '匿'
   },
 
   onShow() {
@@ -34,10 +35,11 @@ Page({
     try {
       const response = await getUserInfo();
       const profile = response.data || {};
+      const nickname = profile.nickname || profile.alias || '';
       this.setData({
         profile,
         form: {
-          nickname: profile.nickname || profile.alias || '',
+          nickname,
           bio: profile.bio || '',
           gender: profile.gender || '',
           studentId: profile.studentId || '',
@@ -45,6 +47,7 @@ Page({
         },
         avatarPreview: profile.avatarUrl || '',
         backgroundPreview: profile.backgroundImageUrl || '',
+        avatarInitial: avatarInitial(nickname || '匿'),
         loading: false
       });
     } catch (error) {
@@ -56,6 +59,11 @@ Page({
     const key = event.currentTarget.dataset.key;
     if (!key) return;
     this.setData({ [`form.${key}`]: event.detail.value });
+    if (key === 'nickname') {
+      this.setData({
+        avatarInitial: avatarInitial(event.detail.value.trim() || '匿')
+      });
+    }
   },
 
   onGenderChange(event) {
@@ -143,8 +151,4 @@ Page({
     }
   },
 
-  avatarFallback() {
-    const nickname = this.data.form.nickname.trim() || this.data.profile?.nickname || '匿';
-    return avatarInitial(nickname);
-  }
 });

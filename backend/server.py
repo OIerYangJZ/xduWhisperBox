@@ -233,7 +233,7 @@ class TreeholeHandler(BaseHTTPRequestHandler):
 
             json_error(self, HTTPStatus.METHOD_NOT_ALLOWED, "Method not allowed")
         except Exception as error:  # pragma: no cover
-            _logger.exception("Unhandled error in _handle_web_delete")
+            _logger.exception("Unhandled error in _handle")
             json_error(self, HTTPStatus.INTERNAL_SERVER_ERROR, "Internal server error")
 
     def _authorize_miniprogram_request(self, path: str) -> bool:

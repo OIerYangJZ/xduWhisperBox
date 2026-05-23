@@ -1329,6 +1329,7 @@ def serialize_comment(db: dict[str, Any], comment: dict[str, Any], viewer_user_i
             if x.get("userId") == viewer_user_id and x.get("commentId") == comment.get("id")
         )
     )
+    is_anonymous = bool(comment.get("isAnonymous", False))
     return {
         "id": comment.get("id", ""),
         "postId": comment.get("postId", ""),
@@ -1336,10 +1337,11 @@ def serialize_comment(db: dict[str, Any], comment: dict[str, Any], viewer_user_i
         "authorAlias": comment.get("authorAlias", "匿名同学"),
         "authorId": author_id,
         "authorAvatarUrl": user_avatar_url(author_user) if author_user else "",
+        "authorUserId": "" if is_anonymous else author_id,
         "likeCount": max(0, int(comment.get("likeCount", 0) or 0)),
         "liked": liked,
         "createdAt": comment.get("createdAt", ""),
-        "isAnonymous": bool(comment.get("isAnonymous", True)),
+        "isAnonymous": is_anonymous,
         "reviewStatus": str(comment.get("reviewStatus", "approved")),
     }
 

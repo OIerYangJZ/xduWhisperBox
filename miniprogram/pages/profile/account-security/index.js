@@ -3,7 +3,6 @@ import { submitCancellationRequest, submitLevelUpgradeRequest } from '../../../a
 import { logout } from '../../../api/auth';
 import { requireLoginPage } from '../../../utils/auth_guard';
 import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
-import { avatarInitial } from '../../../utils/format';
 
 Page({
   data: {
@@ -110,10 +109,7 @@ Page({
     });
   },
 
-  avatarFallback() {
-    const nickname = this.data.profile?.nickname || this.data.profile?.alias || '匿';
-    return avatarInitial(nickname);
-  },
+
 
   async handleLogout() {
     try {

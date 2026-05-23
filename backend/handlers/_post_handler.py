@@ -131,7 +131,7 @@ def _markdown_to_plain_text(source: str) -> str:
 def _serialize_comment(db: dict[str, Any], comment: dict[str, Any], viewer_user_id: str) -> dict[str, Any]:
     author_id = str(comment.get("userId", "")).strip()
     author_user = find_user_by_id(db, author_id)
-    is_anonymous = bool(comment.get("isAnonymous", True))
+    is_anonymous = bool(comment.get("isAnonymous", False))
     liked = bool(
         viewer_user_id
         and any(
@@ -815,7 +815,7 @@ def handle_create_comment(
         "deleted": False,
         "reviewStatus": "approved",
         "riskMarked": risk_marked,
-        "isAnonymous": True,
+        "isAnonymous": False,
         "parentId": str(body.get("parentId", body.get("replyToId", ""))).strip(),
     }
     db["comments"].append(comment)

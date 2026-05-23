@@ -16,6 +16,9 @@ This file is the main handoff context for AI coding assistants working in this r
 - 管理员后台已强化，包含审核/举报关键字搜索、批量审核、数据导出等能力
 - **[最新进展]** 全局黑名单（屏蔽用户）功能已完成前后端联调与存储迁移，微信小程序端已上线“黑名单管理”页面并支持乐观更新，后端附带单元测试验证
 - **[最新进展]** 微信小程序端 Markdown 渲染器大幅升级，支持代码块、表格、超链接、粗斜体、列表等多元素解析渲染，并修正了 DevTools 运行时判定与 loading/toast 冲突等 Bug
+- **[最新进展]** 微信小程序端个人中心、公开主页、编辑资料、账号安全、隐私、通知、会话等页面已继续向移动端主 App 对齐
+- **[最新进展]** 微信小程序端私信申请流程已移除，改为与主 App 一致的直接会话逻辑：隐私设置允许私信且帖子非匿名时可直接发起私信
+- **[最新进展]** 微信小程序端头像展示已去除默认头像图兜底，统一使用昵称首字/“匿”文字头像；匿名帖在卡片与详情页展示“匿名”标签
 
 ## Recent Pushes
 
@@ -31,6 +34,10 @@ This file is the main handoff context for AI coding assistants working in this r
 8. 新增全局黑名单（屏蔽用户）前后端功能，包含 SQLite 迁移、新 API 路由与小程序黑名单管理页面
 9. 重构微信小程序端的 Markdown 解析与渲染逻辑，全面支持复杂的 Markdown 块（如表格、代码块）和行内样式
 10. 修复小程序多端运行时对 `isDevtoolsRuntime` 的判定 Bug 并在 AI 模型切换页面修复 Loading/Toast 冲突问题
+11. 小程序个人主页、公开主页、编辑资料、账号安全、隐私、通知、会话、搜索、关系列表等页面继续对齐移动端主 App
+12. 删除小程序私信申请页与申请 API 封装，消息页只展示会话；公开主页和帖子详情通过直连会话发起私信
+13. 小程序校园页帖子作者头像支持进入对应公开主页，匿名帖不跳转主页
+14. 小程序帖子卡片、搜索结果、学院讨论、我的发布/收藏和帖子详情均增加“匿名”标签，匿名帖头像统一显示“匿”
 
 ## Repository Layout
 
@@ -121,6 +128,12 @@ Do not place Flutter-specific files such as `pubspec.yaml` at the repository roo
 13. `miniprogram/utils/markdown.js`
     - Mini program markdown parsing and rendering node generation logic
 
+14. `miniprogram/utils/format.js`
+    - Mini program post/comment normalization, including anonymous-post display name, avatar initials, and URL resolution
+
+15. `miniprogram/api/messages.js`
+    - Mini program direct-message API wrapper; request/approval flow has been removed from the mini program
+
 ## Architecture Conventions
 
 - Frontend code should go through the `Repository` layer; do not build ad hoc HTTP calls directly in pages
@@ -141,6 +154,8 @@ Do not place Flutter-specific files such as `pubspec.yaml` at the repository roo
 
 - Posts should appear immediately after publishing; do not add a frontend flow where posts wait for review before becoming visible
 - Anonymous posting is allowed, but the admin console must still expose the real account to admins
+- Anonymous posts in the mini program should be immediately recognizable: avatar shows “匿”, author name is paired with a small “匿名” badge, and avatar taps must not open a user profile
+- Mini program direct messages should follow the mobile App rule: no request/approval flow; users can directly create/open a conversation only when privacy settings permit and the source post is not anonymous
 - Normal user login and admin login are separate entry points with separate tokens
 - Do not edit generated `build/web/*` output by hand
 - Do not treat runtime data as source code:

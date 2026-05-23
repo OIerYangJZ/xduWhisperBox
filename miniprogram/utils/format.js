@@ -99,7 +99,10 @@ export const normalizePost = (raw = {}) => {
   const sourceImageUrls = rawImageUrls.length ? rawImageUrls : toArray(raw.images);
   const imageUrls = sourceImageUrls.map(resolveUrl).filter(Boolean);
   const displayTitle = title || truncate(content, 24) || '无标题帖子';
-  const authorAlias = String(raw.authorAlias || raw.alias || raw.authorName || '匿名同学');
+  const isAnonymous = Boolean(raw.isAnonymous || raw.useAnonymousAlias);
+  const authorAlias = isAnonymous
+    ? String(raw.authorAlias || raw.alias || raw.authorName || '匿名用户')
+    : String(raw.authorAlias || raw.alias || raw.authorName || '匿名同学');
   const channel = String(raw.channel || raw.channelName || '综合');
   const displayChannel = channel === '其他' ? '综合' : channel;
   return {
@@ -115,8 +118,9 @@ export const normalizePost = (raw = {}) => {
     tags,
     tagText: tags.join(' / '),
     authorAlias,
-    authorInitial: avatarInitial(authorAlias),
-    authorAvatarUrl: resolveUrl(raw.authorAvatarUrl || ''),
+    authorInitial: isAnonymous ? '匿' : avatarInitial(authorAlias),
+    authorAvatarUrl: isAnonymous ? '' : resolveUrl(raw.authorAvatarUrl || ''),
+    isAnonymous,
     createdAt: raw.createdAt || '',
     timeText: formatTime(raw.createdAt),
     likeCount: Number(raw.likeCount || 0),

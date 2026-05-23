@@ -79,6 +79,7 @@
       <view class="feed-body">
         <view class="feed-head">
           <view class="feed-author">{{item.authorAlias || item.authorName || '匿名用户'}}</view>
+          <view wx:if="{{item.isAnonymous}}" class="anonymous-badge">匿名</view>
           <view class="feed-dot" style="background: {{item.channelColor}}"></view>
           <view class="feed-channel" style="color: {{item.channelColor}}">{{item.displayChannel || item.channel || '综合'}}</view>
           <view wx:if="{{item.isPinned}}" class="pin-icon"></view>

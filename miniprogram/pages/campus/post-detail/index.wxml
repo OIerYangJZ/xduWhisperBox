@@ -15,7 +15,10 @@
         <image wx:if="{{!post.isAnonymous && post.authorAvatarUrl}}" class="post-avatar" src="{{post.authorAvatarUrl}}" mode="aspectFill" bindtap="openAuthorProfile"></image>
         <view wx:else class="post-avatar post-avatar-text" bindtap="openAuthorProfile">{{post.isAnonymous ? '匿' : post.authorInitial}}</view>
         <view class="post-meta" bindtap="openAuthorProfile">
-          <view class="post-author">{{post.authorAlias || post.authorName || '匿名用户'}}</view>
+          <view class="post-author-row">
+            <view class="post-author">{{post.authorAlias || post.authorName || '匿名用户'}}</view>
+            <view wx:if="{{post.isAnonymous}}" class="anonymous-badge">匿名</view>
+          </view>
           <view class="post-subline">
             <text class="post-time">{{post.timeText || post.createdAt}}</text>
             <text wx:if="{{post.status === 'resolved'}}" class="resolved-badge">已解决</text>

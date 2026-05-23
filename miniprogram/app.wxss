@@ -243,6 +243,18 @@ button::after {
   white-space: nowrap;
 }
 
+.anonymous-badge {
+  flex: 0 0 auto;
+  height: 28rpx;
+  padding: 0 8rpx;
+  border-radius: 6rpx;
+  background: rgba(21, 94, 117, .1);
+  color: var(--app-primary);
+  font-size: 20rpx;
+  font-weight: 700;
+  line-height: 28rpx;
+}
+
 .feed-channel {
   color: var(--app-primary);
   font-size: 23rpx;

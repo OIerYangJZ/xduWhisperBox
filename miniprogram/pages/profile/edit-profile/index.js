@@ -3,26 +3,29 @@ import { uploadAvatarImage, uploadBackgroundImage } from '../../../api/uploads';
 import { updateProfile } from '../../../api/user';
 import { requireLoginPage } from '../../../utils/auth_guard';
 import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
+import { avatarInitial } from '../../../utils/format';
 
 Page({
   data: {
     loading: true,
+    saving: false,
+    uploadingAvatar: false,
+    uploadingBackground: false,
     profile: null,
     form: {
       nickname: '',
-      studentId: '',
       bio: '',
-      gender: ''
+      gender: '',
+      studentId: '',
+      email: ''
     },
-    savingProfile: false,
-    uploadingAvatar: false,
-    uploadingBackground: false
+    avatarPreview: '',
+    backgroundPreview: ''
   },
 
   onShow() {
     applyThemeAndLanguage(this);
     if (!requireLoginPage()) return;
-    applyThemeAndLanguage(this);
     this.loadProfile();
   },
 
@@ -35,10 +38,13 @@ Page({
         profile,
         form: {
           nickname: profile.nickname || profile.alias || '',
-          studentId: profile.studentId || '',
           bio: profile.bio || '',
-          gender: profile.gender || ''
+          gender: profile.gender || '',
+          studentId: profile.studentId || '',
+          email: profile.email || ''
         },
+        avatarPreview: profile.avatarUrl || '',
+        backgroundPreview: profile.backgroundImageUrl || '',
         loading: false
       });
     } catch (error) {
@@ -46,7 +52,7 @@ Page({
     }
   },
 
-  onProfileInput(event) {
+  onFieldInput(event) {
     const key = event.currentTarget.dataset.key;
     if (!key) return;
     this.setData({ [`form.${key}`]: event.detail.value });
@@ -59,6 +65,7 @@ Page({
   },
 
   chooseAvatar() {
+    if (this.data.uploadingAvatar) return;
     wx.chooseImage({
       count: 1,
       sizeType: ['compressed'],
@@ -70,18 +77,17 @@ Page({
         wx.showLoading({ title: '上传中' });
         try {
           const uploadRes = await uploadAvatarImage(tempPath);
-          await this.loadProfile();
+          this.setData({ avatarPreview: uploadRes.avatarUrl || '' });
+        } finally {
           wx.hideLoading();
-          wx.showToast({ title: '头像已更新', icon: 'success' });
-        } catch (error) {
-          wx.hideLoading();
+          this.setData({ uploadingAvatar: false });
         }
-        this.setData({ uploadingAvatar: false });
       }
     });
   },
 
   chooseBackground() {
+    if (this.data.uploadingBackground) return;
     wx.chooseImage({
       count: 1,
       sizeType: ['compressed'],
@@ -93,55 +99,52 @@ Page({
         wx.showLoading({ title: '上传中' });
         try {
           const uploadRes = await uploadBackgroundImage(tempPath);
-          // Update profile immediately to persist the background image url and keep other fields
-          await updateProfile({
-            nickname: this.data.form.nickname.trim(),
-            bio: this.data.form.bio.trim(),
-            gender: this.data.form.gender === '未设置' ? '' : (this.data.form.gender || ''),
-            avatarUrl: this.data.profile.avatarUrl || '',
-            backgroundImageUrl: uploadRes.url || ''
-          });
-          await this.loadProfile();
+          this.setData({ backgroundPreview: uploadRes.url || '' });
+        } finally {
           wx.hideLoading();
-          wx.showToast({ title: '背景已更新', icon: 'success' });
-        } catch (error) {
-          wx.hideLoading();
+          this.setData({ uploadingBackground: false });
         }
-        this.setData({ uploadingBackground: false });
       }
     });
   },
 
+  clearBackground() {
+    this.setData({ backgroundPreview: '' });
+  },
+
   async saveProfile() {
-    if (this.data.savingProfile) return;
-    
+    if (this.data.saving) return;
     const nickname = this.data.form.nickname.trim();
     const bio = this.data.form.bio.trim();
-    let gender = this.data.form.gender || '';
-    if (gender === '未设置') gender = '';
-
     if (bio.length > 100) {
       wx.showToast({ title: '个性签名不能超过100个字符', icon: 'none' });
       return;
     }
-
-    this.setData({ savingProfile: true });
+    this.setData({ saving: true });
     wx.showLoading({ title: '保存中' });
     try {
       await updateProfile({
         nickname,
         bio,
-        gender,
-        avatarUrl: this.data.profile.avatarUrl || '',
-        backgroundImageUrl: this.data.profile.backgroundImageUrl || ''
+        gender: this.data.form.gender,
+        avatarUrl: this.data.avatarPreview || '',
+        backgroundImageUrl: this.data.backgroundPreview || ''
       });
       wx.hideLoading();
       wx.showToast({ title: '资料已保存', icon: 'success' });
       await this.loadProfile();
+      setTimeout(() => {
+        wx.navigateBack({ fail: () => wx.switchTab({ url: '/pages/profile/index' }) });
+      }, 400);
     } catch (error) {
       wx.hideLoading();
-      // Error message is already shown by request.js
+    } finally {
+      this.setData({ saving: false });
     }
-    this.setData({ savingProfile: false });
+  },
+
+  avatarFallback() {
+    const nickname = this.data.form.nickname.trim() || this.data.profile?.nickname || '匿';
+    return avatarInitial(nickname);
   }
 });

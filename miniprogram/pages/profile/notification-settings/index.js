@@ -33,13 +33,17 @@ Page({
 
   async loadProfile() {
     this.setData({ loading: true });
-    const response = await getUserInfo();
-    const profile = response.data || {};
-    const prefs = { ...this.data.prefs };
-    PREF_KEYS.forEach((key) => {
-      prefs[key] = profile[key] !== false;
-    });
-    this.setData({ prefs, loading: false });
+    try {
+      const response = await getUserInfo();
+      const profile = response.data || {};
+      const prefs = { ...this.data.prefs };
+      PREF_KEYS.forEach((key) => {
+        prefs[key] = profile[key] !== false;
+      });
+      this.setData({ prefs, loading: false });
+    } catch (error) {
+      this.setData({ loading: false });
+    }
   },
 
   async onSwitchChange(event) {
@@ -47,6 +51,10 @@ Page({
     if (!key) return;
     const prefs = { ...this.data.prefs, [key]: event.detail.value };
     this.setData({ prefs });
-    await updateNotificationPreferences(prefs);
+    try {
+      await updateNotificationPreferences(prefs);
+    } catch (error) {
+      await this.loadProfile();
+    }
   }
 });

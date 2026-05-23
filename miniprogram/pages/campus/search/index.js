@@ -29,12 +29,10 @@ Page({
       this.setData({ activeChannel: decodeURIComponent(options.channel) });
     }
     if (options.keyword) {
-      const keyword = decodeURIComponent(options.keyword);
-      this.setData({ keyword });
+      this.setData({ keyword: decodeURIComponent(options.keyword) });
     }
     if (!requireLoginPage()) return;
-    const history = wx.getStorageSync('searchHistory') || [];
-    this.setData({ history });
+    this.setData({ history: wx.getStorageSync('searchHistory') || [] });
     this.loadChannels();
     if (this.data.keyword) {
       this.search();
@@ -44,8 +42,7 @@ Page({
   onShow() {
     applyThemeAndLanguage(this);
     if (!requireLoginPage()) return;
-    const history = wx.getStorageSync('searchHistory') || [];
-    this.setData({ history });
+    this.setData({ history: wx.getStorageSync('searchHistory') || [] });
     if (this.data.channels.length <= 1) {
       this.loadChannels();
     }
@@ -65,9 +62,7 @@ Page({
 
   async loadChannels() {
     const channels = await getChannels();
-    this.setData({
-      channels: ['全部', ...channels.filter((item) => item !== '全部')]
-    });
+    this.setData({ channels: ['全部', ...channels.filter((item) => item !== '全部')] });
   },
 
   onChannelTap(event) {

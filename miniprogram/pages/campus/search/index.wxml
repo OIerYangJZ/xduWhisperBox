@@ -44,6 +44,7 @@
   <view wx:if="{{loading}}" class="empty">搜索中...</view>
   <view wx:elif="{{searched && activeType === 'posts' && !posts.length}}" class="empty">没有找到相关帖子</view>
   <view wx:elif="{{searched && activeType === 'users' && !users.length}}" class="empty">没有找到相关用户</view>
+
   <view wx:if="{{activeType === 'posts' && !loading}}">
     <view class="feed-card" wx:for="{{posts}}" wx:key="id" data-id="{{item.id}}" bindtap="goPostDetail">
       <view class="feed-avatar">{{item.authorInitial}}</view>
@@ -73,9 +74,13 @@
       </view>
     </view>
   </view>
+
   <view wx:if="{{activeType === 'users' && !loading}}">
     <view class="user-card" wx:for="{{users}}" wx:key="id" data-id="{{item.id}}" bindtap="goUserDetail">
-      <image class="user-avatar" src="{{item.avatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="user-avatar {{item.avatarUrl ? 'has-image' : 'fallback'}}">
+        <image wx:if="{{item.avatarUrl}}" src="{{item.avatarUrl}}" mode="aspectFill"></image>
+        <text wx:else>{{item.avatarInitial}}</text>
+      </view>
       <view class="user-main">
         <view class="user-name">{{item.nickname || item.alias || item.name || '匿名同学'}}</view>
         <view class="user-bio">{{item.bio || '这个同学还没有写简介'}}</view>

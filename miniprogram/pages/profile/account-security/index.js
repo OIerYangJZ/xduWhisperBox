@@ -1,7 +1,9 @@
-import { getUserInfo } from '../../../api/auth';
+import { getUserInfo, resetPassword, sendPasswordResetCode } from '../../../api/auth';
 import { submitCancellationRequest, submitLevelUpgradeRequest } from '../../../api/user';
+import { logout } from '../../../api/auth';
 import { requireLoginPage } from '../../../utils/auth_guard';
 import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
+import { avatarInitial } from '../../../utils/format';
 
 Page({
   data: {
@@ -9,6 +11,7 @@ Page({
     profile: null,
     levelUpgradeSubtitle: '',
     cancellationSubtitle: '',
+    requestReason: '',
     submittingCancellation: false,
     submittingLevelUpgrade: false
   },
@@ -27,10 +30,10 @@ Page({
       this.setData({
         profile,
         levelUpgradeSubtitle: profile.levelUpgradeRequest
-          ? `${profile.levelUpgradeRequest.statusLabel || profile.levelUpgradeRequest.status} · ${profile.levelUpgradeRequest.createdAt || ''}`
+          ? `${profile.levelUpgradeRequest.statusLabel || '申请中'} · ${profile.levelUpgradeRequest.createdAt || ''}`
           : '当前为二级用户，可申请升级为一级用户',
         cancellationSubtitle: profile.accountCancellationRequest
-          ? `${profile.accountCancellationRequest.statusLabel || profile.accountCancellationRequest.status} · ${profile.accountCancellationRequest.createdAt || ''}`
+          ? `${profile.accountCancellationRequest.statusLabel || '申请中'} · ${profile.accountCancellationRequest.createdAt || ''}`
           : '永久注销此账号及所有关联数据',
         loading: false
       });
@@ -39,8 +42,47 @@ Page({
     }
   },
 
-  requestCancellation() {
-    if (this.data.submittingCancellation || (this.data.profile && this.data.profile.accountCancellationRequest)) return;
+  goResetPassword() {
+    wx.navigateTo({ url: '/pages/profile/reset-password/index' });
+  },
+
+  async requestLevelUpgrade() {
+    if (this.data.profile?.isLevelOneUser) return;
+    const request = this.data.profile?.levelUpgradeRequest;
+    if (request && request.status === 'pending') {
+      wx.showToast({ title: '你已经提交过申请了', icon: 'none' });
+      return;
+    }
+    wx.showModal({
+      title: '申请成为一级用户',
+      editable: true,
+      placeholderText: '请简述申请理由',
+      confirmText: '提交',
+      success: async (res) => {
+        if (!res.confirm) return;
+        const reason = String(res.content || '').trim();
+        if (!reason) {
+          wx.showToast({ title: '请填写理由', icon: 'none' });
+          return;
+        }
+        if (this.data.submittingLevelUpgrade) return;
+        this.setData({ submittingLevelUpgrade: true });
+        wx.showLoading({ title: '提交中' });
+        try {
+          await submitLevelUpgradeRequest({ reason });
+          wx.hideLoading();
+          wx.showToast({ title: '已提交申请', icon: 'success' });
+          await this.loadProfile();
+        } catch (error) {
+          wx.hideLoading();
+        }
+        this.setData({ submittingLevelUpgrade: false });
+      }
+    });
+  },
+
+  async requestCancellation() {
+    if (this.data.submittingCancellation) return;
     wx.showModal({
       title: '账号注销申请',
       editable: true,
@@ -68,36 +110,16 @@ Page({
     });
   },
 
-  requestLevelUpgrade() {
-    if (this.data.submittingLevelUpgrade || (this.data.profile && (this.data.profile.isLevelOneUser || this.data.profile.levelUpgradeRequest))) return;
-    wx.showModal({
-      title: '一级用户申请',
-      editable: true,
-      placeholderText: '请简述申请理由',
-      confirmText: '提交',
-      success: async (res) => {
-        if (!res.confirm) return;
-        const reason = String(res.content || '').trim();
-        if (!reason) {
-          wx.showToast({ title: '请填写理由', icon: 'none' });
-          return;
-        }
-        this.setData({ submittingLevelUpgrade: true });
-        wx.showLoading({ title: '提交中' });
-        try {
-          await submitLevelUpgradeRequest({ reason });
-          wx.hideLoading();
-          wx.showToast({ title: '已提交申请', icon: 'success' });
-          await this.loadProfile();
-        } catch (error) {
-          wx.hideLoading();
-        }
-        this.setData({ submittingLevelUpgrade: false });
-      }
-    });
+  avatarFallback() {
+    const nickname = this.data.profile?.nickname || this.data.profile?.alias || '匿';
+    return avatarInitial(nickname);
   },
 
-  goResetPassword() {
-    wx.navigateTo({ url: '/pages/profile/reset-password/index' });
+  async handleLogout() {
+    try {
+      await logout();
+    } catch (error) {}
+    wx.removeStorageSync('token');
+    wx.reLaunch({ url: '/pages/profile/index' });
   }
 });

@@ -72,7 +72,7 @@ export const channelColor = (channel) => {
 
 export const avatarInitial = (value) => {
   const text = String(value || '').trim();
-  if (!text) return '';
+  if (!text) return '匿';
   return text.slice(0, 1);
 };
 

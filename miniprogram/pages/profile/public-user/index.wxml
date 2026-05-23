@@ -4,7 +4,10 @@
   <view wx:else>
     <view class="profile-head">
       <image class="cover" wx:if="{{profile.backgroundImageUrl}}" src="{{profile.backgroundImageUrl}}" mode="aspectFill"></image>
-      <image class="avatar" src="{{profile.avatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="avatar {{profile.avatarUrl ? 'has-image' : 'fallback'}}">
+        <image wx:if="{{profile.avatarUrl}}" src="{{profile.avatarUrl}}" mode="aspectFill"></image>
+        <text wx:else>{{profile.avatarInitial}}</text>
+      </view>
       <view class="name">{{profile.nickname || profile.alias || '西电同学'}}</view>
       <view class="bio">{{profile.bio || '这个同学还没有填写简介'}}</view>
       <view class="stats">

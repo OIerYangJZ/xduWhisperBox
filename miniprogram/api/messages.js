@@ -1,14 +1,32 @@
 import request from '../utils/request';
+import { avatarInitial } from '../utils/format';
 import { getData, toArray } from '../utils/format';
 
 export const getConversations = async () => {
   const response = await request.get('/api/messages/conversations');
-  return toArray(getData(response, []));
+  return toArray(getData(response, [])).map((item) => {
+    const name = String(item.name || item.peerName || '私信');
+    return {
+      ...item,
+      id: String(item.id || ''),
+      name,
+      avatarInitial: avatarInitial(name)
+    };
+  });
 };
 
 export const fetchDmRequests = async () => {
   const response = await request.get('/api/messages/requests');
-  return toArray(getData(response, []));
+  return toArray(getData(response, [])).map((item) => {
+    const name = String(item.fromUserName || item.fromAlias || '同学');
+    return {
+      ...item,
+      id: String(item.id || ''),
+      fromUserName: name,
+      fromAlias: String(item.fromAlias || name),
+      avatarInitial: avatarInitial(name)
+    };
+  });
 };
 
 export const handleDmRequest = async (requestId, accept) => {

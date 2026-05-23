@@ -53,9 +53,44 @@ const getRuntimePlatform = () => {
   return '';
 };
 
+const hasDevtoolsMarker = (info) => {
+  if (!info || typeof info !== 'object') {
+    return false;
+  }
+  const values = [
+    info.platform,
+    info.brand,
+    info.model,
+    info.system,
+    info.environment,
+    info.host && info.host.env,
+    info.host && info.host.appId,
+  ];
+  return values.some((value) => /devtools/i.test(String(value || '')));
+};
+
 const isDevtoolsRuntime = () => {
-  const platform = getRuntimePlatform();
-  return platform === 'devtools';
+  try {
+    if (typeof __wxConfig !== 'undefined' && __wxConfig.platform === 'devtools') {
+      return true;
+    }
+  } catch (error) {}
+  try {
+    if (typeof wx !== 'undefined' && wx.getSystemInfoSync && hasDevtoolsMarker(wx.getSystemInfoSync())) {
+      return true;
+    }
+  } catch (error) {}
+  try {
+    if (typeof wx !== 'undefined' && wx.getDeviceInfo && hasDevtoolsMarker(wx.getDeviceInfo())) {
+      return true;
+    }
+  } catch (error) {}
+  try {
+    if (typeof wx !== 'undefined' && wx.getAppBaseInfo && hasDevtoolsMarker(wx.getAppBaseInfo())) {
+      return true;
+    }
+  } catch (error) {}
+  return getRuntimePlatform() === 'devtools';
 };
 
 const resolveConfig = () => {

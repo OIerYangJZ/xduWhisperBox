@@ -27,12 +27,14 @@
         bindtouchend="onRowTouchEnd"
       >
         <image
+          wx:if="{{item.avatarUrl}}"
           class="avatar"
-          src="{{item.avatarUrl || '/assets/default-avatar.png'}}"
+          src="{{item.avatarUrl}}"
           mode="aspectFill"
           data-id="{{item.peerUserId}}"
           catchtap="openProfile"
         ></image>
+        <view wx:else class="avatar avatar-fallback" data-id="{{item.peerUserId}}" catchtap="openProfile">{{item.avatarInitial}}</view>
         <view class="conversation-body">
           <view class="conversation-head">
             <view class="name-row">

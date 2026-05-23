@@ -1,5 +1,5 @@
 import request from '../utils/request';
-import { getData, normalizePost, resolveUrl, toArray } from '../utils/format';
+import { avatarInitial, getData, normalizePost, resolveUrl, toArray } from '../utils/format';
 
 export const updateNotificationPreferences = async (payload) => {
   const response = await request.patch('/api/users/notification-preferences', payload);
@@ -49,8 +49,10 @@ export const getReportDetail = async (reportId) => {
 export const getPublicUser = async (userId) => {
   const response = await request.get(`/api/users/${userId}`);
   const data = getData(response, {});
+  const nickname = String(data.nickname || data.alias || data.name || '西电同学');
   return {
     ...data,
+    avatarInitial: avatarInitial(nickname),
     avatarUrl: resolveUrl(data.avatarUrl || ''),
     backgroundImageUrl: resolveUrl(data.backgroundImageUrl || '')
   };
@@ -61,6 +63,8 @@ export const searchUsers = async (keyword) => {
   return toArray(getData(response, [])).map((item) => ({
     ...item,
     id: String(item.id || item.userId || ''),
+    nickname: String(item.nickname || item.alias || item.name || '西电同学'),
+    avatarInitial: avatarInitial(item.nickname || item.alias || item.name || '西电同学'),
     avatarUrl: resolveUrl(item.avatarUrl || ''),
     backgroundImageUrl: resolveUrl(item.backgroundImageUrl || '')
   }));
@@ -78,17 +82,35 @@ export const unfollowUser = async (userId) => {
 
 export const getFollowing = async () => {
   const response = await request.get('/api/users/me/following');
-  return toArray(getData(response, []));
+  return toArray(getData(response, [])).map((item) => ({
+    ...item,
+    id: String(item.id || item.userId || ''),
+    nickname: String(item.nickname || item.alias || item.name || '西电同学'),
+    avatarInitial: avatarInitial(item.nickname || item.alias || item.name || '西电同学'),
+    avatarUrl: resolveUrl(item.avatarUrl || '')
+  }));
 };
 
 export const getFollowers = async () => {
   const response = await request.get('/api/users/me/followers');
-  return toArray(getData(response, []));
+  return toArray(getData(response, [])).map((item) => ({
+    ...item,
+    id: String(item.id || item.userId || ''),
+    nickname: String(item.nickname || item.alias || item.name || '西电同学'),
+    avatarInitial: avatarInitial(item.nickname || item.alias || item.name || '西电同学'),
+    avatarUrl: resolveUrl(item.avatarUrl || '')
+  }));
 };
 
 export const getFriends = async () => {
   const response = await request.get('/api/users/me/friends');
-  return toArray(getData(response, []));
+  return toArray(getData(response, [])).map((item) => ({
+    ...item,
+    id: String(item.id || item.userId || ''),
+    nickname: String(item.nickname || item.alias || item.name || '西电同学'),
+    avatarInitial: avatarInitial(item.nickname || item.alias || item.name || '西电同学'),
+    avatarUrl: resolveUrl(item.avatarUrl || '')
+  }));
 };
 
 export const submitFeedback = async (payload) => {
@@ -100,6 +122,9 @@ export const getBlocks = async () => {
   const response = await request.get('/api/users/me/blocks');
   return toArray(getData(response, [])).map((item) => ({
     ...item,
+    id: String(item.id || item.userId || ''),
+    nickname: String(item.nickname || item.alias || item.name || '西电同学'),
+    avatarInitial: avatarInitial(item.nickname || item.alias || item.name || '西电同学'),
     avatarUrl: resolveUrl(item.avatarUrl || '')
   }));
 };

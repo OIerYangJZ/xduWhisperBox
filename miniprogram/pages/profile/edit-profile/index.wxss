@@ -1,7 +1,8 @@
 .page {
-  padding: 32rpx;
-  background: var(--app-background);
   min-height: 100vh;
+  padding: 24rpx;
+  background: var(--app-background);
+  box-sizing: border-box;
 }
 
 .empty {
@@ -12,72 +13,90 @@
 }
 
 .section {
-  margin-bottom: 32rpx;
-  padding: 32rpx;
-  border: 1rpx solid rgba(232, 232, 232, .5);
-  border-radius: 24rpx;
+  margin-bottom: 24rpx;
+  padding: 28rpx;
   background: var(--app-surface);
+  border: 1rpx solid var(--app-divider);
+  border-radius: 16rpx;
 }
 
 .section-title {
-  margin-bottom: 24rpx;
+  margin-bottom: 20rpx;
   color: var(--app-text-primary);
   font-size: 30rpx;
   font-weight: 600;
 }
 
-.avatar-row {
+.avatar-panel {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  min-height: 112rpx;
-  border-bottom: 1rpx solid var(--app-divider);
-  padding: 16rpx 0;
+  gap: 24rpx;
 }
 
 .avatar-preview {
-  width: 96rpx;
-  height: 96rpx;
+  width: 128rpx;
+  height: 128rpx;
   border-radius: 50%;
+  overflow: hidden;
   background: var(--app-control);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--app-primary);
+  font-size: 48rpx;
+  font-weight: 600;
+}
+
+.avatar-preview image {
+  width: 100%;
+  height: 100%;
+}
+
+.panel-actions {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
 }
 
 .avatar-button {
-  height: 58rpx;
   margin: 0;
   padding: 0 24rpx;
-  border-radius: 29rpx;
-  background: rgba(21, 94, 117, .1);
+  height: 60rpx;
+  line-height: 60rpx;
+  border-radius: 30rpx;
+  background: rgba(21, 94, 117, 0.12);
   color: var(--app-primary);
   font-size: 26rpx;
   font-weight: 600;
-  line-height: 58rpx;
 }
 
-.background-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20rpx;
-  min-height: 150rpx;
-  padding: 16rpx 0;
+.avatar-button.ghost {
+  background: transparent;
+  border: 1rpx solid var(--app-divider);
+  color: var(--app-text-primary);
 }
 
-.background-preview,
-.background-empty {
-  flex: 1;
+.background-preview-wrap {
+  margin-top: 20rpx;
+}
+
+.background-preview {
   height: 240rpx;
   border: 1rpx solid var(--app-divider);
   border-radius: 16rpx;
   background: var(--app-control);
   overflow: hidden;
-}
-
-.background-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--app-text-secondary);
   font-size: 26rpx;
-  line-height: 240rpx;
-  text-align: center;
+}
+
+.background-preview image {
+  width: 100%;
+  height: 100%;
 }
 
 .info-row {
@@ -117,7 +136,7 @@
 }
 
 .bio-field {
-  padding: 22rpx 0;
+  padding: 22rpx 0 0;
 }
 
 .bio-label {
@@ -127,7 +146,7 @@
 
 .bio-input {
   width: 100%;
-  height: 140rpx;
+  height: 160rpx;
   margin-top: 14rpx;
   padding: 18rpx;
   border: 1rpx solid var(--app-divider);
@@ -140,11 +159,11 @@
 }
 
 .save-button {
-  height: 100rpx;
-  margin-top: 32rpx;
-  border-radius: 24rpx;
+  height: 96rpx;
+  margin-top: 16rpx;
+  border-radius: 20rpx;
   background: var(--app-primary);
   color: #ffffff;
   font-size: 30rpx;
-  line-height: 100rpx;
+  line-height: 96rpx;
 }

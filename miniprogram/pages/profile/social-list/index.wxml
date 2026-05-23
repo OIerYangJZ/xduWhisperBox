@@ -3,7 +3,10 @@
   <view wx:elif="{{!users.length}}" class="empty">暂无数据</view>
   <view wx:else>
     <view class="user-row" wx:for="{{users}}" wx:key="id">
-      <image class="avatar" src="{{item.avatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill" data-id="{{item.id || item.userId}}" bindtap="openUser"></image>
+      <view class="avatar {{item.avatarUrl ? 'has-image' : 'fallback'}}" data-id="{{item.id || item.userId}}" bindtap="openUser">
+        <image wx:if="{{item.avatarUrl}}" src="{{item.avatarUrl}}" mode="aspectFill"></image>
+        <text wx:else>{{item.avatarInitial}}</text>
+      </view>
       <view class="user-body" data-id="{{item.id || item.userId}}" bindtap="openUser">
         <view class="name">{{item.nickname || item.alias || item.name || '西电同学'}}</view>
         <view class="bio">{{item.bio || item.userLevelLabel || '校园用户'}}</view>

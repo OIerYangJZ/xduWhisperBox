@@ -31,7 +31,8 @@ Page({
       ]);
       const normalized = conversations.map(item => ({
         ...item,
-        offsetX: 0
+        offsetX: 0,
+        avatarInitial: item.avatarInitial || item.name?.slice(0, 1) || '匿'
       }));
       const requestCount = requests.filter(item => item.status === 'pending').length;
       this.setData({ conversations: normalized, requestCount, loading: false });

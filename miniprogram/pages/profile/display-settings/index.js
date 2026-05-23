@@ -1,5 +1,5 @@
-import { getTranslation, getLanguage, setLanguage } from '../../../utils/i18n';
 import { applyThemeAndLanguage } from '../../../utils/theme_i18n';
+import { setLanguage, getLanguage } from '../../../utils/i18n';
 
 Page({
   data: {
@@ -17,7 +17,7 @@ Page({
     applyThemeAndLanguage(this);
     const t = this.data.t;
     const themeConfig = wx.getStorageSync('displayTheme') || 'system';
-    
+
     this.setData({
       currentThemeOption: themeConfig,
       themeOptions: [
@@ -49,4 +49,3 @@ Page({
     wx.showToast({ title: this.data.t.save_success || '已保存', icon: 'success' });
   }
 });
-
